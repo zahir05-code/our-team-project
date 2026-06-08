@@ -563,3 +563,21 @@ body {
   line-height: 1.6;
 }
 .ont-disclaimer strong { color: #374151; }
+
+/* ── 전화 바로 걸기 ── */
+.tel-link {
+  display: inline-block;
+  color: #2563eb;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 3px 10px;
+  border: 1.5px solid #2563eb;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  margin-left: 4px;
+  transition: background 0.15s, color 0.15s;
+}
+.tel-link:hover {
+  background: #2563eb;
+  color: #fff;
+}

@@ -417,7 +417,7 @@ function renderOntPolicy(p, type) {
     ${tagsHtml}
     ${docsHtml}
     ${reasonHtml}
-    <div class="ont-authority">📞 ${p.authority} · ${p.phone}</div>
+    <div class="ont-authority">📞 ${p.authority} · <a class="tel-link" href="tel:${p.phone.replace(/[^0-9]/g,'')}">${p.phone} ☎ 전화하기</a></div>
   </div>`;
 }
 
