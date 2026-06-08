@@ -1,47 +1,42 @@
-/* 아테나 복지서비스 앱 로직 */
+/* 아테나 복지서비스 — 3단계 미니멀 UX */
 
-const TOTAL_STEPS = 8;
-let currentStep  = 1;
-let currentMode  = "form";   // "form" | "nlp"
-
+/* ── 상태 ── */
 const state = {
-  age:             "",
-  region:          "",
-  district:        "",
-  life_situations: [],
-  work_status:     "",
-  family_status:   "",
-  gender:          "",
-  income_range:    "",
+  age: "", region: "", district: "",
+  life_situations: [], family_status: "",
+  income_range: "", gender: "",
 };
-
 const nlpState = {
-  income_range:      "",
-  gender:            "",
-  region_override:   "",
-  district_override: "",
+  income_range: "", gender: "",
+  region_override: "", district_override: "",
 };
 
 /* ── 초기화 ── */
 window.addEventListener("DOMContentLoaded", () => {
-  renderChips("situationChips", SITUATIONS,    true,  "situation");
-  renderChips("workChips",      WORK_OPTIONS,  false, "work");
-  renderChips("familyChips",    FAMILY_OPTIONS,false, "family");
-  renderChips("genderChips",    GENDER_OPTIONS,false, "gender");
-  renderChips("incomeChips",    INCOME_OPTIONS,false, "income");
-  renderChips("nlpIncomeChips", INCOME_OPTIONS,false, "nlpIncome");
-  renderChips("nlpGenderChips", GENDER_OPTIONS,false, "nlpGender");
-  updateProgress();
+  renderSituationGrid();
+  renderChips("familyChips",   FAMILY_OPTIONS,  false, "family");
+  renderChips("incomeChips",   INCOME_OPTIONS,  false, "income");
+  renderChips("nlpGenderChips",GENDER_OPTIONS,  false, "nlpGender");
+  renderChips("nlpIncomeChips",INCOME_OPTIONS,  false, "nlpIncome");
 });
 
-/* ── 모드 전환 ── */
-function switchMode(mode) {
-  currentMode = mode;
-  document.getElementById("tabForm").classList.toggle("active", mode === "form");
-  document.getElementById("tabNlp").classList.toggle("active",  mode === "nlp");
-  document.getElementById("formMode").classList.toggle("hidden", mode !== "form");
-  document.getElementById("nlpMode").classList.toggle("hidden",  mode !== "nlp");
-  document.getElementById("result").classList.add("hidden");
+/* ── 상황 그리드 렌더링 ── */
+function renderSituationGrid() {
+  const grid = document.getElementById("situationGrid");
+  if (!grid) return;
+  SITUATIONS.forEach(label => {
+    const btn = document.createElement("button");
+    btn.className = "sit-card";
+    btn.innerHTML = `<span class="sit-icon">${SITUATION_ICONS[label] || "📌"}</span>
+                     <span class="sit-label">${label}</span>`;
+    btn.onclick = () => {
+      btn.classList.toggle("active");
+      const idx = state.life_situations.indexOf(label);
+      if (idx === -1) state.life_situations.push(label);
+      else            state.life_situations.splice(idx, 1);
+    };
+    grid.appendChild(btn);
+  });
 }
 
 /* ── 칩 렌더링 ── */
@@ -52,53 +47,33 @@ function renderChips(containerId, options, multi, key) {
     const chip = document.createElement("button");
     chip.className = "chip";
     chip.textContent = opt;
-    // 성별 칩에 data-gender 속성 추가 (CSS 색상 분기용)
-    if (key === "gender" || key === "nlpGender") {
-      const gv = GENDER_VALUE_MAP[opt] || opt;
-      chip.dataset.gender = gv;
-    }
+    if (key === "nlpGender") chip.dataset.gender = GENDER_VALUE_MAP[opt] || opt;
     chip.onclick = () => toggleChip(chip, opt, multi, key);
     wrap.appendChild(chip);
   });
 }
 
 function toggleChip(chip, value, multi, key) {
-  if (!multi) {
-    document.querySelectorAll(`#${getContainerId(key)} .chip`)
-      .forEach(c => c.classList.remove("active"));
-    chip.classList.add("active");
-    if (key === "work")      state.work_status     = value;
-    if (key === "family")    state.family_status   = value;
-    if (key === "gender")    state.gender          = GENDER_VALUE_MAP[value] || value;
-    if (key === "income")    state.income_range    = value;
-    if (key === "nlpIncome") nlpState.income_range = value;
-    if (key === "nlpGender") nlpState.gender       = GENDER_VALUE_MAP[value] || value;
-  } else {
-    chip.classList.toggle("active");
-    const idx = state.life_situations.indexOf(value);
-    if (idx === -1) state.life_situations.push(value);
-    else            state.life_situations.splice(idx, 1);
-  }
+  document.querySelectorAll(`#${getContainerId(key)} .chip`)
+    .forEach(c => c.classList.remove("active"));
+  chip.classList.add("active");
+  if (key === "family")    state.family_status      = value;
+  if (key === "income")    state.income_range       = value;
+  if (key === "nlpIncome") nlpState.income_range    = value;
+  if (key === "nlpGender") nlpState.gender = GENDER_VALUE_MAP[value] || value;
 }
 
 function getContainerId(key) {
-  return {
-    situation: "situationChips",
-    work:      "workChips",
-    family:    "familyChips",
-    gender:    "genderChips",
-    income:    "incomeChips",
-    nlpIncome: "nlpIncomeChips",
-    nlpGender: "nlpGenderChips",
-  }[key];
+  return { family:"familyChips", income:"incomeChips",
+           nlpIncome:"nlpIncomeChips", nlpGender:"nlpGenderChips" }[key];
 }
 
 /* ── 지역 선택 ── */
-function selectRegion(region) {
+function pickRegion(region, btn) {
   state.region   = region;
   state.district = "";
-  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-  event.target.classList.add("active");
+  document.querySelectorAll(".region-big-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
 
   const sel = document.getElementById("districtSelect");
   sel.innerHTML = '<option value="">시·군·구 선택</option>';
@@ -109,78 +84,68 @@ function selectRegion(region) {
     sel.appendChild(opt);
   });
   sel.classList.remove("hidden");
-  sel.onchange = () => { state.district = sel.value; };
+  sel.onchange = () => { state.district = sel.value; checkStepA(); };
+  checkStepA();
+}
+
+function onAgeInput() { checkStepA(); }
+
+function checkStepA() {
+  const age = parseInt(document.getElementById("inputAge").value);
+  const ok  = state.region && state.district && age >= 1 && age <= 120;
+  const btn = document.getElementById("btnA");
+  btn.classList.toggle("disabled", !ok);
 }
 
 /* ── 단계 이동 ── */
-function nextStep() {
-  if (!validateStep()) return;
+function goToA() {
+  show("stepA"); setDot(1);
+  document.getElementById("inputCard").scrollIntoView({ behavior: "smooth" });
+}
 
-  if (currentStep < TOTAL_STEPS) {
-    showStep(currentStep + 1);
-  } else {
-    submitProfile();
+function goToB() {
+  const age = parseInt(document.getElementById("inputAge").value);
+  if (!state.region)   { alert("지역을 선택해 주세요."); return; }
+  if (!state.district) { alert("시·군·구를 선택해 주세요."); return; }
+  if (!age || age < 1 || age > 120) { alert("나이를 입력해 주세요."); return; }
+  state.age = String(age);
+  show("stepB"); setDot(2);
+  document.getElementById("inputCard").scrollIntoView({ behavior: "smooth" });
+}
+
+function goToC() {
+  if (state.life_situations.length === 0) {
+    alert("어려운 점을 하나 이상 선택해 주세요."); return;
   }
+  show("stepC"); setDot(3);
+  document.getElementById("inputCard").scrollIntoView({ behavior: "smooth" });
 }
 
-function prevStep() {
-  if (currentStep > 1) showStep(currentStep - 1);
+function show(stepId) {
+  ["stepA","stepB","stepC"].forEach(id => {
+    document.getElementById(id).classList.toggle("hidden", id !== stepId);
+  });
 }
 
-function showStep(n) {
-  document.getElementById(`step${currentStep}`).classList.add("hidden");
-  currentStep = n;
-  document.getElementById(`step${currentStep}`).classList.remove("hidden");
-
-  document.getElementById("btnBack").classList.toggle("hidden", currentStep === 1);
-  document.getElementById("btnNext").textContent =
-    currentStep === TOTAL_STEPS ? "결과 보기 🎯" : "다음 →";
-  document.getElementById("progressText").textContent =
-    `${currentStep} / ${TOTAL_STEPS}`;
-  updateProgress();
+function setDot(n) {
+  [1,2,3].forEach(i => {
+    document.getElementById(`dot${i}`).classList.toggle("active", i === n);
+    document.getElementById(`dot${i}`).classList.toggle("done",   i < n);
+  });
 }
 
-function updateProgress() {
-  const pct = (currentStep / TOTAL_STEPS) * 100;
-  document.getElementById("progressBar").style.width = pct + "%";
-  document.getElementById("progressText").textContent =
-    `${currentStep} / ${TOTAL_STEPS}`;
-}
-
-/* ── 체크박스 변경 시 버튼 활성화 ── */
+/* ── 정직성 체크박스 ── */
 function onPledgeChange() {
-  const checked = document.getElementById("pledgeCheck").checked;
-  const btn = document.getElementById("btnNext");
-  btn.disabled = !checked;
-  btn.style.opacity = checked ? "1" : "0.4";
-}
-
-/* ── 유효성 검사 ── */
-function validateStep() {
-  if (currentStep === 1) {
-    const v = parseInt(document.getElementById("inputAge").value);
-    if (!v || v < 1 || v > 120) {
-      alert("나이를 올바르게 입력해 주세요."); return false;
-    }
-    state.age = String(v);
-  }
-  if (currentStep === 2) {
-    if (!state.region)   { alert("시·도를 선택해 주세요."); return false; }
-    if (!state.district) { alert("시·군·구를 선택해 주세요."); return false; }
-  }
-  if (currentStep === 3 && state.life_situations.length === 0) {
-    alert("어려운 점을 하나 이상 선택해 주세요."); return false;
-  }
-  if (currentStep === 8) {
-    if (!document.getElementById("pledgeCheck").checked) {
-      alert("확인 체크를 해주셔야 결과를 볼 수 있습니다."); return false;
-    }
-  }
-  return true;
+  const ok  = document.getElementById("pledgeCheck").checked;
+  const btn = document.getElementById("btnC");
+  btn.classList.toggle("disabled", !ok);
 }
 
 /* ── 단계별 API 호출 ── */
 async function submitProfile() {
+  if (!document.getElementById("pledgeCheck").checked) {
+    alert("확인 체크를 해주셔야 결과를 볼 수 있습니다."); return;
+  }
   showLoading();
   try {
     const res = await fetch("/welfare/search", {
@@ -191,37 +156,40 @@ async function submitProfile() {
         region:          state.region,
         district:        state.district,
         life_situations: state.life_situations,
-        work_status:     state.work_status   || null,
-        family_status:   state.family_status || null,
-        gender:          state.gender        || null,
-        income_range:    state.income_range  || null,
+        family_status:   state.family_status   || null,
+        income_range:    state.income_range    || null,
+        gender:          state.gender          || null,
+        work_status:     null,
       }),
     });
-
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.detail || "오류가 발생했습니다.");
-    }
-
-    const data = await res.json();
-    renderResult(data, null);
-
-  } catch (e) {
+    if (!res.ok) { const e = await res.json(); throw new Error(e.detail); }
+    renderResult(await res.json(), null);
+  } catch(e) {
     alert("오류: " + e.message);
-    retry();
   } finally {
     hideLoading();
   }
 }
 
-/* ── NLP 지역 보완 선택 ── */
+/* ── NLP 토글 ── */
+function toggleNlp() {
+  const panel   = document.getElementById("nlpPanel");
+  const card    = document.getElementById("inputCard");
+  const entry   = document.getElementById("nlpEntry");
+  const isHidden = panel.classList.contains("hidden");
+  panel.classList.toggle("hidden", !isHidden);
+  card.classList.toggle("hidden",   isHidden);
+  entry.classList.toggle("hidden",  isHidden);
+  if (isHidden) panel.scrollIntoView({ behavior: "smooth" });
+}
+
+/* ── NLP 지역 보완 ── */
 function selectNlpRegion(region, btn) {
   nlpState.region_override   = region;
   nlpState.district_override = "";
-  document.querySelectorAll("#nlpRegionWrap .tab-btn")
+  document.querySelectorAll("#nlpPanel .region-big-btn")
     .forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
-
   const sel = document.getElementById("nlpDistrictSelect");
   sel.innerHTML = '<option value="">시·군·구 선택 (선택)</option>';
   const list = region === "서울특별시" ? SEOUL_DISTRICTS : GYEONGGI_DISTRICTS;
@@ -234,60 +202,46 @@ function selectNlpRegion(region, btn) {
   sel.onchange = () => { nlpState.district_override = sel.value; };
 }
 
-/* ── 자연어 NLP API 호출 ── */
+/* ── NLP API 호출 ── */
 async function submitNlp() {
   const text = document.getElementById("nlpText").value.trim();
-  if (text.length < 5) {
-    alert("상황을 좀 더 자세히 입력해 주세요. (5자 이상)"); return;
-  }
-
+  if (text.length < 5) { alert("상황을 좀 더 자세히 입력해 주세요."); return; }
   showLoading();
-  document.getElementById("nlpMode").classList.add("hidden");
-
+  document.getElementById("nlpPanel").classList.add("hidden");
   try {
     const res = await fetch("/welfare/nlp-search", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        text:              text,
+        text,
         income_range:      nlpState.income_range      || null,
         gender:            nlpState.gender            || null,
         region_override:   nlpState.region_override   || "",
         district_override: nlpState.district_override || "",
       }),
     });
-
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.detail || "오류가 발생했습니다.");
-    }
-
+    if (!res.ok) { const e = await res.json(); throw new Error(e.detail); }
     const data = await res.json();
-
-    // 지역 미감지 → 지역 보완 UI 노출 후 재시도 안내
     if (data.needs_region && !nlpState.region_override) {
       hideLoading();
-      document.getElementById("nlpMode").classList.remove("hidden");
+      document.getElementById("nlpPanel").classList.remove("hidden");
       document.getElementById("nlpRegionWrap").classList.remove("hidden");
-      document.getElementById("nlpMode").scrollIntoView({ behavior: "smooth" });
+      document.getElementById("nlpPanel").scrollIntoView({ behavior: "smooth" });
       return;
     }
-
     renderResult(data, data.analysis);
-
-  } catch (e) {
+  } catch(e) {
     alert("오류: " + e.message);
-    document.getElementById("nlpMode").classList.remove("hidden");
+    document.getElementById("nlpPanel").classList.remove("hidden");
   } finally {
     hideLoading();
   }
 }
 
-/* ── 로딩 표시 ── */
+/* ── 로딩 ── */
 function showLoading() {
-  document.getElementById("cardStep") && document.getElementById("cardStep").classList.add("hidden");
-  document.getElementById("btnRow")   && document.getElementById("btnRow").classList.add("hidden");
-  document.getElementById("progressWrap") && document.getElementById("progressWrap").classList.add("hidden");
+  document.getElementById("inputCard").classList.add("hidden");
+  document.getElementById("nlpEntry").classList.add("hidden");
   document.getElementById("loading").classList.remove("hidden");
 }
 function hideLoading() {
@@ -296,187 +250,153 @@ function hideLoading() {
 
 /* ── 결과 렌더링 ── */
 function renderResult(data, analysis) {
-  // OO님 맞춤 제목
+  document.getElementById("inputCard").classList.add("hidden");
+  document.getElementById("nlpEntry").classList.add("hidden");
+
+  /* OO님 맞춤 제목 */
   const age  = (analysis && analysis.age) ? analysis.age : (state.age || "");
   const nick = age ? `${age}세 고객님` : "고객님";
   document.getElementById("resultTitle").textContent =
     `🎯 ${nick}께 맞는 혜택을 찾았습니다`;
-  document.getElementById("resultSummary").textContent = "";
 
   const body = document.getElementById("resultBody");
   body.innerHTML = "";
 
-  // NLP 분석 정보 표시
+  /* NLP 분석 태그 */
   if (analysis) {
-    let analysisHtml = `<div class="nlp-analysis">
-      <p class="analysis-title">📊 AI 분석 결과</p>
+    let html = `<div class="nlp-analysis"><p class="analysis-title">📊 AI 분석</p>
       <div class="analysis-tags">`;
-
-    if (analysis.age)
-      analysisHtml += `<span class="analysis-tag">나이 ${analysis.age}세</span>`;
-    if (analysis.region)
-      analysisHtml += `<span class="analysis-tag">${analysis.region}</span>`;
-    if (analysis.district)
-      analysisHtml += `<span class="analysis-tag">${analysis.district}</span>`;
-    if (analysis.work_status)
-      analysisHtml += `<span class="analysis-tag">${analysis.work_status}</span>`;
-    if (analysis.family_status)
-      analysisHtml += `<span class="analysis-tag">${analysis.family_status}</span>`;
-    (analysis.life_situations || []).forEach(s => {
-      analysisHtml += `<span class="analysis-tag">${s}</span>`;
-    });
-
-    analysisHtml += `</div>`;
-    if (analysis.warnings && analysis.warnings.length) {
-      analysis.warnings.forEach(w => {
-        analysisHtml += `<div class="nlp-warning">⚠️ ${w}</div>`;
-      });
-    }
-    analysisHtml += `</div>`;
-    body.insertAdjacentHTML("beforeend", analysisHtml);
+    if (analysis.age)          html += `<span class="analysis-tag">${analysis.age}세</span>`;
+    if (analysis.region)       html += `<span class="analysis-tag">${analysis.region}</span>`;
+    if (analysis.district)     html += `<span class="analysis-tag">${analysis.district}</span>`;
+    if (analysis.work_status)  html += `<span class="analysis-tag">${analysis.work_status}</span>`;
+    if (analysis.family_status)html += `<span class="analysis-tag">${analysis.family_status}</span>`;
+    (analysis.life_situations||[]).forEach(s =>
+      html += `<span class="analysis-tag">${s}</span>`);
+    html += `</div>`;
+    (analysis.warnings||[]).forEach(w =>
+      html += `<div class="nlp-warning">⚠️ ${w}</div>`);
+    html += `</div>`;
+    body.insertAdjacentHTML("beforeend", html);
   }
 
-  // 온톨로지 자격 판단 결과
+  /* 온톨로지 결과 */
   if (data.ontology && data.ontology.summary.total > 0) {
-    const ont = data.ontology;
+    const ont  = data.ontology;
     const summ = ont.summary;
 
-    let ontHtml = `<div class="ont-section">
-      <p class="ont-header">🏛️ 자격 판단 결과
+    let html = `<div class="ont-section">
+      <p class="ont-header">🏛 자격 판단 결과
         <span class="ont-badge ont-badge-def">${summ.definite_count}건 요건 충족</span>
         <span class="ont-badge ont-badge-pos">${summ.possible_count}건 가능성</span>
         <span class="ont-badge ont-badge-fut">${summ.future_count}건 미리보기</span>
       </p>
       <div class="ont-disclaimer">
-        💙 아래 결과는 입력하신 정보를 바탕으로 한 <strong>맞춤 안내</strong>입니다.
-        실제 수급 여부는 담당 기관의 심사를 통해 최종 결정됩니다.<br>
+        💙 입력하신 정보를 바탕으로 한 <strong>맞춤 안내</strong>입니다.
+        실제 수급 여부는 담당 기관의 심사를 통해 최종 결정됩니다.
         <span class="disclaimer-legal">
           📌 허위 신청 시 「사회보장기본법」에 따라 불이익이 발생할 수 있습니다.
         </span>
       </div>`;
 
-    // DEFINITE
     if (ont.definite.length) {
-      ontHtml += `<div class="ont-group ont-group-def">
-        <p class="ont-group-title">✅ 지금 바로 신청 가능 (${ont.definite.length}건)</p>`;
-      ont.definite.forEach(p => { ontHtml += renderOntPolicy(p, "def"); });
-      ontHtml += `</div>`;
+      html += `<div class="ont-group ont-group-def">
+        <p class="ont-group-title">✅ 지금 신청 가능 (${ont.definite.length}건)</p>`;
+      ont.definite.forEach(p => html += renderOntPolicy(p, "def"));
+      html += `</div>`;
     }
-
-    // POSSIBLE
     if (ont.possible.length) {
-      ontHtml += `<div class="ont-group ont-group-pos">
-        <p class="ont-group-title">🔶 해당 가능성 있음 (${ont.possible.length}건)</p>`;
-      ont.possible.forEach(p => { ontHtml += renderOntPolicy(p, "pos"); });
-      ontHtml += `</div>`;
+      html += `<div class="ont-group ont-group-pos">
+        <p class="ont-group-title">🔶 해당 가능성 (${ont.possible.length}건)</p>`;
+      ont.possible.forEach(p => html += renderOntPolicy(p, "pos"));
+      html += `</div>`;
     }
-
-    // FUTURE
     if (ont.future.length) {
-      ontHtml += `<div class="ont-group ont-group-fut">
-        <p class="ont-group-title">📌 미리 알아두면 좋아요 (${ont.future.length}건)
+      html += `<div class="ont-group ont-group-fut">
+        <p class="ont-group-title">📌 미리 알아두기 (${ont.future.length}건)
           <button class="ont-toggle-btn" onclick="toggleFuture(this)">펼치기 ▾</button>
         </p>
         <div class="ont-future-body hidden">`;
-      ont.future.forEach(p => { ontHtml += renderOntPolicy(p, "fut"); });
-      ontHtml += `</div></div>`;
+      ont.future.forEach(p => html += renderOntPolicy(p, "fut"));
+      html += `</div></div>`;
     }
-
-    ontHtml += `</div>`;
-    body.insertAdjacentHTML("beforeend", ontHtml);
+    html += `</div>`;
+    body.insertAdjacentHTML("beforeend", html);
   }
 
-  // 기존 링크 섹션 (참고 사이트)
-  const hasLinks = data.results && data.results.some(s => s.services.length > 0);
-  if (hasLinks) {
-    const linkWrap = document.createElement("div");
-    linkWrap.className = "link-section-wrap";
-    linkWrap.innerHTML = `<p class="link-section-header">🔗 관련 기관 바로가기</p>`;
-
-    data.results.forEach(section => {
-      if (!section.services.length) return;
-      const icon = SECTION_ICONS[section.section] || "📋";
-      const div  = document.createElement("div");
-      div.className = "result-section";
-      div.innerHTML = `<p class="section-title">${icon} ${section.section}</p>`;
-      section.services.forEach(svc => {
-        const item = document.createElement("div");
-        item.className = "service-item";
-        item.innerHTML = `
+  /* 링크 섹션 */
+  if (data.results && data.results.some(s => s.services.length > 0)) {
+    let html = `<div class="link-section-wrap">
+      <p class="link-section-header">🔗 관련 기관 바로가기</p>`;
+    data.results.forEach(sec => {
+      if (!sec.services.length) return;
+      const icon = SECTION_ICONS[sec.section] || "📋";
+      html += `<div class="result-section">
+        <p class="section-title">${icon} ${sec.section}</p>`;
+      sec.services.forEach(svc =>
+        html += `<div class="service-item">
           <span class="service-name">${svc.name}</span>
-          <a class="service-link" href="${svc.url}" target="_blank" rel="noopener">바로가기 →</a>`;
-        div.appendChild(item);
-      });
-      linkWrap.appendChild(div);
+          <a class="service-link" href="${svc.url}" target="_blank" rel="noopener">바로가기 →</a>
+        </div>`);
+      html += `</div>`;
     });
-
-    body.appendChild(linkWrap);
+    html += `</div>`;
+    body.insertAdjacentHTML("beforeend", html);
   }
 
   document.getElementById("result").classList.remove("hidden");
   document.getElementById("result").scrollIntoView({ behavior: "smooth" });
 }
 
-/* ── 온톨로지 정책 카드 렌더링 ── */
+/* ── 온톨로지 카드 ── */
 function renderOntPolicy(p, type) {
-  const docsHtml = p.required_docs.length
-    ? `<div class="ont-docs">📄 필요 서류: ${p.required_docs.join(" · ")}</div>`
-    : "";
-  const reasonHtml = p.reasons.length
-    ? `<div class="ont-reason">${p.reasons.join(" / ")}</div>`
-    : "";
-  const tagsHtml = p.tags.length
-    ? `<div class="ont-tags">${p.tags.map(t => `<span class="ont-tag">${t}</span>`).join("")}</div>`
-    : "";
-
+  const docs   = p.required_docs.length
+    ? `<div class="ont-docs">📄 ${p.required_docs.join(" · ")}</div>` : "";
+  const reason = p.reasons.length
+    ? `<div class="ont-reason">${p.reasons.join(" / ")}</div>` : "";
+  const tags   = p.tags.length
+    ? `<div class="ont-tags">${p.tags.map(t=>`<span class="ont-tag">${t}</span>`).join("")}</div>` : "";
   return `<div class="ont-card ont-card-${type}">
     <div class="ont-card-top">
       <span class="ont-policy-name">${p.name}</span>
-      <a class="ont-apply-btn" href="${p.apply_url}" target="_blank" rel="noopener">신청하기 →</a>
+      <a class="ont-apply-btn" href="${p.apply_url}" target="_blank" rel="noopener">신청 →</a>
     </div>
     <p class="ont-desc">${p.description}</p>
-    ${tagsHtml}
-    ${docsHtml}
-    ${reasonHtml}
-    <div class="ont-authority">📞 ${p.authority} · <a class="tel-link" href="tel:${p.phone.replace(/[^0-9]/g,'')}">${p.phone} ☎ 전화하기</a></div>
+    ${tags}${docs}${reason}
+    <div class="ont-authority">📞 ${p.authority} ·
+      <a class="tel-link" href="tel:${p.phone.replace(/[^0-9]/g,'')}">${p.phone} ☎</a>
+    </div>
   </div>`;
 }
 
-/* ── FUTURE 섹션 토글 ── */
+/* ── FUTURE 토글 ── */
 function toggleFuture(btn) {
-  const body = btn.closest(".ont-group-fut").querySelector(".ont-future-body");
-  const isHidden = body.classList.toggle("hidden");
-  btn.textContent = isHidden ? "펼치기 ▾" : "접기 ▴";
-}
-
-/* ── 재조회 ── */
-function retry() {
-  location.reload();
+  const body    = btn.closest(".ont-group-fut").querySelector(".ont-future-body");
+  const hidden  = body.classList.toggle("hidden");
+  btn.textContent = hidden ? "펼치기 ▾" : "접기 ▴";
 }
 
 /* ── 선순환 모달 ── */
 function openPayForwardModal() {
   document.getElementById("payForwardModal").classList.remove("hidden");
-  document.body.style.overflow = "hidden";   // 배경 스크롤 막기
+  document.body.style.overflow = "hidden";
 }
-
 function closePayForwardModal() {
   document.getElementById("payForwardModal").classList.add("hidden");
   document.body.style.overflow = "";
 }
-
-function closeModalOutside(event) {
-  // 오버레이 클릭 시 닫기 (모달 내부 클릭은 닫지 않음)
-  if (event.target.id === "payForwardModal") closePayForwardModal();
+function closeModalOutside(e) {
+  if (e.target.id === "payForwardModal") closePayForwardModal();
 }
-
 function payForwardAction(type) {
   const urls = {
-    community: "https://www.1365.go.kr",          // 자원봉사 포털
-    talent:    "https://www.dovol.net",            // 재능기부 매칭
-    volunteer: "https://www.1365.go.kr/vols/main.do",  // 동네 봉사
+    community: "https://www.1365.go.kr",
+    talent:    "https://www.dovol.net",
+    volunteer: "https://www.1365.go.kr/vols/main.do",
   };
-  const url = urls[type];
-  if (url) window.open(url, "_blank", "noopener");
+  if (urls[type]) window.open(urls[type], "_blank", "noopener");
   closePayForwardModal();
 }
+
+/* ── 재조회 ── */
+function retry() { location.reload(); }
