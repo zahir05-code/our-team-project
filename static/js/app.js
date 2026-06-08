@@ -453,3 +453,30 @@ function toggleFuture(btn) {
 function retry() {
   location.reload();
 }
+
+/* ── 선순환 모달 ── */
+function openPayForwardModal() {
+  document.getElementById("payForwardModal").classList.remove("hidden");
+  document.body.style.overflow = "hidden";   // 배경 스크롤 막기
+}
+
+function closePayForwardModal() {
+  document.getElementById("payForwardModal").classList.add("hidden");
+  document.body.style.overflow = "";
+}
+
+function closeModalOutside(event) {
+  // 오버레이 클릭 시 닫기 (모달 내부 클릭은 닫지 않음)
+  if (event.target.id === "payForwardModal") closePayForwardModal();
+}
+
+function payForwardAction(type) {
+  const urls = {
+    community: "https://www.1365.go.kr",          // 자원봉사 포털
+    talent:    "https://www.dovol.net",            // 재능기부 매칭
+    volunteer: "https://www.1365.go.kr/vols/main.do",  // 동네 봉사
+  };
+  const url = urls[type];
+  if (url) window.open(url, "_blank", "noopener");
+  closePayForwardModal();
+}
