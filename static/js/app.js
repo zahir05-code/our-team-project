@@ -1,6 +1,6 @@
 /* 아테나 복지서비스 앱 로직 */
 
-const TOTAL_STEPS = 7;
+const TOTAL_STEPS = 8;
 let currentStep  = 1;
 let currentMode  = "form";   // "form" | "nlp"
 
@@ -147,6 +147,14 @@ function updateProgress() {
     `${currentStep} / ${TOTAL_STEPS}`;
 }
 
+/* ── 체크박스 변경 시 버튼 활성화 ── */
+function onPledgeChange() {
+  const checked = document.getElementById("pledgeCheck").checked;
+  const btn = document.getElementById("btnNext");
+  btn.disabled = !checked;
+  btn.style.opacity = checked ? "1" : "0.4";
+}
+
 /* ── 유효성 검사 ── */
 function validateStep() {
   if (currentStep === 1) {
@@ -162,6 +170,11 @@ function validateStep() {
   }
   if (currentStep === 3 && state.life_situations.length === 0) {
     alert("어려운 점을 하나 이상 선택해 주세요."); return false;
+  }
+  if (currentStep === 8) {
+    if (!document.getElementById("pledgeCheck").checked) {
+      alert("확인 체크를 해주셔야 결과를 볼 수 있습니다."); return false;
+    }
   }
   return true;
 }
@@ -283,7 +296,12 @@ function hideLoading() {
 
 /* ── 결과 렌더링 ── */
 function renderResult(data, analysis) {
-  document.getElementById("resultSummary").textContent = data.summary;
+  // OO님 맞춤 제목
+  const age  = (analysis && analysis.age) ? analysis.age : (state.age || "");
+  const nick = age ? `${age}세 고객님` : "고객님";
+  document.getElementById("resultTitle").textContent =
+    `🎯 ${nick}께 맞는 혜택을 찾았습니다`;
+  document.getElementById("resultSummary").textContent = "";
 
   const body = document.getElementById("resultBody");
   body.innerHTML = "";
@@ -330,8 +348,11 @@ function renderResult(data, analysis) {
         <span class="ont-badge ont-badge-fut">${summ.future_count}건 미리보기</span>
       </p>
       <div class="ont-disclaimer">
-        ⚠️ 아래 결과는 입력하신 정보 기반의 <strong>참고 안내</strong>이며, 실제 수급 여부는 담당 기관 심사 후 결정됩니다.
-        허위 신청 시 「사회보장기본법」에 따라 불이익이 발생할 수 있습니다.
+        💙 아래 결과는 입력하신 정보를 바탕으로 한 <strong>맞춤 안내</strong>입니다.
+        실제 수급 여부는 담당 기관의 심사를 통해 최종 결정됩니다.<br>
+        <span class="disclaimer-legal">
+          📌 허위 신청 시 「사회보장기본법」에 따라 불이익이 발생할 수 있습니다.
+        </span>
       </div>`;
 
     // DEFINITE

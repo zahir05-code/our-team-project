@@ -581,3 +581,58 @@ body {
   background: #2563eb;
   color: #fff;
 }
+
+/* ── 정직성 서약 박스 ── */
+.pledge-box {
+  background: #f0f9ff;
+  border: 1.5px solid #bae6fd;
+  border-radius: 16px;
+  padding: 22px 20px;
+  margin-top: 16px;
+}
+.pledge-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #0369a1;
+  margin-bottom: 10px;
+}
+.pledge-desc {
+  font-size: 0.85rem;
+  color: #374151;
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+.pledge-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e40af;
+  margin-bottom: 14px;
+}
+.pledge-check input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: #2563eb;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.pledge-legal {
+  font-size: 0.75rem;
+  color: #6b7280;
+  background: #f9fafb;
+  border-left: 3px solid #d1d5db;
+  padding: 8px 12px;
+  border-radius: 0 8px 8px 0;
+  line-height: 1.6;
+}
+
+/* ── 면책 법적 문구 (결과 화면) ── */
+.disclaimer-legal {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.73rem;
+  color: #6b7280;
+}
