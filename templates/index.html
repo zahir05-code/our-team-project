@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>아테나 복지서비스 | 내 혜택 찾기</title>
-  <link rel="stylesheet" href="/static/css/style.css?v=2.2">
+  <link rel="stylesheet" href="/static/css/style.css?v=2.3">
 </head>
 <body>
 
@@ -103,11 +103,14 @@
             입력하신 정보가 정확할수록 실제로 도움이 되는 혜택을 찾아드릴 수 있어요.
             복지 혜택은 우리 모두가 함께 만드는 소중한 기회입니다.
           </p>
-          <label class="pledge-check">
-            <input type="checkbox" id="pledgeCheck" onchange="onPledgeChange()"
-                   aria-describedby="pledgeLegal">
-            <span>입력한 정보가 사실임을 확인합니다</span>
-          </label>
+          <!-- 문장 전체 터치로 확인 -->
+          <button id="pledgeConfirmBtn" class="pledge-confirm-btn"
+                  onclick="onPledgeToggle()"
+                  aria-pressed="false"
+                  aria-describedby="pledgeLegal">
+            <span class="pledge-confirm-icon" id="pledgeIcon">○</span>
+            <span class="pledge-confirm-text">입력한 정보가 사실임을 확인합니다</span>
+          </button>
           <div class="pledge-legal" id="pledgeLegal">
             📌 허위 신청 시 「사회보장기본법」에 따라 불이익이 발생할 수 있습니다.
           </div>
@@ -261,7 +264,7 @@
     </div>
   </footer>
 
-  <script src="/static/js/data.js?v=2.2"></script>
-  <script src="/static/js/app.js?v=2.2"></script>
+  <script src="/static/js/data.js?v=2.3"></script>
+  <script src="/static/js/app.js?v=2.3"></script>
 </body>
 </html>

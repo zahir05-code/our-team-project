@@ -174,11 +174,26 @@ body {
 }
 .pledge-title  { font-size: 0.95rem; font-weight: 800; color: #0369a1; margin-bottom: 8px; }
 .pledge-desc   { font-size: 0.82rem; color: #374151; line-height: 1.7; margin-bottom: 14px; }
-.pledge-check  {
-  display: flex; align-items: center; gap: 10px; cursor: pointer;
-  font-size: 0.9rem; font-weight: 700; color: #1e40af; margin-bottom: 12px;
+/* 문장 전체 터치 서약 버튼 */
+.pledge-confirm-btn {
+  display: flex; align-items: center; gap: 12px;
+  width: 100%; background: #fff;
+  border: 2px solid #bfdbfe; border-radius: 14px;
+  padding: 14px 16px; cursor: pointer;
+  font-size: 0.92rem; font-weight: 700; color: #1e40af;
+  margin-bottom: 12px; text-align: left;
+  transition: all 0.2s ease;
 }
-.pledge-check input[type="checkbox"] { width: 20px; height: 20px; accent-color: #2563eb; cursor: pointer; flex-shrink: 0; }
+.pledge-confirm-btn:hover { border-color: #2563eb; background: #f0f9ff; }
+.pledge-confirm-btn.pledged {
+  background: #eff6ff; border-color: #2563eb;
+  color: #1d4ed8;
+}
+.pledge-confirm-icon {
+  font-size: 1.3rem; flex-shrink: 0; width: 24px; text-align: center;
+  color: #2563eb; transition: all 0.2s;
+}
+.pledge-confirm-btn.pledged .pledge-confirm-icon { color: #16a34a; }
 .pledge-legal  {
   font-size: 0.73rem; color: #6b7280;
   border-left: 3px solid #d1d5db; padding: 7px 10px;
@@ -250,10 +265,18 @@ body {
 
 .ont-card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 5px; }
 .ont-policy-name { font-size: 0.92rem; font-weight: 700; color: #111827; }
+/* 신청 마감일 */
+.ont-deadline {
+  font-size: 0.76rem; font-weight: 700; color: #b91c1c;
+  background: #fef2f2; border-radius: 6px;
+  padding: 5px 9px; margin-bottom: 6px;
+}
+.ont-deadline.calm { color: #047857; background: #f0fdf4; font-weight: 600; }
+
 .ont-apply-btn {
-  flex-shrink: 0; font-size: 0.75rem; font-weight: 700;
-  padding: 5px 12px; background: #2563eb; color: #fff;
-  border-radius: 8px; text-decoration: none;
+  flex-shrink: 0; font-size: 0.72rem; font-weight: 700;
+  padding: 6px 10px; background: #2563eb; color: #fff;
+  border-radius: 8px; text-decoration: none; white-space: nowrap;
 }
 .ont-apply-btn:hover { background: #1d4ed8; }
 .ont-desc    { font-size: 0.8rem; color: #4b5563; line-height: 1.5; margin-bottom: 7px; }

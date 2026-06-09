@@ -163,17 +163,23 @@ function updateRegionAria(region) {
   document.getElementById("btnGyeonggi").setAttribute("aria-pressed", region === "경기도" ? "true" : "false");
 }
 
-/* ── 정직성 체크박스 ── */
-function onPledgeChange() {
-  const ok  = document.getElementById("pledgeCheck").checked;
-  const btn = document.getElementById("btnC");
-  btn.classList.toggle("disabled", !ok);
+/* ── 정직성 서약 — 문장 전체 터치 ── */
+let _pledged = false;
+function onPledgeToggle() {
+  _pledged = !_pledged;
+  const confirmBtn = document.getElementById("pledgeConfirmBtn");
+  const icon       = document.getElementById("pledgeIcon");
+  const btnC       = document.getElementById("btnC");
+  confirmBtn.classList.toggle("pledged", _pledged);
+  confirmBtn.setAttribute("aria-pressed", _pledged ? "true" : "false");
+  icon.textContent = _pledged ? "✔" : "○";
+  btnC.classList.toggle("disabled", !_pledged);
 }
 
 /* ── 단계별 API 호출 ── */
 async function submitProfile() {
-  if (!document.getElementById("pledgeCheck").checked) {
-    alert("확인 체크를 해주셔야 결과를 볼 수 있습니다."); return;
+  if (!_pledged) {
+    alert("확인 문장을 터치해주셔야 결과를 볼 수 있습니다."); return;
   }
   showLoading();
   try {
@@ -380,18 +386,23 @@ function renderResult(data, analysis) {
 /* ── 온톨로지 카드 ── */
 function renderOntPolicy(p, type) {
   const docs   = p.required_docs.length
-    ? `<div class="ont-docs">📄 ${p.required_docs.join(" · ")}</div>` : "";
+    ? `<div class="ont-docs">📄 필요 서류: ${p.required_docs.join(" · ")}</div>` : "";
   const reason = p.reasons.length
-    ? `<div class="ont-reason">💡 ${p.reasons.join(", ")} 조건을 추가하면 해당될 수 있어요</div>` : "";
+    ? `<div class="ont-reason">💡 ${p.reasons.join(" / ")}</div>` : "";
   const tags   = p.tags.length
     ? `<div class="ont-tags">${p.tags.map(t=>`<span class="ont-tag">${t}</span>`).join("")}</div>` : "";
+  // 신청기간 (데이터에 있으면 표시, 없으면 연중상시)
+  const deadline = p.deadline
+    ? `<div class="ont-deadline">⚠️ 신청 마감: <strong>${p.deadline}</strong></div>`
+    : `<div class="ont-deadline calm">📅 신청기간: 연중 상시</div>`;
   return `<div class="ont-card ont-card-${type}">
     <div class="ont-card-top">
       <span class="ont-policy-name">${p.name}</span>
-      <a class="ont-apply-btn" href="${p.apply_url}" target="_blank" rel="noopener">신청 →</a>
+      <a class="ont-apply-btn" href="${p.apply_url}" target="_blank" rel="noopener"
+         title="${p.name} 신청 사이트로 이동합니다">복지로에서 신청 ↗</a>
     </div>
     <p class="ont-desc">${p.description}</p>
-    ${tags}${docs}${reason}
+    ${deadline}${tags}${docs}${reason}
     <div class="ont-authority">📞 ${p.authority} ·
       <a class="tel-link" href="tel:${p.phone.replace(/[^0-9]/g,'')}">${p.phone} ☎</a>
     </div>
