@@ -94,7 +94,7 @@ function pickRegion(region, btn) {
   updateRegionAria(region);
 
   const sel = document.getElementById("districtSelect");
-  sel.innerHTML = '<option value="">시·군·구 선택</option>';
+  sel.innerHTML = `<option value="">${T("district_ph")}</option>`;
   const list = region === "서울특별시" ? SEOUL_DISTRICTS : GYEONGGI_DISTRICTS;
   list.forEach(d => {
     const opt = document.createElement("option");
@@ -231,7 +231,7 @@ function selectNlpRegion(region, btn) {
     .forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
   const sel = document.getElementById("nlpDistrictSelect");
-  sel.innerHTML = '<option value="">시·군·구 선택 (선택)</option>';
+  sel.innerHTML = `<option value="">${T("nlp_district_ph")}</option>`;
   const list = region === "서울특별시" ? SEOUL_DISTRICTS : GYEONGGI_DISTRICTS;
   list.forEach(d => {
     const opt = document.createElement("option");
@@ -374,7 +374,7 @@ function renderResult(data, analysis) {
         <p class="section-title">${icon} ${secLabel}</p>`;
       sec.services.forEach(svc =>
         html += `<div class="service-item">
-          <span class="service-name">${svc.name}</span>
+          <span class="service-name">${getTr(svc.name)}</span>
           <a class="service-link" href="${svc.url}" target="_blank" rel="noopener">${T("link_go")}</a>
         </div>`);
       html += `</div>`;
@@ -389,24 +389,32 @@ function renderResult(data, analysis) {
 
 /* ── 온톨로지 카드 ── */
 function renderOntPolicy(p, type) {
+  // 번역 적용
+  const name  = getPolicyTr(p.policy_id, "name") || p.name;
+  const desc  = getPolicyTr(p.policy_id, "desc") || p.description;
+  const auth  = getTr(p.authority) || p.authority;
+  const trDocs  = p.required_docs.map(d => getTr(d)).join(" · ");
+  const trTags  = p.tags.map(t => getTr(t));
+  const trReasons = p.reasons.map(r => getTr(r));
+
   const docs   = p.required_docs.length
-    ? `<div class="ont-docs">${T("ont_docs")} ${p.required_docs.join(" · ")}</div>` : "";
-  const reason = p.reasons.length
-    ? `<div class="ont-reason">💡 ${p.reasons.join(" / ")}</div>` : "";
-  const tags   = p.tags.length
-    ? `<div class="ont-tags">${p.tags.map(t=>`<span class="ont-tag">${t}</span>`).join("")}</div>` : "";
+    ? `<div class="ont-docs">${T("ont_docs")} ${trDocs}</div>` : "";
+  const reason = trReasons.length
+    ? `<div class="ont-reason">💡 ${trReasons.join(" / ")}</div>` : "";
+  const tags   = trTags.length
+    ? `<div class="ont-tags">${trTags.map(t=>`<span class="ont-tag">${t}</span>`).join("")}</div>` : "";
   const deadline = p.deadline
     ? `<div class="ont-deadline">⚠️ ${T("ont_deadline", p.deadline)}</div>`
     : `<div class="ont-deadline calm">${T("ont_open")}</div>`;
   return `<div class="ont-card ont-card-${type}">
     <div class="ont-card-top">
-      <span class="ont-policy-name">${p.name}</span>
+      <span class="ont-policy-name">${name}</span>
       <a class="ont-apply-btn" href="${p.apply_url}" target="_blank" rel="noopener"
-         title="${p.name}">${T("ont_apply")}</a>
+         title="${name}">${T("ont_apply")}</a>
     </div>
-    <p class="ont-desc">${p.description}</p>
+    <p class="ont-desc">${desc}</p>
     ${deadline}${tags}${docs}${reason}
-    <div class="ont-authority">📞 ${p.authority}${T("ont_authority_sep")}
+    <div class="ont-authority">📞 ${auth}${T("ont_authority_sep")}
       <a class="tel-link" href="tel:${p.phone.replace(/[^0-9]/g,'')}">${p.phone} ☎</a>
     </div>
   </div>`;
