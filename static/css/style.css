@@ -28,6 +28,37 @@ body {
 .logo    { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.5px; }
 .tagline { font-size: 0.85rem; opacity: 0.85; margin-top: 4px; }
 
+/* ── 언어 선택 바 ── */
+.lang-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 14px;
+}
+.lang-btn {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff;
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  white-space: nowrap;
+}
+.lang-btn:hover {
+  background: rgba(255,255,255,0.28);
+  transform: scale(1.05);
+}
+.lang-btn.active {
+  background: #fff;
+  color: #1e3a8a;
+  border-color: #fff;
+  font-weight: 800;
+}
+
 .main { max-width: 480px; margin: 0 auto; padding: 20px 16px 40px; }
 
 /* ════════════════════════════════════════

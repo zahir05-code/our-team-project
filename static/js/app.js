@@ -1,4 +1,4 @@
-/* 아테나 복지서비스 — 3단계 미니멀 UX */
+/* 아테나 복지서비스 — 3단계 미니멀 UX (v2.4 다국어) */
 
 /* ── 상태 ── */
 const state = {
@@ -118,9 +118,9 @@ function goToA() {
 
 function goToB() {
   const age = parseInt(document.getElementById("inputAge").value);
-  if (!state.region)   { alert("지역을 선택해 주세요."); return; }
-  if (!state.district) { alert("시·군·구를 선택해 주세요."); return; }
-  if (!age || age < 1 || age > 120) { alert("나이를 입력해 주세요."); return; }
+  if (!state.region)   { alert(T("alert_region")); return; }
+  if (!state.district) { alert(T("alert_district")); return; }
+  if (!age || age < 1 || age > 120) { alert(T("alert_age")); return; }
   state.age = String(age);
   show("stepB"); setDot(2);
   document.getElementById("inputCard").scrollIntoView({ behavior: "smooth" });
@@ -128,7 +128,7 @@ function goToB() {
 
 function goToC() {
   if (state.life_situations.length === 0) {
-    alert("어려운 점을 하나 이상 선택해 주세요."); return;
+    alert(T("alert_situation")); return;
   }
   show("stepC"); setDot(3);
   document.getElementById("inputCard").scrollIntoView({ behavior: "smooth" });
@@ -179,7 +179,7 @@ function onPledgeToggle() {
 /* ── 단계별 API 호출 ── */
 async function submitProfile() {
   if (!_pledged) {
-    alert("확인 문장을 터치해주셔야 결과를 볼 수 있습니다."); return;
+    alert(T("alert_pledge")); return;
   }
   showLoading();
   try {
@@ -240,7 +240,7 @@ function selectNlpRegion(region, btn) {
 /* ── NLP API 호출 ── */
 async function submitNlp() {
   const text = document.getElementById("nlpText").value.trim();
-  if (text.length < 5) { alert("상황을 좀 더 자세히 입력해 주세요."); return; }
+  if (text.length < 5) { alert(T("alert_nlp_short")); return; }
   showLoading();
   document.getElementById("nlpPanel").classList.add("hidden");
   try {
@@ -290,16 +290,14 @@ function renderResult(data, analysis) {
 
   /* OO님 맞춤 제목 */
   const age  = (analysis && analysis.age) ? analysis.age : (state.age || "");
-  const nick = age ? `${age}세 고객님` : "고객님";
-  document.getElementById("resultTitle").textContent =
-    `🎯 ${nick}께 맞는 혜택을 찾았습니다`;
+  document.getElementById("resultTitle").textContent = T("result_title_tpl", age);
 
   const body = document.getElementById("resultBody");
   body.innerHTML = "";
 
   /* NLP 분석 태그 */
   if (analysis) {
-    let html = `<div class="nlp-analysis"><p class="analysis-title">📊 AI 분석</p>
+    let html = `<div class="nlp-analysis"><p class="analysis-title">${T("analysis_title")}</p>
       <div class="analysis-tags">`;
     if (analysis.age)          html += `<span class="analysis-tag">${analysis.age}세</span>`;
     if (analysis.region)       html += `<span class="analysis-tag">${analysis.region}</span>`;
@@ -321,35 +319,34 @@ function renderResult(data, analysis) {
     const summ = ont.summary;
 
     let html = `<div class="ont-section">
-      <p class="ont-header">🏛 자격 판단 결과
-        <span class="ont-badge ont-badge-def">${summ.definite_count}건 요건 충족</span>
-        <span class="ont-badge ont-badge-pos">${summ.possible_count}건 가능성</span>
-        <span class="ont-badge ont-badge-fut">${summ.future_count}건 미리보기</span>
+      <p class="ont-header">${T("ont_qualify")}
+        <span class="ont-badge ont-badge-def">${T("ont_definite", summ.definite_count)}</span>
+        <span class="ont-badge ont-badge-pos">${T("ont_possible", summ.possible_count)}</span>
+        <span class="ont-badge ont-badge-fut">${T("ont_future", summ.future_count)}</span>
       </p>
       <div class="ont-disclaimer">
-        💙 입력하신 정보를 바탕으로 한 <strong>맞춤 안내</strong>입니다.
-        실제 수급 여부는 담당 기관의 심사를 통해 최종 결정됩니다.
+        ${T("disclaimer")}
         <span class="disclaimer-legal">
-          📌 허위 신청 시 「사회보장기본법」에 따라 불이익이 발생할 수 있습니다.
+          ${T("pledge_legal")}
         </span>
       </div>`;
 
     if (ont.definite.length) {
       html += `<div class="ont-group ont-group-def">
-        <p class="ont-group-title">✅ 지금 신청 가능 (${ont.definite.length}건)</p>`;
+        <p class="ont-group-title">${T("ont_definite", ont.definite.length)}</p>`;
       ont.definite.forEach(p => html += renderOntPolicy(p, "def"));
       html += `</div>`;
     }
     if (ont.possible.length) {
       html += `<div class="ont-group ont-group-pos">
-        <p class="ont-group-title">🔶 해당 가능성 (${ont.possible.length}건)</p>`;
+        <p class="ont-group-title">${T("ont_possible", ont.possible.length)}</p>`;
       ont.possible.forEach(p => html += renderOntPolicy(p, "pos"));
       html += `</div>`;
     }
     if (ont.future.length) {
       html += `<div class="ont-group ont-group-fut">
-        <p class="ont-group-title">📌 미리 알아두기 (${ont.future.length}건)
-          <button class="ont-toggle-btn" onclick="toggleFuture(this)">펼치기 ▾</button>
+        <p class="ont-group-title">${T("ont_future", ont.future.length)}
+          <button class="ont-toggle-btn" onclick="toggleFuture(this)">${T("ont_expand")}</button>
         </p>
         <div class="ont-future-body hidden">`;
       ont.future.forEach(p => html += renderOntPolicy(p, "fut"));
@@ -362,7 +359,7 @@ function renderResult(data, analysis) {
   /* 링크 섹션 */
   if (data.results && data.results.some(s => s.services.length > 0)) {
     let html = `<div class="link-section-wrap">
-      <p class="link-section-header">🔗 관련 기관 바로가기</p>`;
+      <p class="link-section-header">${T("link_header")}</p>`;
     data.results.forEach(sec => {
       if (!sec.services.length) return;
       const icon = SECTION_ICONS[sec.section] || "📋";
@@ -371,7 +368,7 @@ function renderResult(data, analysis) {
       sec.services.forEach(svc =>
         html += `<div class="service-item">
           <span class="service-name">${svc.name}</span>
-          <a class="service-link" href="${svc.url}" target="_blank" rel="noopener">바로가기 →</a>
+          <a class="service-link" href="${svc.url}" target="_blank" rel="noopener">${T("link_go")}</a>
         </div>`);
       html += `</div>`;
     });
@@ -386,24 +383,23 @@ function renderResult(data, analysis) {
 /* ── 온톨로지 카드 ── */
 function renderOntPolicy(p, type) {
   const docs   = p.required_docs.length
-    ? `<div class="ont-docs">📄 필요 서류: ${p.required_docs.join(" · ")}</div>` : "";
+    ? `<div class="ont-docs">${T("ont_docs")} ${p.required_docs.join(" · ")}</div>` : "";
   const reason = p.reasons.length
     ? `<div class="ont-reason">💡 ${p.reasons.join(" / ")}</div>` : "";
   const tags   = p.tags.length
     ? `<div class="ont-tags">${p.tags.map(t=>`<span class="ont-tag">${t}</span>`).join("")}</div>` : "";
-  // 신청기간 (데이터에 있으면 표시, 없으면 연중상시)
   const deadline = p.deadline
-    ? `<div class="ont-deadline">⚠️ 신청 마감: <strong>${p.deadline}</strong></div>`
-    : `<div class="ont-deadline calm">📅 신청기간: 연중 상시</div>`;
+    ? `<div class="ont-deadline">⚠️ ${T("ont_deadline", p.deadline)}</div>`
+    : `<div class="ont-deadline calm">${T("ont_open")}</div>`;
   return `<div class="ont-card ont-card-${type}">
     <div class="ont-card-top">
       <span class="ont-policy-name">${p.name}</span>
       <a class="ont-apply-btn" href="${p.apply_url}" target="_blank" rel="noopener"
-         title="${p.name} 신청 사이트로 이동합니다">복지로에서 신청 ↗</a>
+         title="${p.name}">${T("ont_apply")}</a>
     </div>
     <p class="ont-desc">${p.description}</p>
     ${deadline}${tags}${docs}${reason}
-    <div class="ont-authority">📞 ${p.authority} ·
+    <div class="ont-authority">📞 ${p.authority}${T("ont_authority_sep")}
       <a class="tel-link" href="tel:${p.phone.replace(/[^0-9]/g,'')}">${p.phone} ☎</a>
     </div>
   </div>`;
@@ -413,7 +409,7 @@ function renderOntPolicy(p, type) {
 function toggleFuture(btn) {
   const body    = btn.closest(".ont-group-fut").querySelector(".ont-future-body");
   const hidden  = body.classList.toggle("hidden");
-  btn.textContent = hidden ? "펼치기 ▾" : "접기 ▴";
+  btn.textContent = hidden ? T("ont_expand") : T("ont_collapse");
 }
 
 /* ── 선순환 모달 ── */

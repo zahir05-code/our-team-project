@@ -4,15 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>아테나 복지서비스 | 내 혜택 찾기</title>
-  <link rel="stylesheet" href="/static/css/style.css?v=2.3">
+  <link rel="stylesheet" href="/static/css/style.css?v=2.4">
 </head>
 <body>
 
   <!-- 헤더 -->
   <header class="header">
     <div class="header-inner">
-      <h1 class="logo">🏛 아테나</h1>
-      <p class="tagline">나에게 맞는 복지혜택, 3분 안에</p>
+      <h1 class="logo" data-i18n="logo">🏛 아테나</h1>
+      <p class="tagline" data-i18n="tagline">나에게 맞는 복지혜택, 3분 안에</p>
+
+      <!-- 언어 선택 -->
+      <div class="lang-bar" role="navigation" aria-label="언어 선택 / Language">
+        <button class="lang-btn active" data-lang="ko" onclick="applyLang('ko')" aria-label="한국어">🇰🇷 한국어</button>
+        <button class="lang-btn" data-lang="en" onclick="applyLang('en')" aria-label="English">🇺🇸 EN</button>
+        <button class="lang-btn" data-lang="zh" onclick="applyLang('zh')" aria-label="中文">🇨🇳 中文</button>
+        <button class="lang-btn" data-lang="ja" onclick="applyLang('ja')" aria-label="日本語">🇯🇵 日本語</button>
+        <button class="lang-btn" data-lang="vi" onclick="applyLang('vi')" aria-label="Tiếng Việt">🇻🇳 VI</button>
+        <button class="lang-btn" data-lang="th" onclick="applyLang('th')" aria-label="ภาษาไทย">🇹🇭 TH</button>
+        <button class="lang-btn" data-lang="km" onclick="applyLang('km')" aria-label="ភាសាខ្មែរ">🇰🇭 KM</button>
+      </div>
     </div>
   </header>
 
@@ -35,71 +46,75 @@
 
       <!-- ── STEP A: 나이 + 지역 (합친 1화면) ── -->
       <div class="step" id="stepA">
-        <div class="security-badge">
+        <div class="security-badge" data-i18n="security_badge">
           🔒 입력 정보는 이 기기에만 저장됩니다 · 외부 서버 전송 없음
         </div>
-        <p class="step-q">어디에 사시나요?</p>
+        <p class="step-q" data-i18n="q_region">어디에 사시나요?</p>
 
         <div class="region-row" role="group" aria-label="지역 선택">
           <button class="region-big-btn" id="btnSeoul"
                   aria-label="서울특별시 선택" aria-pressed="false"
-                  onclick="pickRegion('서울특별시', this)">서울</button>
+                  onclick="pickRegion('서울특별시', this)"
+                  data-i18n="seoul">서울</button>
           <button class="region-big-btn" id="btnGyeonggi"
                   aria-label="경기도 선택" aria-pressed="false"
-                  onclick="pickRegion('경기도', this)">경기</button>
+                  onclick="pickRegion('경기도', this)"
+                  data-i18n="gyeonggi">경기</button>
         </div>
 
         <select class="select-box hidden" id="districtSelect"
-                aria-label="시·군·구 선택">
+                aria-label="시·군·구 선택"
+                data-i18n-opt="district_ph">
           <option value="">시·군·구 선택</option>
         </select>
 
-        <p class="step-q" style="margin-top:28px;">나이가 어떻게 되세요?</p>
+        <p class="step-q" style="margin-top:28px;" data-i18n="q_age">나이가 어떻게 되세요?</p>
         <input class="age-input" type="number" id="inputAge"
                placeholder="예: 45" min="1" max="120"
                aria-label="나이 입력 (1세에서 120세 사이)"
+               data-i18n-ph="age_ph"
                oninput="onAgeInput()">
 
         <button class="btn-main disabled" id="btnA" onclick="goToB()"
-                aria-label="다음 단계로 이동">
+                aria-label="다음 단계로 이동" data-i18n="btn_next">
           다음 →
         </button>
       </div>
 
       <!-- ── STEP B: 상황 선택 (1화면에 모든 조건) ── -->
       <div class="step hidden" id="stepB">
-        <p class="step-q">지금 어떤 상황이신가요?</p>
-        <p class="step-sub">해당하는 것을 모두 골라주세요</p>
+        <p class="step-q" data-i18n="q_situation">지금 어떤 상황이신가요?</p>
+        <p class="step-sub" data-i18n="sub_situation">해당하는 것을 모두 골라주세요</p>
 
         <div class="situation-grid" id="situationGrid"
              role="group" aria-label="현재 상황 선택 (복수 선택 가능)"></div>
 
         <div class="extra-row">
           <div class="extra-col">
-            <p class="extra-label" id="familyLabel">가족 상황</p>
+            <p class="extra-label" id="familyLabel" data-i18n="label_family">가족 상황</p>
             <div class="chip-wrap small-chips" id="familyChips"
                  role="group" aria-labelledby="familyLabel"></div>
           </div>
           <div class="extra-col">
-            <p class="extra-label" id="incomeLabel">소득 수준 <span class="optional">선택</span></p>
+            <p class="extra-label" id="incomeLabel"><span data-i18n="label_income">소득 수준</span> <span class="optional" data-i18n="optional">선택</span></p>
             <div class="chip-wrap small-chips" id="incomeChips"
                  role="group" aria-labelledby="incomeLabel"></div>
           </div>
         </div>
 
         <div class="btn-row-two">
-          <button class="btn-back-sm" onclick="goToA()" aria-label="이전 단계로 돌아가기">← 이전</button>
-          <button class="btn-main" id="btnB" onclick="goToC()" aria-label="다음 단계로 이동">다음 →</button>
+          <button class="btn-back-sm" onclick="goToA()" aria-label="이전 단계로 돌아가기" data-i18n="btn_prev">← 이전</button>
+          <button class="btn-main" id="btnB" onclick="goToC()" aria-label="다음 단계로 이동" data-i18n="btn_next">다음 →</button>
         </div>
       </div>
 
       <!-- ── STEP C: 확인 (정직성 서약) ── -->
       <div class="step hidden" id="stepC">
-        <p class="step-q">마지막 확인이에요</p>
+        <p class="step-q" data-i18n="q_confirm">마지막 확인이에요</p>
 
         <div class="pledge-box">
-          <p class="pledge-title">🤝 정확한 혜택 안내를 위해</p>
-          <p class="pledge-desc">
+          <p class="pledge-title" data-i18n="pledge_title">🤝 정확한 혜택 안내를 위해</p>
+          <p class="pledge-desc" data-i18n="pledge_desc">
             입력하신 정보가 정확할수록 실제로 도움이 되는 혜택을 찾아드릴 수 있어요.
             복지 혜택은 우리 모두가 함께 만드는 소중한 기회입니다.
           </p>
@@ -109,17 +124,17 @@
                   aria-pressed="false"
                   aria-describedby="pledgeLegal">
             <span class="pledge-confirm-icon" id="pledgeIcon">○</span>
-            <span class="pledge-confirm-text">입력한 정보가 사실임을 확인합니다</span>
+            <span class="pledge-confirm-text" data-i18n="pledge_btn">입력한 정보가 사실임을 확인합니다</span>
           </button>
-          <div class="pledge-legal" id="pledgeLegal">
+          <div class="pledge-legal" id="pledgeLegal" data-i18n="pledge_legal">
             📌 허위 신청 시 「사회보장기본법」에 따라 불이익이 발생할 수 있습니다.
           </div>
         </div>
 
         <div class="btn-row-two">
-          <button class="btn-back-sm" onclick="goToB()" aria-label="이전 단계로 돌아가기">← 이전</button>
+          <button class="btn-back-sm" onclick="goToB()" aria-label="이전 단계로 돌아가기" data-i18n="btn_prev">← 이전</button>
           <button class="btn-main disabled" id="btnC" onclick="submitProfile()"
-                  aria-label="내 맞춤 혜택 찾기 시작">
+                  aria-label="내 맞춤 혜택 찾기 시작" data-i18n="btn_find">
             🎯 내 혜택 찾기
           </button>
         </div>
@@ -129,58 +144,60 @@
 
     <!-- NLP 버튼 (입력카드 하단 고정) -->
     <div class="nlp-entry" id="nlpEntry">
-      <button class="nlp-entry-btn" onclick="toggleNlp()">
+      <button class="nlp-entry-btn" onclick="toggleNlp()" data-i18n="nlp_btn">
         💬 상황을 직접 말로 입력하기
       </button>
     </div>
 
     <!-- NLP 패널 -->
     <div class="nlp-panel hidden" id="nlpPanel">
-      <p class="step-q">상황을 자유롭게 말씀해 주세요</p>
-      <p class="step-sub">지역·나이·어려운 점을 문장으로 쓰시면 AI가 분석합니다</p>
+      <p class="step-q" data-i18n="nlp_q">상황을 자유롭게 말씀해 주세요</p>
+      <p class="step-sub" data-i18n="nlp_sub">지역·나이·어려운 점을 문장으로 쓰시면 AI가 분석합니다</p>
 
       <div class="nlp-examples">
-        <p class="example-title">예시</p>
-        <p class="example-item">"혼자 아이 키우는데 생활비가 없어요. 서울 노원구 삽니다."</p>
-        <p class="example-item">"59세 독거 남성인데 아프고 경기도 수원에 살아요."</p>
+        <p class="example-title" data-i18n="nlp_ex_title">예시</p>
+        <p class="example-item" data-i18n="nlp_ex1">"혼자 아이 키우는데 생활비가 없어요. 서울 노원구 삽니다."</p>
+        <p class="example-item" data-i18n="nlp_ex2">"59세 독거 남성인데 아프고 경기도 수원에 살아요."</p>
       </div>
 
       <textarea class="nlp-textarea" id="nlpText"
-                placeholder="여기에 상황을 입력하세요…" rows="4"></textarea>
+                placeholder="여기에 상황을 입력하세요…" rows="4"
+                data-i18n-ph="nlp_ph"></textarea>
 
       <div class="nlp-region hidden" id="nlpRegionWrap">
-        <p class="nlp-region-hint">⚠️ 지역을 선택하면 더 정확한 결과를 드릴 수 있어요</p>
+        <p class="nlp-region-hint" data-i18n="nlp_region_hint">⚠️ 지역을 선택하면 더 정확한 결과를 드릴 수 있어요</p>
         <div class="region-row">
           <button class="region-big-btn" id="nlpBtnSeoul"
-                  onclick="selectNlpRegion('서울특별시', this)">서울</button>
+                  onclick="selectNlpRegion('서울특별시', this)" data-i18n="seoul">서울</button>
           <button class="region-big-btn" id="nlpBtnGyeonggi"
-                  onclick="selectNlpRegion('경기도', this)">경기</button>
+                  onclick="selectNlpRegion('경기도', this)" data-i18n="gyeonggi">경기</button>
         </div>
-        <select class="select-box hidden" id="nlpDistrictSelect">
+        <select class="select-box hidden" id="nlpDistrictSelect"
+                data-i18n-opt="nlp_district_ph">
           <option value="">시·군·구 선택 (선택)</option>
         </select>
       </div>
 
       <div class="nlp-opts-row">
         <div>
-          <p class="extra-label">성별 <span class="optional">선택</span></p>
+          <p class="extra-label"><span data-i18n="label_gender">성별</span> <span class="optional" data-i18n="optional">선택</span></p>
           <div class="chip-wrap small-chips" id="nlpGenderChips"></div>
         </div>
         <div>
-          <p class="extra-label">소득 <span class="optional">선택</span></p>
+          <p class="extra-label"><span data-i18n="label_income2">소득</span> <span class="optional" data-i18n="optional">선택</span></p>
           <div class="chip-wrap small-chips" id="nlpIncomeChips"></div>
         </div>
       </div>
 
-      <button class="btn-main" onclick="submitNlp()">🔍 혜택 찾기</button>
-      <button class="nlp-cancel-btn" onclick="toggleNlp()">취소</button>
+      <button class="btn-main" onclick="submitNlp()" data-i18n="btn_nlp_search">🔍 혜택 찾기</button>
+      <button class="nlp-cancel-btn" onclick="toggleNlp()" data-i18n="btn_cancel">취소</button>
     </div>
 
     <!-- 로딩 -->
     <div class="loading hidden" id="loading"
          role="status" aria-live="polite" aria-label="맞춤 혜택을 찾고 있습니다. 잠시만 기다려 주세요.">
       <div class="spinner" aria-hidden="true"></div>
-      <p>맞춤 혜택을 찾고 있습니다…</p>
+      <p data-i18n="loading">맞춤 혜택을 찾고 있습니다…</p>
     </div>
 
     <!-- 결과 -->
@@ -203,23 +220,23 @@
       <!-- 선순환 섹션 -->
       <div class="pay-forward-section">
         <p class="pay-forward-nudge">
-          삶이 조금 더 따뜻해지셨나요?<br>
-          <strong>선순환의 주인공</strong>이 되어보세요.
+          <span data-i18n="pay_forward_nudge">삶이 조금 더 따뜻해지셨나요?</span><br>
+          <span data-i18n="pay_forward_sub" data-i18n-html="true"><strong>선순환의 주인공</strong>이 되어보세요.</span>
         </p>
-        <button class="pay-forward-btn" onclick="openPayForwardModal()">
+        <button class="pay-forward-btn" onclick="openPayForwardModal()" data-i18n="pay_forward_btn">
           🌱 오늘 받은 따뜻함, 이웃에게 이어가기
         </button>
       </div>
 
-      <button class="btn-retry" onclick="retry()">↩ 다시 조회하기</button>
+      <button class="btn-retry" onclick="retry()" data-i18n="btn_retry">↩ 다시 조회하기</button>
     </section>
 
     <!-- 선순환 모달 -->
     <div class="modal-overlay hidden" id="payForwardModal"
          onclick="closeModalOutside(event)">
       <div class="modal-content">
-        <h3>💝 받은 도움 이어가기</h3>
-        <p class="modal-desc">
+        <h3 data-i18n="modal_title">💝 받은 도움 이어가기</h3>
+        <p class="modal-desc" data-i18n="modal_desc">
           오늘 경험하신 따뜻한 마음을 다른 이웃에게도 전해보세요.<br>
           당신의 작은 참여가 큰 변화를 만듭니다.
         </p>
@@ -227,26 +244,26 @@
           <button class="modal-option-btn" onclick="payForwardAction('community')">
             <span class="modal-opt-icon">💬</span>
             <span class="modal-opt-text">
-              <strong>따뜻한 응원 한마디 전하기</strong>
-              <small>힘든 이웃에게 희망의 댓글을 남겨주세요</small>
+              <strong data-i18n="modal_community">따뜻한 응원 한마디 전하기</strong>
+              <small data-i18n="modal_comm_sub">힘든 이웃에게 희망의 댓글을 남겨주세요</small>
             </span>
           </button>
           <button class="modal-option-btn" onclick="payForwardAction('talent')">
             <span class="modal-opt-icon">🤝</span>
             <span class="modal-opt-text">
-              <strong>나의 작은 재능 나누기</strong>
-              <small>소소한 지식·노하우를 이웃과 나눠보세요</small>
+              <strong data-i18n="modal_talent">나의 작은 재능 나누기</strong>
+              <small data-i18n="modal_talent_sub">소소한 지식·노하우를 이웃과 나눠보세요</small>
             </span>
           </button>
           <button class="modal-option-btn" onclick="payForwardAction('volunteer')">
             <span class="modal-opt-icon">🏡</span>
             <span class="modal-opt-text">
-              <strong>우리 동네 봉사활동 참여하기</strong>
-              <small>이번 주말 손길이 필요한 곳을 찾아보세요</small>
+              <strong data-i18n="modal_volunteer">우리 동네 봉사활동 참여하기</strong>
+              <small data-i18n="modal_vol_sub">이번 주말 손길이 필요한 곳을 찾아보세요</small>
             </span>
           </button>
         </div>
-        <button class="modal-close-btn" onclick="closePayForwardModal()">
+        <button class="modal-close-btn" onclick="closePayForwardModal()" data-i18n="modal_close">
           다음에 할게요
         </button>
       </div>
@@ -258,13 +275,14 @@
     <div class="privacy-banner">
       <span class="privacy-icon">🔒</span>
       <div class="privacy-text">
-        <strong>개인정보 보호 안내</strong>
-        <p>입력하신 모든 정보는 <strong>이 기기에만 저장</strong>되며<br>외부 서버로 전송되지 않습니다.</p>
+        <strong data-i18n="privacy_title">개인정보 보호 안내</strong>
+        <p data-i18n="privacy_desc">입력하신 모든 정보는 <strong>이 기기에만 저장</strong>되며<br>외부 서버로 전송되지 않습니다.</p>
       </div>
     </div>
   </footer>
 
-  <script src="/static/js/data.js?v=2.3"></script>
-  <script src="/static/js/app.js?v=2.3"></script>
+  <script src="/static/js/data.js?v=2.4"></script>
+  <script src="/static/js/i18n.js?v=2.4"></script>
+  <script src="/static/js/app.js?v=2.4"></script>
 </body>
 </html>
