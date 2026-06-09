@@ -27,13 +27,21 @@ function renderSituationGrid() {
   SITUATIONS.forEach(label => {
     const btn = document.createElement("button");
     btn.className = "sit-card";
-    btn.innerHTML = `<span class="sit-icon">${SITUATION_ICONS[label] || "📌"}</span>
+    btn.setAttribute("role", "checkbox");
+    btn.setAttribute("aria-checked", "false");
+    btn.setAttribute("aria-label", label + " 선택");
+    btn.innerHTML = `<span class="sit-icon" aria-hidden="true">${SITUATION_ICONS[label] || "📌"}</span>
                      <span class="sit-label">${label}</span>`;
     btn.onclick = () => {
       btn.classList.toggle("active");
       const idx = state.life_situations.indexOf(label);
-      if (idx === -1) state.life_situations.push(label);
-      else            state.life_situations.splice(idx, 1);
+      if (idx === -1) {
+        state.life_situations.push(label);
+        btn.setAttribute("aria-checked", "true");
+      } else {
+        state.life_situations.splice(idx, 1);
+        btn.setAttribute("aria-checked", "false");
+      }
     };
     grid.appendChild(btn);
   });
@@ -47,6 +55,9 @@ function renderChips(containerId, options, multi, key) {
     const chip = document.createElement("button");
     chip.className = "chip";
     chip.textContent = opt;
+    chip.setAttribute("role", "radio");
+    chip.setAttribute("aria-checked", "false");
+    chip.setAttribute("aria-label", opt + " 선택");
     if (key === "nlpGender") chip.dataset.gender = GENDER_VALUE_MAP[opt] || opt;
     chip.onclick = () => toggleChip(chip, opt, multi, key);
     wrap.appendChild(chip);
@@ -55,8 +66,9 @@ function renderChips(containerId, options, multi, key) {
 
 function toggleChip(chip, value, multi, key) {
   document.querySelectorAll(`#${getContainerId(key)} .chip`)
-    .forEach(c => c.classList.remove("active"));
+    .forEach(c => { c.classList.remove("active"); c.setAttribute("aria-checked","false"); });
   chip.classList.add("active");
+  chip.setAttribute("aria-checked", "true");
   if (key === "family")    state.family_status      = value;
   if (key === "income")    state.income_range       = value;
   if (key === "nlpIncome") nlpState.income_range    = value;
@@ -74,6 +86,7 @@ function pickRegion(region, btn) {
   state.district = "";
   document.querySelectorAll(".region-big-btn").forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
+  updateRegionAria(region);
 
   const sel = document.getElementById("districtSelect");
   sel.innerHTML = '<option value="">시·군·구 선택</option>';
@@ -132,6 +145,22 @@ function setDot(n) {
     document.getElementById(`dot${i}`).classList.toggle("active", i === n);
     document.getElementById(`dot${i}`).classList.toggle("done",   i < n);
   });
+  // 진행 표시 업데이트
+  const progress = document.getElementById("dotProgress");
+  if (progress) {
+    progress.setAttribute("aria-valuenow", n);
+    progress.setAttribute("aria-label", `3단계 중 ${n}단계 진행 중`);
+  }
+  // 스크린리더 음성 안내
+  const messages = { 1:"1단계: 지역과 나이를 입력해 주세요.", 2:"2단계: 현재 상황을 선택해 주세요.", 3:"3단계: 입력 정보를 확인해 주세요." };
+  const el = document.getElementById("stepAnnounce");
+  if (el) el.textContent = messages[n] || "";
+}
+
+/* ── 지역 버튼 aria-pressed 동기화 ── */
+function updateRegionAria(region) {
+  document.getElementById("btnSeoul").setAttribute("aria-pressed",  region === "서울특별시" ? "true" : "false");
+  document.getElementById("btnGyeonggi").setAttribute("aria-pressed", region === "경기도" ? "true" : "false");
 }
 
 /* ── 정직성 체크박스 ── */

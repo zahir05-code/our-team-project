@@ -18,14 +18,19 @@
 
   <main class="main">
 
+    <!-- 스크린리더 전용 현재 단계 안내 (시각적으로 숨김) -->
+    <div id="stepAnnounce" role="status" aria-live="polite" class="sr-only"></div>
+
     <!-- ══════════ 입력 카드 ══════════ -->
     <div id="inputCard" class="input-card">
 
       <!-- 진행 도트 -->
-      <div class="dot-progress" id="dotProgress">
-        <span class="dot active" id="dot1"></span>
-        <span class="dot" id="dot2"></span>
-        <span class="dot" id="dot3"></span>
+      <div class="dot-progress" id="dotProgress"
+           role="progressbar" aria-valuemin="1" aria-valuemax="3" aria-valuenow="1"
+           aria-label="3단계 중 1단계 진행 중">
+        <span class="dot active" id="dot1" aria-hidden="true"></span>
+        <span class="dot" id="dot2" aria-hidden="true"></span>
+        <span class="dot" id="dot3" aria-hidden="true"></span>
       </div>
 
       <!-- ── STEP A: 나이 + 지역 (합친 1화면) ── -->
@@ -35,23 +40,28 @@
         </div>
         <p class="step-q">어디에 사시나요?</p>
 
-        <div class="region-row">
+        <div class="region-row" role="group" aria-label="지역 선택">
           <button class="region-big-btn" id="btnSeoul"
+                  aria-label="서울특별시 선택" aria-pressed="false"
                   onclick="pickRegion('서울특별시', this)">서울</button>
           <button class="region-big-btn" id="btnGyeonggi"
+                  aria-label="경기도 선택" aria-pressed="false"
                   onclick="pickRegion('경기도', this)">경기</button>
         </div>
 
-        <select class="select-box hidden" id="districtSelect">
+        <select class="select-box hidden" id="districtSelect"
+                aria-label="시·군·구 선택">
           <option value="">시·군·구 선택</option>
         </select>
 
         <p class="step-q" style="margin-top:28px;">나이가 어떻게 되세요?</p>
         <input class="age-input" type="number" id="inputAge"
                placeholder="예: 45" min="1" max="120"
+               aria-label="나이 입력 (1세에서 120세 사이)"
                oninput="onAgeInput()">
 
-        <button class="btn-main disabled" id="btnA" onclick="goToB()">
+        <button class="btn-main disabled" id="btnA" onclick="goToB()"
+                aria-label="다음 단계로 이동">
           다음 →
         </button>
       </div>
@@ -61,22 +71,25 @@
         <p class="step-q">지금 어떤 상황이신가요?</p>
         <p class="step-sub">해당하는 것을 모두 골라주세요</p>
 
-        <div class="situation-grid" id="situationGrid"></div>
+        <div class="situation-grid" id="situationGrid"
+             role="group" aria-label="현재 상황 선택 (복수 선택 가능)"></div>
 
         <div class="extra-row">
           <div class="extra-col">
-            <p class="extra-label">가족 상황</p>
-            <div class="chip-wrap small-chips" id="familyChips"></div>
+            <p class="extra-label" id="familyLabel">가족 상황</p>
+            <div class="chip-wrap small-chips" id="familyChips"
+                 role="group" aria-labelledby="familyLabel"></div>
           </div>
           <div class="extra-col">
-            <p class="extra-label">소득 수준 <span class="optional">선택</span></p>
-            <div class="chip-wrap small-chips" id="incomeChips"></div>
+            <p class="extra-label" id="incomeLabel">소득 수준 <span class="optional">선택</span></p>
+            <div class="chip-wrap small-chips" id="incomeChips"
+                 role="group" aria-labelledby="incomeLabel"></div>
           </div>
         </div>
 
         <div class="btn-row-two">
-          <button class="btn-back-sm" onclick="goToA()">← 이전</button>
-          <button class="btn-main" id="btnB" onclick="goToC()">다음 →</button>
+          <button class="btn-back-sm" onclick="goToA()" aria-label="이전 단계로 돌아가기">← 이전</button>
+          <button class="btn-main" id="btnB" onclick="goToC()" aria-label="다음 단계로 이동">다음 →</button>
         </div>
       </div>
 
@@ -91,17 +104,19 @@
             복지 혜택은 우리 모두가 함께 만드는 소중한 기회입니다.
           </p>
           <label class="pledge-check">
-            <input type="checkbox" id="pledgeCheck" onchange="onPledgeChange()">
+            <input type="checkbox" id="pledgeCheck" onchange="onPledgeChange()"
+                   aria-describedby="pledgeLegal">
             <span>입력한 정보가 사실임을 확인합니다</span>
           </label>
-          <div class="pledge-legal">
+          <div class="pledge-legal" id="pledgeLegal">
             📌 허위 신청 시 「사회보장기본법」에 따라 불이익이 발생할 수 있습니다.
           </div>
         </div>
 
         <div class="btn-row-two">
-          <button class="btn-back-sm" onclick="goToB()">← 이전</button>
-          <button class="btn-main disabled" id="btnC" onclick="submitProfile()">
+          <button class="btn-back-sm" onclick="goToB()" aria-label="이전 단계로 돌아가기">← 이전</button>
+          <button class="btn-main disabled" id="btnC" onclick="submitProfile()"
+                  aria-label="내 맞춤 혜택 찾기 시작">
             🎯 내 혜택 찾기
           </button>
         </div>
@@ -159,17 +174,18 @@
     </div>
 
     <!-- 로딩 -->
-    <div class="loading hidden" id="loading">
-      <div class="spinner"></div>
+    <div class="loading hidden" id="loading"
+         role="status" aria-live="polite" aria-label="맞춤 혜택을 찾고 있습니다. 잠시만 기다려 주세요.">
+      <div class="spinner" aria-hidden="true"></div>
       <p>맞춤 혜택을 찾고 있습니다…</p>
     </div>
 
     <!-- 결과 -->
-    <section class="result hidden" id="result">
+    <section class="result hidden" id="result" aria-label="맞춤 복지 혜택 결과">
       <div class="result-header">
         <h2 id="resultTitle">🎯 맞춤 혜택을 찾았습니다</h2>
       </div>
-      <div id="resultBody"></div>
+      <div id="resultBody" aria-live="polite"></div>
 
       <!-- 부정수급 신고 안내 -->
       <div class="fraud-guide">
