@@ -85,6 +85,25 @@ const I18N = {
     link_go:          "바로가기 →",
     disclaimer:       '💙 입력하신 정보를 바탕으로 한 <strong>맞춤 안내</strong>입니다. 실제 수급 여부는 담당 기관의 심사를 통해 최종 결정됩니다.',
     analysis_title:   "📊 AI 분석",
+    situations: [
+      "생활비·식비가 부족해요","병원비·건강이 걱정돼요","주거가 불안정해요",
+      "교육비·돌봄이 필요해요","취업·일자리가 필요해요","사업·자영업이 어려워요",
+      "가족을 돌봐야 해요","갑작스러운 위기 상황이에요","건강·신체적으로 불편함이 있어요"
+    ],
+    family_options: [
+      "혼자 살고 있어요","배우자와 둘이 살아요","아이와 함께 살고 있어요",
+      "혼자 아이를 키우고 있어요","어르신 가족을 돌보고 있어요","아픈 가족이 있어요",
+      "여러 세대가 함께 살아요","기타"
+    ],
+    income_options: [
+      "잘 모르겠어요 (소득 무관 서비스 우선 안내)","거의 없어요","중위소득 50% 이하",
+      "중위소득 50~100%","중위소득 100~150%","중위소득 150% 이상"
+    ],
+    gender_options: ["여성","남성","무관 (성별 상관없이 검색)"],
+    section_names: {
+      "중앙정부":"중앙정부","지자체":"지자체",
+      "여성 특화 서비스":"여성 특화 서비스","남성 특화 서비스":"남성 특화 서비스","환급금·지원금":"환급금·지원금"
+    },
   },
 
   /* ─────────── English ─────────── */
@@ -166,6 +185,25 @@ const I18N = {
     link_go:          "Visit →",
     disclaimer:       '💙 This is <strong>personalized guidance</strong> based on your input. Final eligibility is determined by the relevant agency.',
     analysis_title:   "📊 AI Analysis",
+    situations: [
+      "Short on living / food expenses","Worried about medical / health costs","Housing instability",
+      "Need education / childcare support","Need a job / employment","Business / self-employment difficulty",
+      "Need to care for family","Sudden crisis situation","Health / physical disability"
+    ],
+    family_options: [
+      "Living alone","Living with spouse","Living with children",
+      "Single parent","Caring for elderly family","Have a sick family member",
+      "Multi-generational household","Other"
+    ],
+    income_options: [
+      "Not sure (show all services)","Very low income","≤50% median income",
+      "50~100% median income","100~150% median income","≥150% median income"
+    ],
+    gender_options: ["Female","Male","Any (no preference)"],
+    section_names: {
+      "중앙정부":"Central Government","지자체":"Local Government",
+      "여성 특화 서비스":"Women's Services","남성 특화 서비스":"Men's Services","환급금·지원금":"Refunds & Subsidies"
+    },
   },
 
   /* ─────────── 中文 (简体) ─────────── */
@@ -247,6 +285,25 @@ const I18N = {
     link_go:          "前往 →",
     disclaimer:       '💙 这是基于您输入信息的<strong>个性化指南</strong>。最终资格由相关机构审核决定。',
     analysis_title:   "📊 AI 分析",
+    situations: [
+      "生活费·食费不足","医疗费·健康忧虑","居住不稳定",
+      "需要教育费·托育","需要就业·工作","经营·自营业困难",
+      "需照顾家人","突发危机状况","健康·身体有障碍"
+    ],
+    family_options: [
+      "独居","与配偶同住","与孩子同住",
+      "单亲育儿","照顾年长家人","有生病的家人",
+      "多代同住","其他"
+    ],
+    income_options: [
+      "不确定（优先显示所有服务）","几乎没有收入","中位收入50%以下",
+      "中位收入50~100%","中位收入100~150%","中位收入150%以上"
+    ],
+    gender_options: ["女","男","不限性别"],
+    section_names: {
+      "중앙정부":"中央政府","지자체":"地方政府",
+      "여성 특화 서비스":"女性专项服务","남성 특화 서비스":"男性专项服务","환급금·지원금":"退款·补贴"
+    },
   },
 
   /* ─────────── 日本語 ─────────── */
@@ -328,6 +385,25 @@ const I18N = {
     link_go:          "アクセス →",
     disclaimer:       '💙 入力情報に基づく<strong>個別案内</strong>です。最終的な受給可否は担当機関の審査により決定されます。',
     analysis_title:   "📊 AI 分析",
+    situations: [
+      "生活費・食費が不足","医療費・健康が心配","住居が不安定",
+      "教育費・育児支援が必要","就職・仕事が必要","事業・自営業が困難",
+      "家族の介護が必要","突然の危機状況","健康・身体的に不便"
+    ],
+    family_options: [
+      "一人暮らし","配偶者と二人暮らし","子どもと同居",
+      "ひとり親育児","高齢家族の介護","病気の家族がいる",
+      "多世代同居","その他"
+    ],
+    income_options: [
+      "わからない（所得問わず先案内）","ほぼない","中位所得50%以下",
+      "中位所得50~100%","中位所得100~150%","中位所得150%以上"
+    ],
+    gender_options: ["女性","男性","問わない"],
+    section_names: {
+      "중앙정부":"中央政府","지자체":"地方自治体",
+      "여성 특화 서비스":"女性向けサービス","남성 특화 서비스":"男性向けサービス","환급금·지원금":"還付金·支援金"
+    },
   },
 
   /* ─────────── Tiếng Việt ─────────── */
@@ -409,6 +485,25 @@ const I18N = {
     link_go:          "Truy cập →",
     disclaimer:       '💙 Đây là <strong>hướng dẫn cá nhân hóa</strong> dựa trên thông tin bạn nhập. Tư cách cuối cùng do cơ quan có thẩm quyền xác định.',
     analysis_title:   "📊 Phân Tích AI",
+    situations: [
+      "Thiếu chi phí sinh hoạt / thực phẩm","Lo lắng viện phí / sức khỏe","Nhà ở không ổn định",
+      "Cần học phí / hỗ trợ chăm sóc trẻ","Cần việc làm / tìm kiếm việc","Kinh doanh / tự doanh gặp khó khăn",
+      "Cần chăm sóc thành viên gia đình","Tình huống khủng hoảng đột ngột","Bất tiện về sức khỏe / thể chất"
+    ],
+    family_options: [
+      "Sống một mình","Sống cùng vợ / chồng","Sống cùng con cái",
+      "Phụ huynh đơn thân","Chăm sóc người cao tuổi","Có thành viên gia đình ốm đau",
+      "Gia đình nhiều thế hệ","Khác"
+    ],
+    income_options: [
+      "Không chắc (hiển thị tất cả dịch vụ)","Gần như không có","≤50% thu nhập trung bình",
+      "50~100% thu nhập trung bình","100~150% thu nhập trung bình","≥150% thu nhập trung bình"
+    ],
+    gender_options: ["Nữ","Nam","Không giới hạn"],
+    section_names: {
+      "중앙정부":"Chính phủ Trung ương","지자체":"Chính quyền địa phương",
+      "여성 특화 서비스":"Dịch vụ cho Phụ nữ","남성 특화 서비스":"Dịch vụ cho Nam giới","환급금·지원금":"Hoàn tiền & Trợ cấp"
+    },
   },
 
   /* ─────────── ภาษาไทย ─────────── */
@@ -490,6 +585,25 @@ const I18N = {
     link_go:          "เยี่ยมชม →",
     disclaimer:       '💙 นี่คือ<strong>คำแนะนำส่วนตัว</strong>ตามข้อมูลที่คุณป้อน คุณสมบัติสุดท้ายถูกกำหนดโดยการตรวจสอบของหน่วยงาน',
     analysis_title:   "📊 การวิเคราะห์ AI",
+    situations: [
+      "ค่าครองชีพ / อาหารไม่เพียงพอ","กังวลค่ารักษา / สุขภาพ","ที่อยู่อาศัยไม่มั่นคง",
+      "ต้องการค่าเล่าเรียน / ดูแลเด็ก","ต้องการงาน / การจ้างงาน","ธุรกิจ / อาชีพอิสระลำบาก",
+      "ต้องดูแลสมาชิกในครอบครัว","วิกฤตเฉียบพลัน","มีปัญหาสุขภาพ / ร่างกาย"
+    ],
+    family_options: [
+      "อาศัยอยู่คนเดียว","อาศัยอยู่กับคู่สมรส","อาศัยอยู่กับบุตร",
+      "พ่อแม่เลี้ยงเดี่ยว","ดูแลผู้สูงอายุในครอบครัว","มีสมาชิกครอบครัวป่วย",
+      "ครอบครัวหลายรุ่น","อื่นๆ"
+    ],
+    income_options: [
+      "ไม่แน่ใจ (แสดงบริการทั้งหมด)","แทบไม่มีรายได้","≤50% รายได้มัธยฐาน",
+      "50~100% รายได้มัธยฐาน","100~150% รายได้มัธยฐาน","≥150% รายได้มัธยฐาน"
+    ],
+    gender_options: ["หญิง","ชาย","ไม่จำกัด"],
+    section_names: {
+      "중앙정부":"รัฐบาลกลาง","지자체":"รัฐบาลท้องถิ่น",
+      "여성 특화 서비스":"บริการสำหรับผู้หญิง","남성 특화 서비스":"บริการสำหรับผู้ชาย","환급금·지원금":"เงินคืน & เงินอุดหนุน"
+    },
   },
 
   /* ─────────── ភាសាខ្មែរ (Khmer) ─────────── */
@@ -571,6 +685,25 @@ const I18N = {
     link_go:          "ចូលទស្សនា →",
     disclaimer:       '💙 នេះគឺជា<strong>ការណែនាំផ្ទាល់ខ្លួន</strong>ដោយផ្អែកលើព័ត៌មានដែលអ្នកបញ្ចូល',
     analysis_title:   "📊 ការវិភាគ AI",
+    situations: [
+      "ខ្វះប្រាក់រស់នៅ / អាហារ","ព្រួយបារម្ភថ្លៃព្យាបាល / សុខភាព","លំនៅឋានមិនស្ថិតស្ថេរ",
+      "ត្រូវការថ្លៃសិក្សា / ថែទាំកុមារ","ត្រូវការការងារ / ការជ្រើសរើស","ការអាជីវកម្មមានការលំបាក",
+      "ត្រូវថែទាំក្រុមគ្រួសារ","វិបត្តិភ្លាមៗ","មានការលំបាកផ្នែកសុខភាព / រាងកាយ"
+    ],
+    family_options: [
+      "រស់នៅម្នាក់ឯង","រស់នៅជាមួយដៃគូ","រស់នៅជាមួយកូន",
+      "ឪពុក/ម្តាយតែម្នាក់","ថែទាំអ្នកចាស់ក្នុងគ្រួសារ","មានសមាជិកគ្រួសារជំងឺ",
+      "គ្រួសារច្រើនជំនាន់","ផ្សេងៗ"
+    ],
+    income_options: [
+      "មិនច្បាស់ (បង្ហាញសេវាទាំងអស់)","ស្ទើរតែគ្មាន","≤50% ប្រាក់ចំណូលមធ្យម",
+      "50~100% ប្រាក់ចំណូលមធ្យម","100~150% ប្រាក់ចំណូលមធ្យម","≥150% ប្រាក់ចំណូលមធ្យម"
+    ],
+    gender_options: ["ស្ត្រី","បុរស","មិនកំណត់"],
+    section_names: {
+      "중앙정부":"រដ្ឋាភិបាលកណ្តាល","지자체":"រដ្ឋាភិបាលក្នុងស្រុក",
+      "여성 특화 서비스":"សេវាសម្រាប់ស្ត្រី","남성 특화 서비스":"សេវាសម្រាប់បុរស","환급금·지원금":"ការសងប្រាក់ & ប្រាក់ឧបត្ថម្ភ"
+    },
   },
 };
 
@@ -624,6 +757,12 @@ function applyLang(lang) {
   // HTML lang 속성
   const langMap = { ko:"ko", en:"en", zh:"zh-Hans", ja:"ja", vi:"vi", th:"th", km:"km" };
   document.documentElement.lang = langMap[lang] || lang;
+
+  // 동적 UI (상황 그리드·칩) 갱신 — 이미 렌더링된 경우에만
+  const grid = document.getElementById("situationGrid");
+  if (grid && grid.children.length > 0 && typeof refreshDynamicUI === "function") {
+    refreshDynamicUI();
+  }
 }
 
 /* ── 초기화 시 언어 복원 ── */

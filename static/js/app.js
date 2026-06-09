@@ -14,29 +14,32 @@ const nlpState = {
 /* ── 초기화 ── */
 window.addEventListener("DOMContentLoaded", () => {
   renderSituationGrid();
-  renderChips("familyChips",   FAMILY_OPTIONS,  false, "family");
-  renderChips("incomeChips",   INCOME_OPTIONS,  false, "income");
-  renderChips("nlpGenderChips",GENDER_OPTIONS,  false, "nlpGender");
-  renderChips("nlpIncomeChips",INCOME_OPTIONS,  false, "nlpIncome");
+  renderChips("familyChips",   FAMILY_OPTIONS,  false, "family",   T("family_options"));
+  renderChips("incomeChips",   INCOME_OPTIONS,  false, "income",   T("income_options"));
+  renderChips("nlpGenderChips",GENDER_OPTIONS,  false, "nlpGender",T("gender_options"));
+  renderChips("nlpIncomeChips",INCOME_OPTIONS,  false, "nlpIncome",T("income_options"));
 });
 
 /* ── 상황 그리드 렌더링 ── */
 function renderSituationGrid() {
   const grid = document.getElementById("situationGrid");
   if (!grid) return;
-  SITUATIONS.forEach(label => {
+  const labels = T("situations");  // 현재 언어 번역 배열
+  SITUATIONS.forEach((value, i) => {
+    const label = (Array.isArray(labels) && labels[i]) ? labels[i] : value;
     const btn = document.createElement("button");
     btn.className = "sit-card";
     btn.setAttribute("role", "checkbox");
     btn.setAttribute("aria-checked", "false");
-    btn.setAttribute("aria-label", label + " 선택");
-    btn.innerHTML = `<span class="sit-icon" aria-hidden="true">${SITUATION_ICONS[label] || "📌"}</span>
+    btn.setAttribute("aria-label", label);
+    btn.dataset.value = value;   // API 전송용 한국어 값
+    btn.innerHTML = `<span class="sit-icon" aria-hidden="true">${SITUATION_ICONS[value] || "📌"}</span>
                      <span class="sit-label">${label}</span>`;
     btn.onclick = () => {
       btn.classList.toggle("active");
-      const idx = state.life_situations.indexOf(label);
+      const idx = state.life_situations.indexOf(value);
       if (idx === -1) {
-        state.life_situations.push(label);
+        state.life_situations.push(value);
         btn.setAttribute("aria-checked", "true");
       } else {
         state.life_situations.splice(idx, 1);
@@ -48,16 +51,18 @@ function renderSituationGrid() {
 }
 
 /* ── 칩 렌더링 ── */
-function renderChips(containerId, options, multi, key) {
+function renderChips(containerId, options, multi, key, translatedLabels) {
   const wrap = document.getElementById(containerId);
   if (!wrap) return;
-  options.forEach(opt => {
+  options.forEach((opt, i) => {
+    const label = (Array.isArray(translatedLabels) && translatedLabels[i]) ? translatedLabels[i] : opt;
     const chip = document.createElement("button");
     chip.className = "chip";
-    chip.textContent = opt;
+    chip.textContent = label;
     chip.setAttribute("role", "radio");
     chip.setAttribute("aria-checked", "false");
-    chip.setAttribute("aria-label", opt + " 선택");
+    chip.setAttribute("aria-label", label);
+    chip.dataset.value = opt;   // API 전송용 한국어 값
     if (key === "nlpGender") chip.dataset.gender = GENDER_VALUE_MAP[opt] || opt;
     chip.onclick = () => toggleChip(chip, opt, multi, key);
     wrap.appendChild(chip);
@@ -362,9 +367,11 @@ function renderResult(data, analysis) {
       <p class="link-section-header">${T("link_header")}</p>`;
     data.results.forEach(sec => {
       if (!sec.services.length) return;
-      const icon = SECTION_ICONS[sec.section] || "📋";
+      const icon     = SECTION_ICONS[sec.section] || "📋";
+      const secNames = T("section_names") || {};
+      const secLabel = secNames[sec.section] || sec.section;
       html += `<div class="result-section">
-        <p class="section-title">${icon} ${sec.section}</p>`;
+        <p class="section-title">${icon} ${secLabel}</p>`;
       sec.services.forEach(svc =>
         html += `<div class="service-item">
           <span class="service-name">${svc.name}</span>
@@ -432,6 +439,46 @@ function payForwardAction(type) {
   };
   if (urls[type]) window.open(urls[type], "_blank", "noopener");
   closePayForwardModal();
+}
+
+/* ── 언어 전환 시 동적 UI 재렌더링 ── */
+function refreshDynamicUI() {
+  // 현재 활성 상태 저장
+  const savedSits   = [...state.life_situations];
+  const savedFamily = state.family_status;
+  const savedIncome = state.income_range;
+
+  // 상황 그리드 재렌더
+  const grid = document.getElementById("situationGrid");
+  if (grid) {
+    grid.innerHTML = "";
+    renderSituationGrid();
+    grid.querySelectorAll(".sit-card").forEach(btn => {
+      if (savedSits.includes(btn.dataset.value)) {
+        btn.classList.add("active");
+        btn.setAttribute("aria-checked", "true");
+      }
+    });
+  }
+
+  // 칩 재렌더
+  [
+    ["familyChips",   FAMILY_OPTIONS,  "family",   T("family_options")],
+    ["incomeChips",   INCOME_OPTIONS,  "income",   T("income_options")],
+    ["nlpGenderChips",GENDER_OPTIONS,  "nlpGender",T("gender_options")],
+    ["nlpIncomeChips",INCOME_OPTIONS,  "nlpIncome",T("income_options")],
+  ].forEach(([id, opts, key, labels]) => {
+    const wrap = document.getElementById(id);
+    if (wrap) { wrap.innerHTML = ""; renderChips(id, opts, false, key, labels); }
+  });
+
+  // 활성 칩 복원
+  document.querySelectorAll("#familyChips .chip").forEach(c => {
+    if (c.dataset.value === savedFamily) { c.classList.add("active"); c.setAttribute("aria-checked","true"); }
+  });
+  document.querySelectorAll("#incomeChips .chip").forEach(c => {
+    if (c.dataset.value === savedIncome) { c.classList.add("active"); c.setAttribute("aria-checked","true"); }
+  });
 }
 
 /* ── 재조회 ── */
