@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>아테나 복지서비스 | 내 혜택 찾기</title>
-  <link rel="stylesheet" href="/static/css/style.css?v=2.7">
+  <link rel="stylesheet" href="/static/css/style.css?v=2.8">
 </head>
 <body>
 
@@ -17,31 +17,31 @@
       <!-- 언어 선택 -->
       <div class="lang-bar" role="navigation" aria-label="언어 선택 / Language">
         <button class="lang-btn active" data-lang="ko" onclick="applyLang('ko')" aria-label="한국어">
-          <span class="lang-flag">🇰🇷</span>
+          <img class="lang-flag" src="https://flagcdn.com/w40/kr.png" alt="한국" width="36" height="27">
           <span class="lang-name">한국어</span>
         </button>
         <button class="lang-btn" data-lang="en" onclick="applyLang('en')" aria-label="English">
-          <span class="lang-flag">🇺🇸</span>
+          <img class="lang-flag" src="https://flagcdn.com/w40/us.png" alt="US" width="36" height="27">
           <span class="lang-name">English</span>
         </button>
         <button class="lang-btn" data-lang="zh" onclick="applyLang('zh')" aria-label="中文">
-          <span class="lang-flag">🇨🇳</span>
+          <img class="lang-flag" src="https://flagcdn.com/w40/cn.png" alt="中国" width="36" height="27">
           <span class="lang-name">中文</span>
         </button>
         <button class="lang-btn" data-lang="ja" onclick="applyLang('ja')" aria-label="日本語">
-          <span class="lang-flag">🇯🇵</span>
+          <img class="lang-flag" src="https://flagcdn.com/w40/jp.png" alt="日本" width="36" height="27">
           <span class="lang-name">日本語</span>
         </button>
         <button class="lang-btn" data-lang="vi" onclick="applyLang('vi')" aria-label="Tiếng Việt">
-          <span class="lang-flag">🇻🇳</span>
+          <img class="lang-flag" src="https://flagcdn.com/w40/vn.png" alt="Việt Nam" width="36" height="27">
           <span class="lang-name">Việt</span>
         </button>
         <button class="lang-btn" data-lang="th" onclick="applyLang('th')" aria-label="ภาษาไทย">
-          <span class="lang-flag">🇹🇭</span>
+          <img class="lang-flag" src="https://flagcdn.com/w40/th.png" alt="ไทย" width="36" height="27">
           <span class="lang-name">ภาษาไทย</span>
         </button>
         <button class="lang-btn" data-lang="km" onclick="applyLang('km')" aria-label="ភាសាខ្មែរ">
-          <span class="lang-flag">🇰🇭</span>
+          <img class="lang-flag" src="https://flagcdn.com/w40/kh.png" alt="កម្ពុជា" width="36" height="27">
           <span class="lang-name">ខ្មែរ</span>
         </button>
       </div>
@@ -266,21 +266,21 @@
             <span class="modal-opt-icon">💬</span>
             <span class="modal-opt-text">
               <strong data-i18n="modal_community">따뜻한 응원 한마디 전하기</strong>
-              <small data-i18n="modal_comm_sub">힘든 이웃에게 희망의 댓글을 남겨주세요</small>
+              <small data-i18n="modal_comm_sub">복지로에서 복지 상담·정보를 나누고 이웃을 응원해주세요</small>
             </span>
           </button>
           <button class="modal-option-btn" onclick="payForwardAction('talent')">
             <span class="modal-opt-icon">🤝</span>
             <span class="modal-opt-text">
               <strong data-i18n="modal_talent">나의 작은 재능 나누기</strong>
-              <small data-i18n="modal_talent_sub">소소한 지식·노하우를 이웃과 나눠보세요</small>
+              <small data-i18n="modal_talent_sub">나눔포털(행안부) — 내 지식·기술로 이웃을 도와보세요</small>
             </span>
           </button>
           <button class="modal-option-btn" onclick="payForwardAction('volunteer')">
             <span class="modal-opt-icon">🏡</span>
             <span class="modal-opt-text">
               <strong data-i18n="modal_volunteer">우리 동네 봉사활동 참여하기</strong>
-              <small data-i18n="modal_vol_sub">이번 주말 손길이 필요한 곳을 찾아보세요</small>
+              <small data-i18n="modal_vol_sub">1365 포털에서 내 동네 봉사활동을 찾아보세요</small>
             </span>
           </button>
         </div>

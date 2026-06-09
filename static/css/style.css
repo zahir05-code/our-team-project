@@ -34,51 +34,67 @@ body {
   flex-wrap: nowrap;
   overflow-x: auto;
   justify-content: center;
-  gap: 6px;
+  gap: 7px;
   margin-top: 16px;
-  padding: 0 4px 4px;
-  scrollbar-width: none;          /* Firefox */
-  -ms-overflow-style: none;       /* IE/Edge */
+  padding: 2px 6px 6px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-.lang-bar::-webkit-scrollbar { display: none; }  /* Chrome/Safari */
+.lang-bar::-webkit-scrollbar { display: none; }
 
+/* 카드형 국기 버튼 */
 .lang-btn {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
-  background: rgba(255,255,255,0.13);
-  border: 1.5px solid rgba(255,255,255,0.28);
-  color: #fff;
+  justify-content: center;
+  gap: 4px;
+  width: 62px;
+  height: 64px;
   border-radius: 12px;
-  padding: 7px 10px 6px;
-  min-width: 54px;
+  border: 2px solid rgba(255,255,255,0.45);
+  background: rgba(255,255,255,0.18);
   cursor: pointer;
-  transition: background 0.2s, transform 0.15s, border-color 0.2s;
-  white-space: nowrap;
   flex-shrink: 0;
+  padding: 6px 4px 6px;
+  transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s, background 0.18s;
 }
 .lang-btn:hover {
-  background: rgba(255,255,255,0.26);
-  transform: translateY(-2px);
-  border-color: rgba(255,255,255,0.55);
+  transform: translateY(-3px) scale(1.05);
+  border-color: rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.30);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.22);
 }
 .lang-btn.active {
-  background: #fff;
-  color: #1e3a8a;
-  border-color: #fff;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-  transform: translateY(-2px);
+  border: 2.5px solid #fff;
+  background: rgba(255,255,255,0.32);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.35), 0 6px 18px rgba(0,0,0,0.25);
+  transform: translateY(-3px);
 }
+
+/* 국기 이미지 */
 .lang-flag {
-  font-size: 1.35rem;
-  line-height: 1;
+  width: 36px;
+  height: 27px;
+  object-fit: cover;
+  border-radius: 3px;
+  pointer-events: none;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
 }
+
+/* 언어명 — 국기 아래 별도 텍스트 */
 .lang-name {
-  font-size: 0.65rem;
+  color: #fff;
+  font-size: 0.58rem;
   font-weight: 700;
-  letter-spacing: -0.2px;
-  line-height: 1;
+  letter-spacing: 0;
+  pointer-events: none;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.55);
+  white-space: nowrap;
+}
+.lang-btn.active .lang-name {
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(37,99,235,0.8);
 }
 
 .main { max-width: 480px; margin: 0 auto; padding: 20px 16px 40px; }
@@ -441,3 +457,139 @@ body {
 
 /* 유틸 */
 .hidden { display: none !important; }
+
+/* ════════════════════════════════════════
+   모바일 반응형 (≤ 480px)
+════════════════════════════════════════ */
+@media (max-width: 480px) {
+
+  /* 헤더 */
+  .header { padding: 18px 14px 14px; }
+  .logo   { font-size: 1.2rem; }
+  .tagline { font-size: 0.78rem; }
+
+  /* 언어 버튼 — 7개가 좁은 화면에서도 한 줄로 스크롤 */
+  .lang-bar { gap: 5px; margin-top: 12px; padding: 2px 4px 6px; justify-content: flex-start; }
+  .lang-btn { width: 54px; height: 56px; border-radius: 10px; padding: 5px 3px 5px; gap: 3px; }
+  .lang-flag { width: 30px; height: 22px; }
+  .lang-name { font-size: 0.52rem; }
+
+  /* 메인 컨텐츠 */
+  .main { padding: 14px 10px 32px; }
+
+  /* 입력 카드 */
+  .input-card { padding: 20px 16px; border-radius: 18px; }
+
+  /* 도트 진행 */
+  .dot-progress { gap: 6px; margin-bottom: 20px; }
+
+  /* 질문 텍스트 */
+  .step-q   { font-size: 1.05rem; margin-bottom: 12px; }
+  .step-sub { font-size: 0.78rem; }
+
+  /* 지역 버튼 */
+  .region-row { gap: 8px; }
+  .region-big-btn { padding: 13px 8px; font-size: 0.92rem; border-radius: 12px; }
+
+  /* 나이 입력 */
+  .age-input { padding: 14px 12px; font-size: 1.2rem; border-radius: 12px; margin-bottom: 18px; }
+
+  /* 상황 그리드 — 3열 유지하되 패딩 축소 */
+  .situation-grid { gap: 6px; margin-bottom: 16px; }
+  .sit-card  { padding: 10px 4px; border-radius: 12px; gap: 4px; }
+  .sit-icon  { font-size: 1.3rem; }
+  .sit-label { font-size: 0.63rem; }
+
+  /* 부가 선택 (가족·소득·성별) — 1열로 */
+  .extra-row { grid-template-columns: 1fr; gap: 10px; margin-bottom: 16px; }
+
+  /* 칩 */
+  .chip { padding: 7px 11px; font-size: 0.76rem; }
+  .small-chips .chip { font-size: 0.7rem; padding: 5px 9px; }
+
+  /* 버튼 */
+  .btn-main { padding: 15px; font-size: 0.95rem; border-radius: 12px; }
+  .btn-back-sm { padding: 14px 14px; font-size: 0.85rem; }
+
+  /* NLP 패널 */
+  .nlp-panel { padding: 20px 14px; border-radius: 18px; }
+  .nlp-opts-row { grid-template-columns: 1fr; gap: 10px; }
+
+  /* 서약 박스 */
+  .pledge-box { padding: 16px 14px; }
+  .pledge-confirm-btn { padding: 12px 13px; font-size: 0.86rem; }
+
+  /* 결과 헤더 */
+  .result-header { padding: 16px; border-radius: 18px; }
+  .result-header h2 { font-size: 1rem; }
+
+  /* 온톨로지 카드 */
+  .ont-card { padding: 12px 12px; }
+  .ont-policy-name { font-size: 0.88rem; }
+  .ont-desc  { font-size: 0.77rem; }
+  .ont-apply-btn { padding: 7px 10px; font-size: 0.7rem; }
+
+  /* 링크 서비스 */
+  .result-section { padding: 12px 13px; }
+  .service-name   { font-size: 0.8rem; }
+  .service-link   { font-size: 0.73rem; }
+
+  /* 선순환 */
+  .pay-forward-section { padding: 18px 14px; }
+  .pay-forward-btn { padding: 12px 18px; font-size: 0.85rem; }
+
+  /* 모달 */
+  .modal-content { padding: 22px 16px; border-radius: 18px; }
+  .modal-content h3 { font-size: 1rem; }
+
+  /* 푸터 */
+  .footer { padding: 12px 10px; font-size: 0.75rem; }
+
+  /* 보안 배지 */
+  .security-badge { font-size: 0.74rem; padding: 8px 12px; }
+
+  /* 부정수급 안내 */
+  .fraud-guide { padding: 14px 14px; }
+  .fraud-guide-list li { font-size: 0.75rem; }
+}
+
+/* ════════════════════════════════════════
+   초소형 화면 (≤ 360px, 구형 폰)
+════════════════════════════════════════ */
+@media (max-width: 360px) {
+  .lang-btn  { width: 46px; height: 50px; }
+  .lang-flag { width: 26px; height: 19px; }
+  .lang-name { font-size: 0.48rem; }
+
+  .step-q    { font-size: 0.98rem; }
+  .sit-label { font-size: 0.6rem; }
+  .situation-grid { grid-template-columns: 1fr 1fr 1fr; gap: 5px; }
+  .sit-card  { padding: 8px 3px; }
+  .sit-icon  { font-size: 1.1rem; }
+
+  .btn-main  { font-size: 0.9rem; padding: 14px; }
+  .input-card { padding: 16px 12px; }
+}
+
+/* ════════════════════════════════════════
+   태블릿 (481px ~ 768px)
+════════════════════════════════════════ */
+@media (min-width: 481px) and (max-width: 768px) {
+  .main   { max-width: 520px; padding: 18px 20px 40px; }
+  .footer { max-width: 520px; }
+  .lang-bar { gap: 8px; }
+  .lang-btn { width: 66px; height: 62px; }
+}
+
+/* ════════════════════════════════════════
+   터치 접근성 — 최소 터치 타겟 44px
+════════════════════════════════════════ */
+@media (pointer: coarse) {
+  .chip       { min-height: 38px; padding: 8px 14px; }
+  .btn-main   { min-height: 52px; }
+  .btn-back-sm { min-height: 50px; }
+  .region-big-btn { min-height: 52px; }
+  .ont-apply-btn  { min-height: 36px; padding: 8px 12px; }
+  .lang-btn   { min-height: 52px; }
+  .sit-card   { min-height: 68px; }
+}

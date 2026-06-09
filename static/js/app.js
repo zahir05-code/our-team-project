@@ -441,8 +441,11 @@ function closeModalOutside(e) {
 }
 function payForwardAction(type) {
   const urls = {
-    community: "https://www.1365.go.kr",
-    talent:    "https://www.dovol.net",
+    // 💬 따뜻한 응원 → 복지로 공식 홈 (커뮤니티·상담 게시판 접근 가능)
+    community: "https://www.bokjiro.go.kr",
+    // 🤝 재능나누기 → 나눔포털 (행정안전부 공식 재능나눔 플랫폼)
+    talent:    "https://www.nanumkorea.go.kr",
+    // 🏡 우리 동네 봉사활동 → 1365 봉사활동 찾기
     volunteer: "https://www.1365.go.kr/vols/main.do",
   };
   if (urls[type]) window.open(urls[type], "_blank", "noopener");
