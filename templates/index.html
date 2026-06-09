@@ -181,6 +181,15 @@
         <p class="example-item" data-i18n="nlp_ex2">"59세 독거 남성인데 아프고 경기도 수원에 살아요."</p>
       </div>
 
+      <!-- 음성 입력 버튼 -->
+      <div class="voice-input-wrap">
+        <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()" type="button">
+          <span class="voice-icon">🎤</span>
+          <span class="voice-label" id="voiceLabel" data-i18n="voice_start">음성으로 말하기</span>
+        </button>
+        <span class="voice-status hidden" id="voiceStatus">🔴 녹음 중...</span>
+      </div>
+
       <textarea class="nlp-textarea" id="nlpText"
                 placeholder="여기에 상황을 입력하세요…" rows="4"
                 data-i18n-ph="nlp_ph"></textarea>

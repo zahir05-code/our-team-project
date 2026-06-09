@@ -427,6 +427,73 @@ function toggleFuture(btn) {
   btn.textContent = hidden ? T("ont_expand") : T("ont_collapse");
 }
 
+/* ── 음성 입력 (Web Speech API) ── */
+let _recognition = null;
+let _isRecording = false;
+
+function toggleVoice() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    alert("이 브라우저는 음성 입력을 지원하지 않습니다.\nChrome 또는 Edge를 사용해 주세요.");
+    return;
+  }
+
+  if (_isRecording) {
+    _recognition && _recognition.stop();
+    return;
+  }
+
+  _recognition = new SpeechRecognition();
+  _recognition.lang = _currentLang === "ko" ? "ko-KR"
+                    : _currentLang === "en" ? "en-US"
+                    : _currentLang === "zh" ? "zh-CN"
+                    : _currentLang === "ja" ? "ja-JP"
+                    : _currentLang === "vi" ? "vi-VN"
+                    : _currentLang === "th" ? "th-TH"
+                    : "km-KH";
+  _recognition.continuous     = false;
+  _recognition.interimResults = false;
+
+  _recognition.onstart = () => {
+    _isRecording = true;
+    const btn = document.getElementById("voiceBtn");
+    const status = document.getElementById("voiceStatus");
+    btn.classList.add("recording");
+    btn.querySelector(".voice-icon").textContent = "⏹";
+    btn.querySelector(".voice-label").textContent = T("voice_stop");
+    status.classList.remove("hidden");
+  };
+
+  _recognition.onresult = (e) => {
+    const text = e.results[0][0].transcript;
+    const ta = document.getElementById("nlpText");
+    ta.value = ta.value ? ta.value + " " + text : text;
+    ta.dispatchEvent(new Event("input"));
+  };
+
+  _recognition.onend = () => {
+    _isRecording = false;
+    const btn = document.getElementById("voiceBtn");
+    const status = document.getElementById("voiceStatus");
+    btn.classList.remove("recording");
+    btn.querySelector(".voice-icon").textContent = "🎤";
+    btn.querySelector(".voice-label").textContent = T("voice_start");
+    status.classList.add("hidden");
+  };
+
+  _recognition.onerror = (e) => {
+    _isRecording = false;
+    const btn = document.getElementById("voiceBtn");
+    btn.classList.remove("recording");
+    btn.querySelector(".voice-icon").textContent = "🎤";
+    btn.querySelector(".voice-label").textContent = T("voice_start");
+    document.getElementById("voiceStatus").classList.add("hidden");
+    if (e.error !== "no-speech") alert("음성 인식 오류: " + e.error);
+  };
+
+  _recognition.start();
+}
+
 /* ── 선순환 모달 ── */
 function openPayForwardModal() {
   document.getElementById("payForwardModal").classList.remove("hidden");
