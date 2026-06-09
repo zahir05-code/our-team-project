@@ -353,7 +353,7 @@ function renderOntPolicy(p, type) {
   const docs   = p.required_docs.length
     ? `<div class="ont-docs">📄 ${p.required_docs.join(" · ")}</div>` : "";
   const reason = p.reasons.length
-    ? `<div class="ont-reason">${p.reasons.join(" / ")}</div>` : "";
+    ? `<div class="ont-reason">💡 ${p.reasons.join(", ")} 조건을 추가하면 해당될 수 있어요</div>` : "";
   const tags   = p.tags.length
     ? `<div class="ont-tags">${p.tags.map(t=>`<span class="ont-tag">${t}</span>`).join("")}</div>` : "";
   return `<div class="ont-card ont-card-${type}">

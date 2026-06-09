@@ -150,7 +150,8 @@ def match(profile: UserProfile, policy: PolicyNode) -> tuple[MatchLevel, list[st
             met_conditions += 1
         else:
             needed = [s.value for s in policy.required_situations]
-            reasons.append(f"상황 조건 미해당: {needed}")
+            needed_str = ", ".join(f"'{v}'" for v in needed)
+            reasons.append(f"{needed_str} 조건을 추가하면 해당될 수 있어요")
 
     # 직업 (하나라도 일치하면 OK)
     if policy.required_work:
@@ -159,7 +160,8 @@ def match(profile: UserProfile, policy: PolicyNode) -> tuple[MatchLevel, list[st
             met_conditions += 1
         else:
             needed = [w.value for w in policy.required_work]
-            reasons.append(f"직업 조건 미해당: {needed}")
+            needed_str = ", ".join(f"'{v}'" for v in needed)
+            reasons.append(f"{needed_str} 직업 조건을 추가하면 해당될 수 있어요")
 
     # 가족 (하나라도 일치하면 OK)
     if policy.required_family:
@@ -168,7 +170,8 @@ def match(profile: UserProfile, policy: PolicyNode) -> tuple[MatchLevel, list[st
             met_conditions += 1
         else:
             needed = [f.value for f in policy.required_family]
-            reasons.append(f"가족 조건 미해당: {needed}")
+            needed_str = ", ".join(f"'{v}'" for v in needed)
+            reasons.append(f"{needed_str} 가족 조건을 추가하면 해당될 수 있어요")
 
     # ── 5. 등급 산정 ──────────────────────────────────────
     if total_conditions == 0:
