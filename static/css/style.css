@@ -344,7 +344,24 @@ body {
 .modal-close-btn:hover { background: #f3f4f6; }
 
 /* 푸터 */
-.footer { text-align: center; padding: 20px; font-size: 0.72rem; color: #9ca3af; max-width: 480px; margin: 0 auto; }
+.footer { text-align: center; padding: 16px; max-width: 480px; margin: 0 auto; }
+
+/* 개인정보 보호 배너 */
+.privacy-banner {
+  display: flex; align-items: center; gap: 14px;
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+  border: 1.5px solid #bae6fd; border-radius: 16px;
+  padding: 16px 18px; text-align: left;
+}
+.privacy-icon { font-size: 1.8rem; flex-shrink: 0; }
+.privacy-text strong {
+  display: block; font-size: 0.88rem; color: #0369a1;
+  font-weight: 800; margin-bottom: 4px;
+}
+.privacy-text p {
+  font-size: 0.78rem; color: #374151; line-height: 1.6; margin: 0;
+}
+.privacy-text p strong { display: inline; font-size: inherit; color: #0369a1; }
 
 /* 유틸 */
 .hidden { display: none !important; }
