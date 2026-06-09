@@ -15,6 +15,14 @@ from welfare_analyzer.api.link_connector import build_result_links
 from welfare_analyzer.models.user_profile import ALLOWED_REGIONS
 from config.settings import REPORT_DRAFT_DIR
 
+# 온톨로지 매칭 (선택적 로드)
+try:
+    from ontology.knowledge_graph import run_ontology_match as _run_ontology_match
+    _ONTOLOGY_AVAILABLE = True
+except Exception as _e:
+    _ONTOLOGY_AVAILABLE = False
+    logging.getLogger(__name__).warning("온톨로지 모듈 로드 실패: %s", _e)
+
 router = APIRouter(prefix="/welfare", tags=["복지서비스"])
 logger = logging.getLogger(__name__)
 
@@ -66,14 +74,16 @@ async def search_welfare(req: ProfileRequest):
         ))
 
     # 온톨로지 매칭
+    ont_dict = {}
     ontology_result = None
-    try:
-        from ontology.knowledge_graph import run_ontology_match
-        ont = run_ontology_match(profile)
-        ont_dict = ont.to_dict()
-        ontology_result = OntologyMatchResult(**ont_dict)
-    except Exception as e:
-        logger.error("온톨로지 매칭 실패: %s", e)
+    if _ONTOLOGY_AVAILABLE:
+        try:
+            ont = _run_ontology_match(profile)
+            ont_dict = ont.to_dict()
+            ontology_result = OntologyMatchResult(**ont_dict)
+        except Exception as e:
+            import traceback
+            logger.error("온톨로지 매칭 실패(search): %s\n%s", e, traceback.format_exc())
 
     # Draft 저장
     draft_saved = False
@@ -148,14 +158,15 @@ async def nlp_search_welfare(req: NlpRequest):
         ))
 
     # 온톨로지 매칭
+    ont_dict = {}
     ontology_result = None
-    try:
-        from ontology.knowledge_graph import run_ontology_match
-        ont = run_ontology_match(profile)
-        ont_dict = ont.to_dict()
-        ontology_result = OntologyMatchResult(**ont_dict)
-    except Exception as e:
-        logger.error("온톨로지 매칭 실패: %s", e)
+    if _ONTOLOGY_AVAILABLE:
+        try:
+            ont = _run_ontology_match(profile)
+            ont_dict = ont.to_dict()
+            ontology_result = OntologyMatchResult(**ont_dict)
+        except Exception as e:
+            logger.error("온톨로지 매칭 실패(nlp): %s", e)
 
     # Draft 저장
     draft_saved = False
@@ -219,6 +230,30 @@ async def get_situations():
     """챗봇 STEP 3 선택지 반환."""
     from welfare_analyzer.models.user_profile import LifeSituation
     return {"situations": [s.value for s in LifeSituation if s.value != "기타"]}
+
+
+@router.get("/debug/ontology", summary="온톨로지 디버그 (개발용)")
+async def debug_ontology():
+    """온톨로지 모듈 상태 및 샘플 매칭 결과 반환."""
+    import traceback as tb
+    result = {"available": _ONTOLOGY_AVAILABLE, "error": None, "match": None}
+    if _ONTOLOGY_AVAILABLE:
+        try:
+            from chatbot.parser import build_profile
+            answers = {
+                "age": "58", "region": "서울특별시", "district": "노원구",
+                "life_situations": ["갑작스러운 위기 상황이에요"],
+                "family_status": "혼자 살고 있어요",
+                "income_range": "", "gender": "", "work_status": "",
+            }
+            p = build_profile(answers)
+            ont = _run_ontology_match(p)
+            d = ont.to_dict()
+            result["match"] = d["summary"]
+            result["situations"] = [s.value for s in p.life_situations]
+        except Exception as e:
+            result["error"] = tb.format_exc()
+    return result
 
 
 @router.get("/regions", summary="허용 지역 목록")
