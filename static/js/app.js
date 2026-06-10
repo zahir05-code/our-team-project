@@ -5,6 +5,16 @@ const state = {
   age: "", region: "", district: "",
   life_situations: [], family_status: "",
   income_range: "", gender: "",
+  // 가족 구성원 카운터 (v3.3)
+  family_members: {
+    spouse:      0,  // 배우자/파트너
+    parent:      0,  // 부모
+    child:       0,  // 아동 (0~12세)
+    teen:        0,  // 청소년 (13~18세)
+    youth:       0,  // 청년 (19~34세)
+    middle:      0,  // 중장년 자녀 (35~64세)
+    grandparent: 0,  // 조부모 (65세+)
+  },
 };
 const nlpState = {
   income_range: "", gender: "",
@@ -14,7 +24,7 @@ const nlpState = {
 /* ── 초기화 ── */
 window.addEventListener("DOMContentLoaded", () => {
   renderSituationGrid();
-  renderChips("familyChips",   FAMILY_OPTIONS,  false, "family",   T("family_options"));
+  renderFamilyComposer();   // 가족 구성원 카운터 렌더링
   renderChips("nlpGenderChips",GENDER_OPTIONS,  false, "nlpGender",T("gender_options"));
   renderChips("nlpIncomeChips",INCOME_OPTIONS,  false, "nlpIncome",T("income_options"));
   loadProfile();  // 저장된 프로필 자동 복원
@@ -32,15 +42,34 @@ const MEDIAN_INCOME = {
   5: 710,   // 5인
 };
 
-// 가족상황 → 가구원 수 추정
-function estimateHouseholdSize(familyStatus) {
-  if (!familyStatus || familyStatus.includes("혼자 살")) return 1;
-  if (familyStatus.includes("배우자와 둘")) return 2;
-  if (familyStatus.includes("혼자 아이")) return 2;
-  if (familyStatus.includes("아이와 함께")) return 3;
-  if (familyStatus.includes("어르신")) return 2;
-  if (familyStatus.includes("여러 세대")) return 4;
-  return 2; // 기본값
+// 가족 구성원 카운터 → 가구원 수 계산
+function estimateHouseholdSize() {
+  const m = state.family_members;
+  const total = 1 // 본인
+    + (m.spouse || 0)
+    + (m.parent || 0)
+    + (m.child  || 0)
+    + (m.teen   || 0)
+    + (m.youth  || 0)
+    + (m.middle || 0)
+    + (m.grandparent || 0);
+  return Math.max(1, total);
+}
+
+// 가족 구성원 → 복지 API용 텍스트 요약 생성
+function fcToStatusString() {
+  const m = state.family_members;
+  const total = estimateHouseholdSize();
+  if (total === 1) return "혼자 살고 있어요";
+  const parts = [];
+  if (m.spouse)      parts.push("배우자");
+  if (m.parent)      parts.push(`부모 ${m.parent}명`);
+  if (m.child)       parts.push(`아동 ${m.child}명`);
+  if (m.teen)        parts.push(`청소년 ${m.teen}명`);
+  if (m.youth)       parts.push(`청년 ${m.youth}명`);
+  if (m.middle)      parts.push(`중장년 ${m.middle}명`);
+  if (m.grandparent) parts.push(`조부모 ${m.grandparent}명`);
+  return parts.length ? parts.join(", ") + " 함께" : `${total}인 가구`;
 }
 
 // 소득(만원) + 가구원수 → 중위소득 구간 반환
@@ -67,7 +96,7 @@ function onIncomeInput() {
     return;
   }
 
-  const size   = estimateHouseholdSize(state.family_status);
+  const size   = estimateHouseholdSize();
   const result = calcIncomeRange(val, size);
 
   resultText.textContent = result.label;
@@ -87,14 +116,16 @@ function onIncomeInput() {
 const PROFILE_KEY = "athena_profile_v1";
 
 function saveProfile() {
+  state.family_status = fcToStatusString(); // 카운터 → 텍스트 동기화
   const profile = {
-    region:        state.region,
-    district:      state.district,
-    age:           state.age,
-    family_status: state.family_status,
-    income_range:  state.income_range,
-    income_amount: state.income_amount_maan || "",
-    saved_at:      new Date().toISOString(),
+    region:         state.region,
+    district:       state.district,
+    age:            state.age,
+    family_status:  state.family_status,
+    family_members: state.family_members,
+    income_range:   state.income_range,
+    income_amount:  state.income_amount_maan || "",
+    saved_at:       new Date().toISOString(),
   };
   try { localStorage.setItem(PROFILE_KEY, JSON.stringify(profile)); } catch(e) {}
 }
@@ -120,16 +151,12 @@ function loadProfile() {
       if (btn) pickRegion("경기도", btn);
     }
 
-    // 가족 칩 복원
-    if (p.family_status) {
-      document.querySelectorAll("#familyChips .chip").forEach(c => {
-        if (c.dataset.value === p.family_status) {
-          c.classList.add("active");
-          c.setAttribute("aria-checked", "true");
-          state.family_status = p.family_status;
-        }
-      });
+    // 가족 구성원 카운터 복원
+    if (p.family_members) {
+      Object.assign(state.family_members, p.family_members);
+      renderFamilyComposer(); // UI 재렌더링
     }
+    if (p.family_status) state.family_status = p.family_status;
   } catch(e) {}
 }
 
@@ -180,6 +207,85 @@ function renderChips(containerId, options, multi, key, translatedLabels) {
     chip.onclick = () => toggleChip(chip, opt, multi, key);
     wrap.appendChild(chip);
   });
+}
+
+/* ══════════════════════════════════════════════
+   가족 구성원 카운터 (v3.3)
+══════════════════════════════════════════════ */
+// 멤버 타입별 최댓값
+const FC_MAX = { spouse:1, parent:2, child:10, teen:10, youth:10, middle:10, grandparent:4 };
+
+// 카운터 렌더링
+function renderFamilyComposer() {
+  const wrap = document.getElementById("familyComposer");
+  if (!wrap) return;
+
+  const rows = [
+    { key:"spouse",      icon:"💑",  labelKey:"fc_spouse" },
+    { key:"parent",      icon:"👨‍👩‍👦", labelKey:"fc_parent" },
+    { key:"child",       icon:"👶",  labelKey:"fc_child"  },
+    { key:"teen",        icon:"🧒",  labelKey:"fc_teen"   },
+    { key:"youth",       icon:"🧑",  labelKey:"fc_youth"  },
+    { key:"middle",      icon:"🧑‍💼", labelKey:"fc_middle" },
+    { key:"grandparent", icon:"👴",  labelKey:"fc_grandparent" },
+  ];
+
+  wrap.innerHTML = `
+    <!-- 본인 (고정) -->
+    <div class="fc-row fc-self">
+      <span class="fc-icon">👤</span>
+      <span class="fc-label" data-i18n="fc_self">${T("fc_self") || "나 (본인)"}</span>
+      <div class="fc-counter-fixed"><span class="fc-num-fixed">1</span></div>
+    </div>
+    ${rows.map(r => `
+    <div class="fc-row" id="fc_row_${r.key}">
+      <span class="fc-icon">${r.icon}</span>
+      <div class="fc-label-wrap">
+        <span class="fc-label" data-i18n="${r.labelKey}">${T(r.labelKey) || r.labelKey}</span>
+        <span class="fc-hint" data-i18n="${r.labelKey}_hint">${T(r.labelKey+"_hint") || ""}</span>
+      </div>
+      <div class="fc-counter">
+        <button class="fc-btn fc-minus" onclick="fcChange('${r.key}',-1)"
+                aria-label="감소" ${state.family_members[r.key] === 0 ? "disabled" : ""}>−</button>
+        <span class="fc-num" id="fcn_${r.key}">${state.family_members[r.key]}</span>
+        <button class="fc-btn fc-plus" onclick="fcChange('${r.key}',1)"
+                aria-label="증가" ${state.family_members[r.key] >= FC_MAX[r.key] ? "disabled" : ""}>+</button>
+      </div>
+    </div>`).join("")}
+    <!-- 합계 -->
+    <div class="fc-total-row">
+      <span data-i18n="fc_total">${T("fc_total") || "총 가구원 수"}</span>
+      <span class="fc-total-num" id="fcTotal">${estimateHouseholdSize()}명</span>
+    </div>`;
+}
+
+// 카운터 +/- 처리
+function fcChange(key, delta) {
+  const cur = state.family_members[key] || 0;
+  const next = Math.max(0, Math.min(FC_MAX[key], cur + delta));
+  if (next === cur) return;
+  state.family_members[key] = next;
+
+  // 숫자 업데이트
+  const numEl = document.getElementById(`fcn_${key}`);
+  if (numEl) numEl.textContent = next;
+
+  // 합계 업데이트
+  const totalEl = document.getElementById("fcTotal");
+  if (totalEl) totalEl.textContent = estimateHouseholdSize() + "명";
+
+  // 버튼 상태 업데이트
+  const row = document.getElementById(`fc_row_${key}`);
+  if (row) {
+    row.querySelector(".fc-minus").disabled = (next === 0);
+    row.querySelector(".fc-plus").disabled  = (next >= FC_MAX[key]);
+    row.classList.toggle("fc-active", next > 0);
+  }
+
+  saveProfile();
+  // 소득 재계산 (가구원수 변경되므로)
+  const incEl = document.getElementById("inputIncome");
+  if (incEl && incEl.value) onIncomeInput();
 }
 
 function toggleChip(chip, value, multi, key) {
@@ -658,9 +764,8 @@ function refreshDynamicUI() {
     });
   }
 
-  // 칩 재렌더
+  // 칩 재렌더 (가족 칩 제거 → 카운터로 교체됨)
   [
-    ["familyChips",   FAMILY_OPTIONS,  "family",   T("family_options")],
     ["incomeChips",   INCOME_OPTIONS,  "income",   T("income_options")],
     ["nlpGenderChips",GENDER_OPTIONS,  "nlpGender",T("gender_options")],
     ["nlpIncomeChips",INCOME_OPTIONS,  "nlpIncome",T("income_options")],
@@ -669,10 +774,9 @@ function refreshDynamicUI() {
     if (wrap) { wrap.innerHTML = ""; renderChips(id, opts, false, key, labels); }
   });
 
-  // 활성 칩 복원
-  document.querySelectorAll("#familyChips .chip").forEach(c => {
-    if (c.dataset.value === savedFamily) { c.classList.add("active"); c.setAttribute("aria-checked","true"); }
-  });
+  // 가족 카운터 레이블 재렌더 (언어 변경 시)
+  renderFamilyComposer();
+
   document.querySelectorAll("#incomeChips .chip").forEach(c => {
     if (c.dataset.value === savedIncome) { c.classList.add("active"); c.setAttribute("aria-checked","true"); }
   });
@@ -716,11 +820,23 @@ function renderMyProfile() {
     return;
   }
   const p = JSON.parse(raw);
+  const m = p.family_members || {};
+  const memberParts = [];
+  if (m.spouse)       memberParts.push(`배우자 ${m.spouse}`);
+  if (m.parent)       memberParts.push(`부모 ${m.parent}`);
+  if (m.child)        memberParts.push(`아동 ${m.child}`);
+  if (m.teen)         memberParts.push(`청소년 ${m.teen}`);
+  if (m.youth)        memberParts.push(`청년 ${m.youth}`);
+  if (m.middle)       memberParts.push(`중장년 ${m.middle}`);
+  if (m.grandparent)  memberParts.push(`조부모 ${m.grandparent}`);
+  const totalMem = 1+(m.spouse||0)+(m.parent||0)+(m.child||0)+(m.teen||0)+(m.youth||0)+(m.middle||0)+(m.grandparent||0);
+  const familyVal = memberParts.length ? `총 ${totalMem}명 (${memberParts.join(", ")})` : (p.family_status || "-");
+
   const items = [
     { label: "📍 지역",   value: [p.region, p.district].filter(Boolean).join(" ") || "-" },
     { label: "👤 나이",   value: p.age || "-" },
-    { label: "👨‍👩‍👧 가족",  value: p.family_status || "-" },
-    { label: "💰 소득",   value: p.income_amount_maan ? `월 ${p.income_amount_maan}만원` : (p.income_range || "-") },
+    { label: "👨‍👩‍👧 가족",  value: familyVal },
+    { label: "💰 소득",   value: p.income_amount ? `월 ${p.income_amount}만원` : (p.income_range || "-") },
   ];
   grid.innerHTML = items.map(it => `
     <div class="mypage-profile-item">

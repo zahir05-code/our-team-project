@@ -98,11 +98,13 @@
                aria-label="나이 입력" data-i18n-ph="age_ph"
                oninput="onAgeInput()">
 
-        <!-- 가족 상황 (첫화면 통합) -->
-        <p class="step-q" style="margin-top:22px;" data-i18n="label_family">가족 상황</p>
-        <p class="step-sub" data-i18n="sub_family">해당하는 상황을 선택해 주세요</p>
-        <div class="chip-wrap" id="familyChips"
-             role="group" aria-label="가족 상황 선택"></div>
+        <!-- 가족 구성원 카운터 -->
+        <p class="step-q" style="margin-top:22px;" data-i18n="label_family">가족 구성원</p>
+        <p class="step-sub" data-i18n="sub_family">함께 사는 구성원을 선택하세요</p>
+        <div class="family-composer" id="familyComposer"
+             role="group" aria-label="가족 구성원 설정">
+          <!-- JS renderFamilyComposer()로 채워짐 -->
+        </div>
 
         <!-- 소득 직접 입력 → 중위소득 자동 변환 -->
         <p class="step-q" style="margin-top:22px;">
@@ -362,9 +364,9 @@
     </div>
   </footer>
 
-  <script src="/static/js/data.js?v=3.2"></script>
-  <script src="/static/js/i18n.js?v=3.2"></script>
-  <script src="/static/js/translations.js?v=3.2"></script>
-  <script src="/static/js/app.js?v=3.2"></script>
+  <script src="/static/js/data.js?v=3.3"></script>
+  <script src="/static/js/i18n.js?v=3.3"></script>
+  <script src="/static/js/translations.js?v=3.3"></script>
+  <script src="/static/js/app.js?v=3.3"></script>
 </body>
 </html>

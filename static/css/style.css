@@ -657,6 +657,133 @@ body {
 }
 
 /* ════════════════════════════════════════
+   가족 구성원 카운터 (v3.3)
+════════════════════════════════════════ */
+.family-composer {
+  background: #fff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 18px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+/* 본인 (고정 행) */
+.fc-self {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  border-bottom: 1.5px solid #bfdbfe !important;
+  cursor: default;
+}
+.fc-counter-fixed {
+  display: flex; align-items: center; justify-content: center;
+  width: 88px;
+}
+.fc-num-fixed {
+  font-size: 1.1rem; font-weight: 800; color: #2563eb;
+  background: #dbeafe; border-radius: 10px;
+  padding: 6px 18px;
+}
+
+/* 일반 행 */
+.fc-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background 0.15s;
+}
+.fc-row:last-of-type { border-bottom: none; }
+.fc-row.fc-active { background: #f0fdf4; }
+
+.fc-icon {
+  font-size: 1.35rem;
+  width: 30px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.fc-label-wrap {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.fc-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1e3a8a;
+}
+.fc-hint {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  line-height: 1.3;
+}
+
+/* 카운터 버튼 */
+.fc-counter {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.fc-btn {
+  width: 34px; height: 34px;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2563eb;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.12s;
+  flex-shrink: 0;
+}
+.fc-btn:hover:not(:disabled) { background: #dbeafe; }
+.fc-btn:disabled { color: #cbd5e1; cursor: default; }
+.fc-btn.fc-minus { border-right: 1px solid #e2e8f0; }
+.fc-btn.fc-plus  { border-left:  1px solid #e2e8f0; }
+.fc-num {
+  width: 32px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 34px;
+}
+
+/* 합계 행 */
+.fc-total-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 16px;
+  background: #f8fafc;
+  border-top: 1.5px solid #e2e8f0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+}
+.fc-total-num {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #2563eb;
+  background: #eff6ff;
+  padding: 4px 14px;
+  border-radius: 20px;
+}
+
+/* 모바일 */
+@media (max-width: 400px) {
+  .fc-btn  { width: 30px; height: 30px; font-size: 1rem; }
+  .fc-num  { width: 26px; line-height: 30px; font-size: 0.9rem; }
+  .fc-label { font-size: 0.82rem; }
+}
+
+/* ════════════════════════════════════════
    마이페이지 버튼 (헤더)
 ════════════════════════════════════════ */
 .mypage-shortcut {
