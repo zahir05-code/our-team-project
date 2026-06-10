@@ -89,32 +89,55 @@ def _try_bokjiro_api_update() -> bool:
 def run_policy_update():
     """
     스케줄러가 주기적으로 호출하는 갱신 함수.
-    1. 복지로 API 시도
-    2. 실패 시 정적 DB 유지
-    3. 만료 정책 체크
-    4. 상태 업데이트
+    1. GOV API → Supabase 수집 시도
+    2. 복지로 API 시도
+    3. 실패 시 정적 DB 유지
+    4. 만료 정책 체크
+    5. 상태 업데이트
     """
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     logger.info(f"[Updater] 정책 갱신 시작 — {now}")
     update_status["last_run"] = now
 
-    # API 갱신 시도
-    api_ok = _try_bokjiro_api_update()
+    # ① 정부24 복지서비스 API → Supabase 수집
+    gov_ok = False
+    try:
+        from ontology.welfare_collector import collect_one_page, get_supabase_policy_count
+        # 매 실행마다 다음 페이지 순환 (1~10페이지)
+        page = (update_status.get("_next_page", 1))
+        result = collect_one_page(page=page)
+        gov_ok = result.get("ok", False)
+        if gov_ok:
+            update_status["_next_page"] = (page % 10) + 1
+            supa_count = get_supabase_policy_count()
+            update_status["supabase_count"] = supa_count
+            update_status["source"] = "gov24_api"
+            logger.info(f"[Updater] Supabase 정책 총 {supa_count}건")
+    except Exception as e:
+        logger.warning(f"[Updater] GOV API 수집 오류: {e}")
 
-    # 만료 정책 확인
+    # ② 복지로 API 시도 (별도 키)
+    api_ok = _try_bokjiro_api_update() if not gov_ok else False
+
+    # ③ 만료 정책 확인
     expired = check_expired_policies()
     if expired:
         logger.warning(f"[Updater] 만료 정책 {len(expired)}개: {expired}")
 
-    # 상태 기록
+    # ④ 상태 기록
     from ontology.policies_db import get_all_policies
-    count = len(get_all_policies())
+    static_count = len(get_all_policies())
+    supa_count = update_status.get("supabase_count", 0)
+    total = max(static_count, supa_count)
+
     update_status["last_success"] = now
-    update_status["total_policies"] = count
-    update_status["message"] = (
-        f"API 갱신 성공 ({count}개)" if api_ok
-        else f"정적 DB 사용 중 ({count}개) · API 키 필요"
-    )
+    update_status["total_policies"] = total
+    if gov_ok:
+        update_status["message"] = f"GOV24 API 수집 완료 (Supabase {supa_count}건 + 정적 {static_count}건)"
+    elif api_ok:
+        update_status["message"] = f"복지로 API 갱신 완료 ({total}개)"
+    else:
+        update_status["message"] = f"정적 DB 사용 중 ({static_count}개) · Supabase {supa_count}건 누적"
     logger.info(f"[Updater] 완료 — {update_status['message']}")
 
 
