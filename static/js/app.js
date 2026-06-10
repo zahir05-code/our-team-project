@@ -680,3 +680,146 @@ function refreshDynamicUI() {
 
 /* ── 재조회 ── */
 function retry() { location.reload(); }
+
+/* ══════════════════════════════════════════════
+   마이페이지 — localStorage 기반 프로필·저장 결과
+   키: athena_profile_v1 (프로필)
+       athena_saved_results (저장된 복지 목록)
+══════════════════════════════════════════════ */
+const SAVED_KEY = "athena_saved_results";
+
+/* ── 마이페이지 열기 ── */
+function openMyPage() {
+  renderMyProfile();
+  renderSavedList();
+  const modal = document.getElementById("myPageModal");
+  modal.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
+/* ── 마이페이지 닫기 ── */
+function closeMyPage() {
+  document.getElementById("myPageModal").classList.add("hidden");
+  document.body.style.overflow = "";
+}
+function closeMyPageOutside(e) {
+  if (e.target.id === "myPageModal") closeMyPage();
+}
+
+/* ── 내 정보 렌더링 ── */
+function renderMyProfile() {
+  const grid = document.getElementById("myPageProfile");
+  if (!grid) return;
+  const raw = localStorage.getItem(PROFILE_KEY);
+  if (!raw) {
+    grid.innerHTML = `<p style="color:#94a3b8;font-size:0.83rem;padding:8px 0">${T("mypage_no_profile") || "저장된 정보가 없습니다. 조건을 입력하면 자동 저장됩니다."}</p>`;
+    return;
+  }
+  const p = JSON.parse(raw);
+  const items = [
+    { label: "📍 지역",   value: [p.region, p.district].filter(Boolean).join(" ") || "-" },
+    { label: "👤 나이",   value: p.age || "-" },
+    { label: "👨‍👩‍👧 가족",  value: p.family_status || "-" },
+    { label: "💰 소득",   value: p.income_amount_maan ? `월 ${p.income_amount_maan}만원` : (p.income_range || "-") },
+  ];
+  grid.innerHTML = items.map(it => `
+    <div class="mypage-profile-item">
+      <div class="mypage-profile-label">${it.label}</div>
+      <div class="mypage-profile-value">${it.value}</div>
+    </div>`).join("");
+}
+
+/* ── 저장된 복지 목록 렌더링 ── */
+function renderSavedList() {
+  const listEl = document.getElementById("myPageSavedList");
+  const emptyEl = document.getElementById("myPageEmpty");
+  if (!listEl) return;
+
+  const saved = JSON.parse(localStorage.getItem(SAVED_KEY) || "[]");
+  if (saved.length === 0) {
+    listEl.innerHTML = "";
+    if (emptyEl) emptyEl.classList.remove("hidden");
+    return;
+  }
+  if (emptyEl) emptyEl.classList.add("hidden");
+
+  listEl.innerHTML = saved.map((item, idx) => `
+    <div class="mypage-saved-card">
+      <div class="mypage-saved-card-body">
+        <div class="mypage-saved-card-title">${item.title || "-"}</div>
+        <div class="mypage-saved-card-desc">${item.desc || ""}</div>
+        <div class="mypage-saved-card-date">📅 ${item.saved_at || ""}</div>
+      </div>
+      <button class="mypage-saved-del" onclick="deleteSavedResult(${idx})" title="삭제">✕</button>
+    </div>`).join("");
+}
+
+/* ── 개별 저장 항목 삭제 ── */
+function deleteSavedResult(idx) {
+  const saved = JSON.parse(localStorage.getItem(SAVED_KEY) || "[]");
+  saved.splice(idx, 1);
+  localStorage.setItem(SAVED_KEY, JSON.stringify(saved));
+  renderSavedList();
+}
+
+/* ── 현재 결과 마이페이지에 저장 ── */
+function saveResultToMyPage() {
+  // 현재 결과 카드에서 타이틀/설명 수집
+  const cards = document.querySelectorAll("#resultList .result-card, #resultList .policy-card");
+  if (cards.length === 0) {
+    showToast(T("mypage_no_result") || "저장할 결과가 없습니다.");
+    return;
+  }
+
+  const saved = JSON.parse(localStorage.getItem(SAVED_KEY) || "[]");
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,"0")}.${String(now.getDate()).padStart(2,"0")}`;
+
+  let addedCount = 0;
+  cards.forEach(card => {
+    const titleEl = card.querySelector(".card-title, .policy-title, h3, h4");
+    const descEl  = card.querySelector(".card-desc, .policy-desc, p");
+    const title   = titleEl ? titleEl.textContent.trim() : "복지 서비스";
+    const desc    = descEl  ? descEl.textContent.trim().slice(0, 80) : "";
+
+    // 중복 체크 (같은 타이틀이면 스킵)
+    const alreadyExists = saved.some(s => s.title === title);
+    if (!alreadyExists) {
+      saved.push({ title, desc, saved_at: dateStr });
+      addedCount++;
+    }
+  });
+
+  localStorage.setItem(SAVED_KEY, JSON.stringify(saved));
+
+  if (addedCount > 0) {
+    showToast(`✅ ${addedCount}개 복지 서비스를 마이페이지에 저장했습니다.`);
+  } else {
+    showToast("이미 저장된 항목입니다.");
+  }
+}
+
+/* ── 전체 삭제 ── */
+function clearMyPage() {
+  if (!confirm("저장된 모든 정보를 삭제하시겠습니까?")) return;
+  localStorage.removeItem(PROFILE_KEY);
+  localStorage.removeItem(SAVED_KEY);
+  renderMyProfile();
+  renderSavedList();
+  showToast("🗑 저장 정보가 삭제되었습니다.");
+}
+
+/* ── 토스트 알림 ── */
+function showToast(msg) {
+  let toast = document.getElementById("saveToast");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "saveToast";
+    toast.className = "save-toast";
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.classList.add("show");
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => toast.classList.remove("show"), 2800);
+}

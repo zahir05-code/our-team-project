@@ -113,6 +113,14 @@ const I18N = {
       "중앙정부":"중앙정부","지자체":"지자체",
       "여성 특화 서비스":"여성 특화 서비스","남성 특화 서비스":"남성 특화 서비스","환급금·지원금":"환급금·지원금"
     },
+    mypage_btn:       "마이페이지",
+    mypage_title:     "마이페이지",
+    mypage_profile:   "내 정보",
+    mypage_saved:     "저장된 복지 혜택",
+    mypage_edit:      "✏️ 정보 수정하기",
+    mypage_empty:     "아직 저장된 복지 서비스가 없습니다. 결과 화면에서 📌 버튼을 눌러 저장하세요.",
+    mypage_clear:     "🗑 저장 정보 전체 삭제",
+    btn_save_result:  "📌 이 결과 마이페이지에 저장",
   },
 
   /* ─────────── English ─────────── */
@@ -215,6 +223,14 @@ const I18N = {
       "중앙정부":"Central Government","지자체":"Local Government",
       "여성 특화 서비스":"Women's Services","남성 특화 서비스":"Men's Services","환급금·지원금":"Refunds & Subsidies"
     },
+    mypage_btn:       "My Page",
+    mypage_title:     "My Page",
+    mypage_profile:   "My Profile",
+    mypage_saved:     "Saved Benefits",
+    mypage_edit:      "✏️ Edit Profile",
+    mypage_empty:     "No saved benefits yet. Press 📌 on the results screen to save.",
+    mypage_clear:     "🗑 Delete All Saved Data",
+    btn_save_result:  "📌 Save These Results to My Page",
   },
 
   /* ─────────── 中文 (简体) ─────────── */
@@ -317,6 +333,14 @@ const I18N = {
       "중앙정부":"中央政府","지자체":"地方政府",
       "여성 특화 서비스":"女性专项服务","남성 특화 서비스":"男性专项服务","환급금·지원금":"退款·补贴"
     },
+    mypage_btn:       "我的页面",
+    mypage_title:     "我的页面",
+    mypage_profile:   "我的信息",
+    mypage_saved:     "已保存的福利",
+    mypage_edit:      "✏️ 修改信息",
+    mypage_empty:     "尚无已保存的福利服务。在结果页面点击 📌 按钮即可保存。",
+    mypage_clear:     "🗑 删除所有保存的信息",
+    btn_save_result:  "📌 将此结果保存到我的页面",
   },
 
   /* ─────────── 日本語 ─────────── */
@@ -419,6 +443,14 @@ const I18N = {
       "중앙정부":"中央政府","지자체":"地方自治体",
       "여성 특화 서비스":"女性向けサービス","남성 특화 서비스":"男性向けサービス","환급금·지원금":"還付金·支援金"
     },
+    mypage_btn:       "マイページ",
+    mypage_title:     "マイページ",
+    mypage_profile:   "マイ情報",
+    mypage_saved:     "保存した福祉給付",
+    mypage_edit:      "✏️ 情報を編集",
+    mypage_empty:     "まだ保存された福祉サービスはありません。結果画面で 📌 ボタンを押して保存してください。",
+    mypage_clear:     "🗑 保存情報をすべて削除",
+    btn_save_result:  "📌 この結果をマイページに保存",
   },
 
   /* ─────────── Tiếng Việt ─────────── */
@@ -521,6 +553,14 @@ const I18N = {
       "중앙정부":"Chính phủ Trung ương","지자체":"Chính quyền địa phương",
       "여성 특화 서비스":"Dịch vụ cho Phụ nữ","남성 특화 서비스":"Dịch vụ cho Nam giới","환급금·지원금":"Hoàn tiền & Trợ cấp"
     },
+    mypage_btn:       "Trang của tôi",
+    mypage_title:     "Trang của tôi",
+    mypage_profile:   "Thông tin của tôi",
+    mypage_saved:     "Phúc lợi đã lưu",
+    mypage_edit:      "✏️ Chỉnh sửa thông tin",
+    mypage_empty:     "Chưa có dịch vụ phúc lợi nào được lưu. Nhấn 📌 ở màn hình kết quả để lưu.",
+    mypage_clear:     "🗑 Xóa tất cả thông tin đã lưu",
+    btn_save_result:  "📌 Lưu kết quả này vào trang của tôi",
   },
 
   /* ─────────── ภาษาไทย ─────────── */
@@ -623,6 +663,14 @@ const I18N = {
       "중앙정부":"รัฐบาลกลาง","지자체":"รัฐบาลท้องถิ่น",
       "여성 특화 서비스":"บริการสำหรับผู้หญิง","남성 특화 서비스":"บริการสำหรับผู้ชาย","환급금·지원금":"เงินคืน & เงินอุดหนุน"
     },
+    mypage_btn:       "หน้าของฉัน",
+    mypage_title:     "หน้าของฉัน",
+    mypage_profile:   "ข้อมูลของฉัน",
+    mypage_saved:     "สวัสดิการที่บันทึกไว้",
+    mypage_edit:      "✏️ แก้ไขข้อมูล",
+    mypage_empty:     "ยังไม่มีบริการสวัสดิการที่บันทึกไว้ กด 📌 ที่หน้าผลลัพธ์เพื่อบันทึก",
+    mypage_clear:     "🗑 ลบข้อมูลที่บันทึกทั้งหมด",
+    btn_save_result:  "📌 บันทึกผลลัพธ์นี้ไปยังหน้าของฉัน",
   },
 
   /* ─────────── ភាសាខ្មែរ (Khmer) ─────────── */
@@ -725,6 +773,14 @@ const I18N = {
       "중앙정부":"រដ្ឋាភិបាលកណ្តាល","지자체":"រដ្ឋាភិបាលក្នុងស្រុក",
       "여성 특화 서비스":"សេវាសម្រាប់ស្ត្រី","남성 특화 서비스":"សេវាសម្រាប់បុរស","환급금·지원금":"ការសងប្រាក់ & ប្រាក់ឧបត្ថម្ភ"
     },
+    mypage_btn:       "ទំព័ររបស់ខ្ញុំ",
+    mypage_title:     "ទំព័ររបស់ខ្ញុំ",
+    mypage_profile:   "ព័ត៌មានរបស់ខ្ញុំ",
+    mypage_saved:     "សុខុមាលភាពដែលបានរក្សាទុក",
+    mypage_edit:      "✏️ កែប្រែព័ត៌មាន",
+    mypage_empty:     "មិនទាន់មានសេវាសុខុមាលភាពដែលបានរក្សាទុកទេ។ ចុច 📌 នៅអេក្រង់លទ្ធផលដើម្បីរក្សាទុក។",
+    mypage_clear:     "🗑 លុបព័ត៌មានដែលបានរក្សាទុកទាំងអស់",
+    btn_save_result:  "📌 រក្សាទុកលទ្ធផលនេះទៅទំព័ររបស់ខ្ញុំ",
   },
 };
 
