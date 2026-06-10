@@ -75,8 +75,8 @@ function toggleChip(chip, value, multi, key) {
   chip.classList.add("active");
   chip.setAttribute("aria-checked", "true");
   if (key === "family")    state.family_status      = value;
-  if (key === "income")    state.income_range       = value;
-  if (key === "nlpIncome") nlpState.income_range    = value;
+  if (key === "income")    state.income_range       = INCOME_VALUE_MAP[value] || value;
+  if (key === "nlpIncome") nlpState.income_range    = INCOME_VALUE_MAP[value] || value;
   if (key === "nlpGender") nlpState.gender = GENDER_VALUE_MAP[value] || value;
 }
 
