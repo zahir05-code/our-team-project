@@ -15,10 +15,123 @@ const nlpState = {
 window.addEventListener("DOMContentLoaded", () => {
   renderSituationGrid();
   renderChips("familyChips",   FAMILY_OPTIONS,  false, "family",   T("family_options"));
-  renderChips("incomeChips",   INCOME_OPTIONS,  false, "income",   T("income_options"));
   renderChips("nlpGenderChips",GENDER_OPTIONS,  false, "nlpGender",T("gender_options"));
   renderChips("nlpIncomeChips",INCOME_OPTIONS,  false, "nlpIncome",T("income_options"));
+  loadProfile();  // 저장된 프로필 자동 복원
 });
+
+/* ══════════════════════════════════════════════
+   중위소득 자동 변환 엔진 (2025년 기준)
+   가구원 수별 기준 중위소득 (월, 만원)
+══════════════════════════════════════════════ */
+const MEDIAN_INCOME = {
+  1: 239,   // 1인 가구 약 239만원
+  2: 393,   // 2인
+  3: 502,   // 3인
+  4: 609,   // 4인
+  5: 710,   // 5인
+};
+
+// 가족상황 → 가구원 수 추정
+function estimateHouseholdSize(familyStatus) {
+  if (!familyStatus || familyStatus.includes("혼자 살")) return 1;
+  if (familyStatus.includes("배우자와 둘")) return 2;
+  if (familyStatus.includes("혼자 아이")) return 2;
+  if (familyStatus.includes("아이와 함께")) return 3;
+  if (familyStatus.includes("어르신")) return 2;
+  if (familyStatus.includes("여러 세대")) return 4;
+  return 2; // 기본값
+}
+
+// 소득(만원) + 가구원수 → 중위소득 구간 반환
+function calcIncomeRange(incomeMaan, householdSize) {
+  const base = MEDIAN_INCOME[Math.min(householdSize, 5)] || 239;
+  const ratio = incomeMaan / base; // 중위소득 대비 비율
+
+  if (ratio < 0.3)  return { label: "중위소득 30% 이하 (기초생활수급 대상 가능)",  value: "거의 없어요",           ratio: Math.round(ratio*100), warn: true };
+  if (ratio < 0.5)  return { label: `중위소득 약 ${Math.round(ratio*100)}% — 차상위계층 해당 가능`, value: "중위소득 50% 이하",   ratio: Math.round(ratio*100), warn: false };
+  if (ratio < 1.0)  return { label: `중위소득 약 ${Math.round(ratio*100)}% — 저소득층 지원 가능`,  value: "중위소득 50~100%",   ratio: Math.round(ratio*100), warn: false };
+  if (ratio < 1.5)  return { label: `중위소득 약 ${Math.round(ratio*100)}% — 일반 복지서비스 대상`, value: "중위소득 100~150%",  ratio: Math.round(ratio*100), warn: false };
+  return              { label: `중위소득 약 ${Math.round(ratio*100)}% — 일부 서비스 이용 가능`,    value: "중위소득 150% 이상", ratio: Math.round(ratio*100), warn: false };
+}
+
+function onIncomeInput() {
+  const val = parseInt(document.getElementById("inputIncome").value, 10);
+  const resultBox  = document.getElementById("incomeResult");
+  const resultText = document.getElementById("incomeResultText");
+
+  if (!val || val <= 0) {
+    resultBox.classList.add("hidden");
+    state.income_range = "";
+    saveProfile();
+    return;
+  }
+
+  const size   = estimateHouseholdSize(state.family_status);
+  const result = calcIncomeRange(val, size);
+
+  resultText.textContent = result.label;
+  resultBox.classList.remove("hidden", "warn");
+  if (result.warn) resultBox.classList.add("warn");
+
+  // 백엔드 전송용 값 저장
+  state.income_range       = result.value;
+  state.income_amount_maan = val;   // 실제 입력값도 보관
+
+  saveProfile();  // localStorage 자동 저장
+}
+
+/* ══════════════════════════════════════════════
+   localStorage — 개인 프로필 저장/복원
+══════════════════════════════════════════════ */
+const PROFILE_KEY = "athena_profile_v1";
+
+function saveProfile() {
+  const profile = {
+    region:        state.region,
+    district:      state.district,
+    age:           state.age,
+    family_status: state.family_status,
+    income_range:  state.income_range,
+    income_amount: state.income_amount_maan || "",
+    saved_at:      new Date().toISOString(),
+  };
+  try { localStorage.setItem(PROFILE_KEY, JSON.stringify(profile)); } catch(e) {}
+}
+
+function loadProfile() {
+  try {
+    const raw = localStorage.getItem(PROFILE_KEY);
+    if (!raw) return;
+    const p = JSON.parse(raw);
+
+    // 상태 복원
+    if (p.age)           { state.age = p.age; document.getElementById("inputAge").value = p.age; }
+    if (p.income_amount) { document.getElementById("inputIncome").value = p.income_amount; }
+    if (p.income_range)  { state.income_range = p.income_range; }
+    if (p.income_amount) { onIncomeInput(); } // 변환 결과 재표시
+
+    // 지역 복원
+    if (p.region === "서울특별시") {
+      const btn = document.getElementById("btnSeoul");
+      if (btn) pickRegion("서울특별시", btn);
+    } else if (p.region === "경기도") {
+      const btn = document.getElementById("btnGyeonggi");
+      if (btn) pickRegion("경기도", btn);
+    }
+
+    // 가족 칩 복원
+    if (p.family_status) {
+      document.querySelectorAll("#familyChips .chip").forEach(c => {
+        if (c.dataset.value === p.family_status) {
+          c.classList.add("active");
+          c.setAttribute("aria-checked", "true");
+          state.family_status = p.family_status;
+        }
+      });
+    }
+  } catch(e) {}
+}
 
 /* ── 상황 그리드 렌더링 ── */
 function renderSituationGrid() {
@@ -74,7 +187,13 @@ function toggleChip(chip, value, multi, key) {
     .forEach(c => { c.classList.remove("active"); c.setAttribute("aria-checked","false"); });
   chip.classList.add("active");
   chip.setAttribute("aria-checked", "true");
-  if (key === "family")    state.family_status      = value;
+  if (key === "family") {
+    state.family_status = value;
+    saveProfile();
+    // 가족 변경 시 소득 재계산 (가구원수 바뀌므로)
+    const incVal = document.getElementById("inputIncome");
+    if (incVal && incVal.value) onIncomeInput();
+  }
   if (key === "income")    state.income_range       = INCOME_VALUE_MAP[value] || value;
   if (key === "nlpIncome") nlpState.income_range    = INCOME_VALUE_MAP[value] || value;
   if (key === "nlpGender") nlpState.gender = GENDER_VALUE_MAP[value] || value;

@@ -228,6 +228,38 @@ body {
 .example-title { font-size: 0.75rem; color: #9ca3af; margin-bottom: 6px; font-weight: 600; }
 .example-item  { font-size: 0.8rem; color: #4b5563; line-height: 1.8; }
 .nlp-opts-row  { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+/* 소득 직접 입력 */
+.income-input-wrap { margin-bottom: 4px; }
+.income-input-row {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
+}
+.income-input {
+  flex: 1; padding: 14px 16px;
+  border: 2px solid #e5e7eb; border-radius: 14px;
+  font-size: 1.3rem; font-weight: 700; color: #111827;
+  text-align: center; outline: none;
+  transition: border-color 0.15s;
+  -moz-appearance: textfield;
+}
+.income-input::-webkit-outer-spin-button,
+.income-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.income-input:focus { border-color: #2563eb; }
+.income-unit {
+  font-size: 0.95rem; font-weight: 700; color: #6b7280; white-space: nowrap;
+}
+.income-result {
+  display: flex; align-items: center; gap: 8px;
+  background: #eff6ff; border: 1.5px solid #bfdbfe;
+  border-radius: 12px; padding: 10px 14px;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:none; } }
+.income-result-arrow { font-size: 1rem; color: #2563eb; font-weight: 900; }
+.income-result-text  { font-size: 0.88rem; font-weight: 700; color: #1e40af; }
+.income-result.warn  { background: #fff7ed; border-color: #fed7aa; }
+.income-result.warn .income-result-text  { color: #c2410c; }
+.income-result.warn .income-result-arrow { color: #f97316; }
+
 /* 음성 입력 */
 .voice-input-wrap {
   display: flex; align-items: center; gap: 10px;

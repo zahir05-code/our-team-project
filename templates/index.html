@@ -101,14 +101,27 @@
         <div class="chip-wrap" id="familyChips"
              role="group" aria-label="가족 상황 선택"></div>
 
-        <!-- 소득 수준 (직관적 금액 표기) -->
+        <!-- 소득 직접 입력 → 중위소득 자동 변환 -->
         <p class="step-q" style="margin-top:22px;">
           <span data-i18n="label_income">월 소득이 어느 정도인가요?</span>
           <span class="optional" data-i18n="optional">선택</span>
         </p>
-        <p class="step-sub" data-i18n="sub_income">월 가구 소득을 기준으로 선택해 주세요</p>
-        <div class="chip-wrap" id="incomeChips"
-             role="group" aria-label="소득 수준 선택"></div>
+        <p class="step-sub" data-i18n="sub_income">가구 전체 월 소득을 만원 단위로 입력하세요</p>
+
+        <div class="income-input-wrap">
+          <div class="income-input-row">
+            <input class="income-input" type="number" id="inputIncome"
+                   placeholder="예: 180" min="0" max="9999"
+                   aria-label="월 소득 입력 (만원)"
+                   oninput="onIncomeInput()">
+            <span class="income-unit" data-i18n="income_unit">만원 / 월</span>
+          </div>
+          <!-- 자동 변환 결과 표시 -->
+          <div class="income-result hidden" id="incomeResult">
+            <span class="income-result-arrow">→</span>
+            <span class="income-result-text" id="incomeResultText"></span>
+          </div>
+        </div>
 
         <button class="btn-main disabled" id="btnA" onclick="goToB()"
                 aria-label="다음 단계로 이동" data-i18n="btn_next" style="margin-top:24px;">
