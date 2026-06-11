@@ -21,12 +21,20 @@ LIST_ENDPOINT  = f"{API_BASE}/NationalWelfarelistV001"
 DETAIL_ENDPOINT = f"{API_BASE}/NationalWelfaredetailedV001"
 
 
-def _get_supabase():
-    """Supabase 클라이언트 반환 (환경변수 없으면 None)."""
+def _get_supabase(write=False):
+    """
+    Supabase 클라이언트 반환.
+    write=True → service_role 키 사용 (RLS 우회, 서버 전용)
+    write=False → anon 키 사용 (읽기 전용)
+    """
     url = os.environ.get("SUPABASE_URL")
-    key = os.environ.get("SUPABASE_KEY")
+    if write:
+        key = os.environ.get("SUPABASE_SERVICE_KEY") or os.environ.get("SUPABASE_KEY")
+    else:
+        key = os.environ.get("SUPABASE_KEY")
+
     if not url or not key:
-        logger.warning("[Collector] SUPABASE_URL 또는 SUPABASE_KEY 없음")
+        logger.warning("[Collector] SUPABASE_URL 또는 KEY 없음")
         return None
     try:
         from supabase import create_client
@@ -180,7 +188,7 @@ def upsert_policies(policies: list[dict]) -> tuple[int, int]:
     Supabase welfare_policies에 upsert.
     Returns: (upserted_count, error_count)
     """
-    client = _get_supabase()
+    client = _get_supabase(write=True)
     if not client or not policies:
         return 0, 0
 
@@ -205,7 +213,7 @@ def upsert_policies(policies: list[dict]) -> tuple[int, int]:
 
 def log_update(source: str, total: int, new_count: int, message: str):
     """update_logs 테이블에 수집 결과 기록."""
-    client = _get_supabase()
+    client = _get_supabase(write=True)
     if not client:
         return
     try:
