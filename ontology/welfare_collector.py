@@ -56,7 +56,7 @@ def fetch_policy_list(page: int = 1, per_page: int = 100) -> list[dict]:
         return []
 
     # data.go.kr는 serviceKey를 URL에 직접 삽입해야 함 (requests params 사용 시 이중 인코딩 오류)
-    url = f"{LIST_ENDPOINT}?serviceKey={api_key}&pageNo={page}&numOfRows={per_page}&srchKeyCode=001&inqTrgtCd=A&lifeArray=&trgterIndvdlArray="
+    url = f"{LIST_ENDPOINT}?serviceKey={api_key}&pageNo={page}&numOfRows={per_page}&srchKeyCode=001"
 
     try:
         resp = requests.get(url, timeout=15)
@@ -89,31 +89,38 @@ def fetch_policy_detail(service_id: str) -> Optional[dict]:
 
 
 def _parse_list_xml(xml_text: str) -> list[dict]:
-    """목록 API XML 파싱."""
+    """목록 API XML 파싱 (실제 응답 구조 기준)."""
     policies = []
     try:
         root = ET.fromstring(xml_text)
-        items = root.findall(".//wlfareInfo")
+
+        # 오류 체크
+        result_code = root.findtext("resultCode", "")
+        if result_code != "0":
+            logger.warning(f"[Collector] API 오류 코드: {result_code} — {root.findtext('resultMessage', '')}")
+            return []
+
+        items = root.findall(".//servList")
         for item in items:
             def t(tag):
                 el = item.find(tag)
                 return el.text.strip() if el is not None and el.text else ""
 
             policy = {
-                "policy_id":     t("wlfareInfoId") or t("serviceId"),
-                "name":          t("wlfareInfoNm") or t("serviceName"),
-                "description":   t("wlfareInfoOutlCn") or t("summary"),
-                "target":        t("trgterIndvdlCn") or t("target"),
-                "benefit":       t("giveBnftCn") or t("benefit"),
-                "how_to_apply":  t("aplyMthdCn") or t("applyMethod"),
-                "contact":       t("inqirePlcCn") or t("contact"),
-                "url":           t("wlfareInfoReldBizUrl") or t("url"),
-                "source":        t("wlfareInfoProvidOrgnCd") or "복지로",
-                "category":      t("lifeNmArray") or t("lifeCycle"),
-                "tags":          _split_tags(t("lifeNmArray") or t("keywords")),
-                "regions":       _parse_regions(t("sigunguCd") or ""),
-                "income_levels": _parse_income(t("sprtTrgtCn") or ""),
-                "deadline":      t("jdgBasisCn") or "",
+                "policy_id":     t("servId"),
+                "name":          t("servNm"),
+                "description":   t("servDgst"),
+                "target":        t("lifeArray"),
+                "benefit":       t("srvPvsnNm"),
+                "how_to_apply":  "Y" if t("onapPsbltYn") == "Y" else "방문/전화 신청",
+                "contact":       t("rprsCtadr"),
+                "url":           t("servDtlLink"),
+                "source":        t("jurMnofNm") or "복지로",
+                "category":      t("lifeArray"),
+                "tags":          _split_tags(t("intrsThemaArray") + "," + t("lifeArray")),
+                "regions":       ["서울특별시", "경기도"],
+                "income_levels": _parse_income(t("lifeArray")),
+                "deadline":      "",
                 "is_active":     True,
             }
 
