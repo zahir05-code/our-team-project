@@ -1301,7 +1301,7 @@ function toggleProfileSection() {
   if (icon) icon.textContent = hidden ? "▾" : "▸";
 }
 
-/* ── 내 프로필로 혜택 다시 조회 ── */
+/* ── 장바구니 재조회 ── */
 function walletRequery() {
   const raw = localStorage.getItem(PROFILE_KEY);
   if (!raw) { showToast("⚠️ 저장된 프로필이 없습니다. 혜택진단을 먼저 해주세요."); return; }
@@ -1510,7 +1510,7 @@ function saveResultToMyPage() {
 
   if (saved.length > 10) saved.splice(10);
   localStorage.setItem(SAVED_KEY, JSON.stringify(saved));
-  showToast(`✅ ${total}건 복지혜택을 내정보에 저장했습니다.`);
+  showToast(`🛒 ${total}건 혜택을 장바구니에 담았습니다!`);
 }
 
 /* ── 전체 삭제 ── */

@@ -121,7 +121,7 @@ const I18N = {
     mypage_empty:     "아직 저장된 복지 서비스가 없습니다. 결과 화면에서 📌 버튼을 눌러 저장하세요.",
     mypage_clear:     "🗑 저장 정보 전체 삭제",
     mypage_no_result: "저장할 결과가 없습니다. 먼저 복지서비스를 조회해 주세요.",
-    btn_save_result:  "📌 이 결과 내정보에 저장",
+    btn_save_result:  "🛒 이 결과 장바구니에 담기",
     sub_family:       "함께 사는 구성원을 선택하세요",
     fc_self:          "나 (본인)",
     fc_spouse:        "배우자 / 파트너",        fc_spouse_hint:      "",
