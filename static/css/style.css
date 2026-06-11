@@ -1214,3 +1214,53 @@ body { padding-bottom: 68px; }
   font-size: 1rem; font-weight: 800; color: #111827;
 }
 .fc2-card--active .fc2-num { color: #2563eb; }
+
+/* ══════════════════════════════════════
+   내정보 탭 패널 (v3.4)
+══════════════════════════════════════ */
+.myinfo-section {
+  background: #fff; border-radius: 18px;
+  padding: 18px 16px; margin-bottom: 14px;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+}
+.myinfo-section-title {
+  font-size: 0.88rem; font-weight: 800; color: #1e3a8a;
+  margin-bottom: 14px; padding-bottom: 8px;
+  border-bottom: 2px solid #eff6ff;
+}
+.myinfo-row {
+  display: flex; align-items: flex-start;
+  gap: 10px; padding: 8px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+.myinfo-row:last-child { border-bottom: none; }
+.myinfo-label { font-size: 0.8rem; color: #6b7280; min-width: 60px; font-weight: 600; }
+.myinfo-val   { font-size: 0.88rem; color: #111827; font-weight: 600; }
+.myinfo-empty { font-size: 0.82rem; color: #9ca3af; text-align: center; padding: 16px 0; line-height: 1.7; }
+.myinfo-edit-btn {
+  width: 100%; margin-top: 14px; padding: 12px;
+  background: #eff6ff; border: 2px solid #bfdbfe;
+  border-radius: 12px; color: #2563eb;
+  font-size: 0.88rem; font-weight: 700; cursor: pointer;
+  transition: background 0.15s;
+}
+.myinfo-edit-btn:hover { background: #dbeafe; }
+.myinfo-clear-btn {
+  width: 100%; margin-top: 12px; padding: 10px;
+  background: #fff; border: 1.5px solid #fecaca;
+  border-radius: 12px; color: #ef4444;
+  font-size: 0.82rem; font-weight: 700; cursor: pointer;
+}
+.myinfo-saved-card {
+  background: #f8fafc; border-radius: 12px;
+  padding: 12px 14px; margin-bottom: 8px;
+  border: 1px solid #e5e7eb;
+}
+.myinfo-saved-top {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 6px;
+}
+.myinfo-saved-date { font-size: 0.72rem; color: #9ca3af; }
+.myinfo-saved-del  { background: none; border: none; color: #d1d5db; cursor: pointer; font-size: 0.9rem; }
+.myinfo-saved-summary { font-size: 0.85rem; font-weight: 600; color: #374151; margin-bottom: 4px; }
+.myinfo-saved-count   { font-size: 0.75rem; color: #2563eb; font-weight: 700; }

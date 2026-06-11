@@ -730,11 +730,14 @@ function bnavGo(tab) {
     renderLocal("서울특별시");
     window.scrollTo({ top: 0, behavior: "smooth" });
 
-  } else if (tab === "mypage") {
-    openMyPage();
-    // 모달이 닫히면 이전 탭 복귀
-    setTimeout(() => bnavGo(_currentTab === "mypage" ? "home" : _currentTab), 100);
-    return;
+  } else if (tab === "myinfo") {
+    if (main) main.classList.add("hidden");
+    calPanel && calPanel.classList.add("hidden");
+    locPanel && locPanel.classList.add("hidden");
+    const myinfoPanel = document.getElementById("myinfoPanel");
+    myinfoPanel && myinfoPanel.classList.remove("hidden");
+    renderMyinfoPanel();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 }
 
@@ -1017,13 +1020,65 @@ function retry() { location.reload(); }
 ══════════════════════════════════════════════ */
 const SAVED_KEY = "athena_saved_results";
 
-/* ── 마이페이지 열기 ── */
+/* ── 내정보 패널 렌더링 ── */
+function renderMyinfoPanel() {
+  renderMyinfoProfile();
+  renderMyinfoSaved();
+}
+
+function renderMyinfoProfile() {
+  const el = document.getElementById("myinfoProfile");
+  if (!el) return;
+  const raw = localStorage.getItem(PROFILE_KEY);
+  if (!raw) {
+    el.innerHTML = `<p class="myinfo-empty">저장된 프로필이 없습니다.<br>조건 입력 후 자동 저장됩니다.</p>`;
+    return;
+  }
+  const p = JSON.parse(raw);
+  const m = p.family_members || {};
+  const members = [
+    m.spouse && `배우자 ${m.spouse}명`, m.parent && `부모 ${m.parent}명`,
+    m.child && `아동 ${m.child}명`, m.teen && `청소년 ${m.teen}명`,
+    m.youth && `청년 ${m.youth}명`, m.middle && `중장년 ${m.middle}명`,
+    m.grandparent && `조부모 ${m.grandparent}명`
+  ].filter(Boolean);
+
+  el.innerHTML = `
+    <div class="myinfo-row"><span class="myinfo-label">📍 지역</span><span class="myinfo-val">${p.region||""} ${p.district||""}</span></div>
+    <div class="myinfo-row"><span class="myinfo-label">🎂 나이</span><span class="myinfo-val">${p.age||""}세</span></div>
+    <div class="myinfo-row"><span class="myinfo-label">👥 가구</span><span class="myinfo-val">${members.length ? members.join(", ") : "1인 가구"}</span></div>
+    <div class="myinfo-row"><span class="myinfo-label">💰 소득</span><span class="myinfo-val">${p.income_range||"미입력"}</span></div>`;
+}
+
+function renderMyinfoSaved() {
+  const el = document.getElementById("myinfoSaved");
+  if (!el) return;
+  const raw = localStorage.getItem(SAVED_KEY);
+  const list = raw ? JSON.parse(raw) : [];
+  if (!list.length) {
+    el.innerHTML = `<p class="myinfo-empty">저장된 혜택이 없습니다.<br>결과 화면에서 📌 버튼을 눌러 저장하세요.</p>`;
+    return;
+  }
+  el.innerHTML = list.map((item, i) => `
+    <div class="myinfo-saved-card">
+      <div class="myinfo-saved-top">
+        <span class="myinfo-saved-date">${item.savedAt||""}</span>
+        <button class="myinfo-saved-del" onclick="deleteSavedResult(${i})">✕</button>
+      </div>
+      <p class="myinfo-saved-summary">${item.summary||""}</p>
+      <p class="myinfo-saved-count">혜택 ${item.count||0}건 저장됨</p>
+    </div>`).join("");
+}
+
+function myinfoEditProfile() {
+  // 홈으로 이동해서 프로필 재입력
+  bnavGo("home");
+  showToast("정보를 수정하고 다시 조회해 주세요 ✏️");
+}
+
+/* ── 마이페이지 열기 (레거시 — 내정보 탭으로 대체) ── */
 function openMyPage() {
-  renderMyProfile();
-  renderSavedList();
-  const modal = document.getElementById("myPageModal");
-  modal.classList.remove("hidden");
-  document.body.style.overflow = "hidden";
+  bnavGo("myinfo");
 }
 
 /* ── 마이페이지 닫기 ── */
@@ -1103,12 +1158,15 @@ function deleteSavedResult(idx) {
   renderSavedList();
 }
 
-/* ── 현재 결과 마이페이지에 저장 ── */
+/* ── 현재 결과 내정보에 저장 ── */
 function saveResultToMyPage() {
-  // 현재 결과 카드에서 타이틀/설명 수집
-  const cards = document.querySelectorAll("#resultList .result-card, #resultList .policy-card");
-  if (cards.length === 0) {
-    showToast(T("mypage_no_result") || "저장할 결과가 없습니다.");
+  // 온톨로지 카드 + Supabase 카드 수집
+  const ontCards  = document.querySelectorAll(".ont-card");
+  const supaCards = document.querySelectorAll(".supa-card");
+  const total = ontCards.length + supaCards.length;
+
+  if (total === 0) {
+    showToast(T("mypage_no_result") || "저장할 결과가 없습니다. 먼저 복지서비스를 조회해 주세요.");
     return;
   }
 
@@ -1116,28 +1174,28 @@ function saveResultToMyPage() {
   const now = new Date();
   const dateStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,"0")}.${String(now.getDate()).padStart(2,"0")}`;
 
-  let addedCount = 0;
-  cards.forEach(card => {
-    const titleEl = card.querySelector(".card-title, .policy-title, h3, h4");
-    const descEl  = card.querySelector(".card-desc, .policy-desc, p");
-    const title   = titleEl ? titleEl.textContent.trim() : "복지 서비스";
-    const desc    = descEl  ? descEl.textContent.trim().slice(0, 80) : "";
-
-    // 중복 체크 (같은 타이틀이면 스킵)
-    const alreadyExists = saved.some(s => s.title === title);
-    if (!alreadyExists) {
-      saved.push({ title, desc, saved_at: dateStr });
-      addedCount++;
-    }
+  // 요약 정보 생성
+  const names = [];
+  ontCards.forEach(c => {
+    const n = c.querySelector(".ont-policy-name");
+    if (n) names.push(n.textContent.trim());
+  });
+  supaCards.forEach(c => {
+    const n = c.querySelector(".supa-name");
+    if (n) names.push(n.textContent.trim());
   });
 
-  localStorage.setItem(SAVED_KEY, JSON.stringify(saved));
+  saved.unshift({
+    savedAt: dateStr,
+    summary: names.slice(0, 3).join(", ") + (names.length > 3 ? ` 외 ${names.length-3}건` : ""),
+    count: total,
+    names: names,
+  });
 
-  if (addedCount > 0) {
-    showToast(`✅ ${addedCount}개 복지 서비스를 마이페이지에 저장했습니다.`);
-  } else {
-    showToast("이미 저장된 항목입니다.");
-  }
+  // 최대 10개 유지
+  if (saved.length > 10) saved.splice(10);
+  localStorage.setItem(SAVED_KEY, JSON.stringify(saved));
+  showToast(`✅ ${total}건 복지혜택을 내정보에 저장했습니다.`);
 }
 
 /* ── 전체 삭제 ── */
