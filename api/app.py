@@ -66,6 +66,42 @@ async def policy_status():
     return JSONResponse(get_update_status())
 
 
+@app.get("/api/db/test", summary="Supabase 연결 진단")
+async def db_test():
+    """Supabase 연결 상태 및 오류 메시지 반환."""
+    import os
+    result = {
+        "supabase_url": os.environ.get("SUPABASE_URL", "❌ 없음"),
+        "supabase_key_set": bool(os.environ.get("SUPABASE_KEY")),
+        "service_key_set": bool(os.environ.get("SUPABASE_SERVICE_KEY")),
+        "gov_api_key_set": bool(os.environ.get("GOV_WELFARE_API_KEY")),
+        "supabase_write_test": "not_run",
+        "supabase_read_test": "not_run",
+        "error": None,
+    }
+    try:
+        from supabase import create_client
+        url = os.environ.get("SUPABASE_URL")
+        # 읽기 테스트 (anon key)
+        anon_key = os.environ.get("SUPABASE_KEY")
+        if url and anon_key:
+            client = create_client(url, anon_key)
+            r = client.table("welfare_policies").select("id", count="exact").limit(1).execute()
+            result["supabase_read_test"] = f"✅ 성공 (총 {r.count}건)"
+        # 쓰기 테스트 (service key)
+        svc_key = os.environ.get("SUPABASE_SERVICE_KEY")
+        if url and svc_key:
+            client2 = create_client(url, svc_key)
+            test_data = {"policy_id": "TEST_001", "name": "진단테스트", "is_active": False}
+            client2.table("welfare_policies").upsert(test_data, on_conflict="policy_id").execute()
+            result["supabase_write_test"] = "✅ 성공"
+            # 테스트 데이터 삭제
+            client2.table("welfare_policies").delete().eq("policy_id", "TEST_001").execute()
+    except Exception as e:
+        result["error"] = str(e)
+    return JSONResponse(result)
+
+
 @app.get("/api/policies/count", summary="정책 개수 확인")
 async def policy_count():
     """현재 등록된 정책 총 개수."""
