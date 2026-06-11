@@ -1081,6 +1081,7 @@ const SAVED_KEY = "athena_saved_results";
 /* ── 내정보 패널 렌더링 ── */
 function renderMyinfoPanel() {
   renderMyinfoProfile();
+  renderWalletSummary();
   renderMyinfoSaved();
 }
 
@@ -1108,27 +1109,144 @@ function renderMyinfoProfile() {
     <div class="myinfo-row"><span class="myinfo-label">💰 소득</span><span class="myinfo-val">${p.income_range||"미입력"}</span></div>`;
 }
 
+/* ── 지갑 요약 배지 ── */
+function renderWalletSummary() {
+  const el = document.getElementById("walletSummary");
+  if (!el) return;
+  const list = JSON.parse(localStorage.getItem(SAVED_KEY) || "[]");
+  if (!list.length) { el.innerHTML = ""; return; }
+
+  // 전체 항목별 상태 집계
+  let total = 0, done = 0, pending = 0, none = 0;
+  list.forEach(item => {
+    (item.items || []).forEach(it => {
+      total++;
+      const st = it.status || "none";
+      if (st === "done")    done++;
+      else if (st === "pending") pending++;
+      else none++;
+    });
+  });
+
+  el.innerHTML = `
+    <div class="wallet-badge-row">
+      <div class="wallet-badge wallet-badge--total">
+        <span class="wb-num">${total}</span>
+        <span class="wb-label">전체 혜택</span>
+      </div>
+      <div class="wallet-badge wallet-badge--done">
+        <span class="wb-num">${done}</span>
+        <span class="wb-label">신청완료 ✓</span>
+      </div>
+      <div class="wallet-badge wallet-badge--pending">
+        <span class="wb-num">${pending}</span>
+        <span class="wb-label">신청예정 ⏳</span>
+      </div>
+      <div class="wallet-badge wallet-badge--none">
+        <span class="wb-num">${none}</span>
+        <span class="wb-label">미신청</span>
+      </div>
+    </div>`;
+}
+
+/* ── 저장 목록 렌더링 ── */
 function renderMyinfoSaved() {
   const el = document.getElementById("myinfoSaved");
   if (!el) return;
-  const raw = localStorage.getItem(SAVED_KEY);
-  const list = raw ? JSON.parse(raw) : [];
+  const list = JSON.parse(localStorage.getItem(SAVED_KEY) || "[]");
   if (!list.length) {
-    el.innerHTML = `<p class="myinfo-empty">저장된 혜택이 없습니다.<br>결과 화면에서 📌 버튼을 눌러 저장하세요.</p>`;
+    el.innerHTML = `<p class="myinfo-empty">저장된 혜택이 없습니다.<br>혜택진단 결과에서 📌 버튼을 눌러 저장하세요.</p>`;
     return;
   }
-  el.innerHTML = list.map((item, i) => `
-    <div class="myinfo-saved-card" onclick="openSavedDetail(${i})" role="button" tabindex="0">
-      <div class="myinfo-saved-top">
-        <span class="myinfo-saved-date">${item.savedAt||""}</span>
-        <button class="myinfo-saved-del" onclick="event.stopPropagation();deleteSavedResult(${i})">✕</button>
-      </div>
-      <p class="myinfo-saved-summary">${item.summary||""}</p>
-      <div class="myinfo-saved-footer">
-        <span class="myinfo-saved-count">혜택 ${item.count||0}건 저장됨</span>
-        <span class="myinfo-saved-open">자세히 보기 ›</span>
-      </div>
-    </div>`).join("");
+
+  // 저장된 세션별로 카드 목록 표시
+  let html = "";
+  list.forEach((item, i) => {
+    const items = item.items || [];
+    const done    = items.filter(it => it.status === "done").length;
+    const pending = items.filter(it => it.status === "pending").length;
+    const none    = items.filter(it => !it.status || it.status === "none").length;
+
+    html += `<div class="wallet-session">
+      <div class="wallet-session-header">
+        <span class="wallet-session-date">${item.savedAt||""}</span>
+        <span class="wallet-session-stats">
+          ${done ? `<span class="wss-done">완료 ${done}</span>` : ""}
+          ${pending ? `<span class="wss-pending">예정 ${pending}</span>` : ""}
+          ${none ? `<span class="wss-none">미신청 ${none}</span>` : ""}
+        </span>
+        <button class="myinfo-saved-del" onclick="deleteSavedResult(${i})">✕</button>
+      </div>`;
+
+    if (items.length) {
+      items.forEach((it, j) => {
+        const st = it.status || "none";
+        html += `<div class="wallet-item wallet-item--${st}">
+          <div class="wallet-item-left">
+            <div class="wallet-item-name">${it.name}</div>
+            ${it.desc ? `<div class="wallet-item-desc">${it.desc}</div>` : ""}
+          </div>
+          <div class="wallet-item-right">
+            <div class="wallet-status-toggle">
+              <button class="wst-btn ${st==="none"?"wst-active":""}" onclick="setItemStatus(${i},${j},'none')">미신청</button>
+              <button class="wst-btn ${st==="pending"?"wst-active wst-pending":""}" onclick="setItemStatus(${i},${j},'pending')">예정</button>
+              <button class="wst-btn ${st==="done"?"wst-active wst-done":""}" onclick="setItemStatus(${i},${j},'done')">완료✓</button>
+            </div>
+            <a href="${it.url||'https://www.bokjiro.go.kr'}" target="_blank" rel="noopener" class="wallet-apply-btn">신청 →</a>
+          </div>
+        </div>`;
+      });
+    } else {
+      // 구버전 names 배열 fallback
+      (item.names || []).forEach(name => {
+        html += `<div class="wallet-item wallet-item--none">
+          <div class="wallet-item-left"><div class="wallet-item-name">${name}</div></div>
+          <div class="wallet-item-right">
+            <a href="https://www.bokjiro.go.kr" target="_blank" class="wallet-apply-btn">신청 →</a>
+          </div>
+        </div>`;
+      });
+    }
+    html += `</div>`;
+  });
+  el.innerHTML = html;
+}
+
+/* ── 항목 상태 변경 (미신청/예정/완료) ── */
+function setItemStatus(sessionIdx, itemIdx, status) {
+  const list = JSON.parse(localStorage.getItem(SAVED_KEY) || "[]");
+  if (!list[sessionIdx] || !list[sessionIdx].items) return;
+  list[sessionIdx].items[itemIdx].status = status;
+  localStorage.setItem(SAVED_KEY, JSON.stringify(list));
+  renderWalletSummary();
+  renderMyinfoSaved();
+  const labels = { none:"미신청", pending:"신청예정으로 설정", done:"신청완료로 변경 ✅" };
+  showToast(labels[status] || "");
+}
+
+/* ── 프로필 섹션 접기/펼치기 ── */
+function toggleProfileSection() {
+  const wrap = document.getElementById("myinfoProfileWrap");
+  const icon = document.getElementById("profileToggleIcon");
+  if (!wrap) return;
+  const hidden = wrap.style.display === "none";
+  wrap.style.display = hidden ? "" : "none";
+  if (icon) icon.textContent = hidden ? "▾" : "▸";
+}
+
+/* ── 내 프로필로 혜택 다시 조회 ── */
+function walletRequery() {
+  const raw = localStorage.getItem(PROFILE_KEY);
+  if (!raw) { showToast("⚠️ 저장된 프로필이 없습니다. 혜택진단을 먼저 해주세요."); return; }
+  bnavGo("home");
+  showToast("✅ 이전 프로필이 불러와졌습니다. 조회 버튼을 눌러주세요.");
+  // 마지막 스텝(C)으로 이동
+  setTimeout(() => {
+    const age = parseInt(document.getElementById("inputAge").value);
+    if (state.region && state.district && age > 0) {
+      show("stepC"); setDot(3);
+    }
+  }, 300);
 }
 
 /* ── 저장된 혜택 상세 패널 열기 ── */

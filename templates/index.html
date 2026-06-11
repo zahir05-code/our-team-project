@@ -380,18 +380,32 @@
   <!-- ══════════ 내정보 패널 ══════════ -->
   <div id="myinfoPanel" class="tab-panel hidden">
     <div class="panel-header">
-      <h2 class="panel-title">👤 내정보</h2>
-      <p class="panel-sub">내 복지 프로필 및 저장된 혜택</p>
+      <h2 class="panel-title">👤 내 복지 지갑</h2>
+      <p class="panel-sub">저장된 혜택을 관리하고 바로 신청하세요</p>
     </div>
-    <!-- 프로필 섹션 -->
+
+    <!-- 신청 현황 요약 배지 -->
+    <div id="walletSummary" class="wallet-summary"></div>
+
+    <!-- 빠른 재조회 버튼 -->
+    <button class="wallet-requery-btn" onclick="walletRequery()">
+      🔄 내 프로필로 혜택 다시 조회
+    </button>
+
+    <!-- 프로필 섹션 (접기/펼치기) -->
     <div class="myinfo-section">
-      <div class="myinfo-section-title">📋 내 프로필</div>
-      <div id="myinfoProfile" class="myinfo-profile-body"></div>
-      <button class="myinfo-edit-btn" onclick="myinfoEditProfile()">✏️ 정보 수정하기</button>
+      <div class="myinfo-section-title collapsible" onclick="toggleProfileSection()">
+        📋 내 프로필 <span id="profileToggleIcon">▾</span>
+      </div>
+      <div id="myinfoProfileWrap">
+        <div id="myinfoProfile" class="myinfo-profile-body"></div>
+        <button class="myinfo-edit-btn" onclick="myinfoEditProfile()">✏️ 정보 수정하기</button>
+      </div>
     </div>
-    <!-- 저장된 혜택 -->
+
+    <!-- 저장된 혜택 지갑 -->
     <div class="myinfo-section">
-      <div class="myinfo-section-title">📌 저장된 복지혜택</div>
+      <div class="myinfo-section-title">💳 혜택 지갑</div>
       <div id="myinfoSaved"></div>
       <button class="myinfo-clear-btn" onclick="clearMyPage()">🗑 저장 정보 전체 삭제</button>
     </div>
