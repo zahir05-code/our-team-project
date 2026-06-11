@@ -636,6 +636,14 @@ function renderResult(data, analysis) {
 
   document.getElementById("result").classList.remove("hidden");
   document.getElementById("result").scrollIntoView({ behavior: "smooth" });
+
+  // 하단 탭 — 내결과 활성화 + 배지
+  document.querySelectorAll(".bnav-tab").forEach(t => t.classList.remove("active"));
+  const resultTab = document.getElementById("bnav-result");
+  if (resultTab) resultTab.classList.add("active");
+  const totalCards = (data.ontology ? (data.ontology.summary?.total || 0) : 0)
+                   + (data.supabase_policies ? data.supabase_policies.length : 0);
+  updateResultBadge(totalCards);
 }
 
 /* ── 온톨로지 카드 ── */
@@ -676,6 +684,50 @@ function toggleFuture(btn) {
   const body    = btn.closest(".ont-group-fut").querySelector(".ont-future-body");
   const hidden  = body.classList.toggle("hidden");
   btn.textContent = hidden ? T("ont_expand") : T("ont_collapse");
+}
+
+/* ── 하단 탭 네비게이션 ── */
+function bnavGo(tab) {
+  // 탭 활성화 표시
+  document.querySelectorAll(".bnav-tab").forEach(t => t.classList.remove("active"));
+  const activeTab = document.getElementById("bnav-" + tab);
+  if (activeTab) activeTab.classList.add("active");
+
+  if (tab === "home") {
+    // 홈: 입력 카드로 스크롤
+    const card = document.getElementById("inputCard") || document.querySelector(".input-card");
+    if (card) card.scrollIntoView({ behavior: "smooth" });
+  } else if (tab === "result") {
+    // 내 결과: 결과 영역으로 스크롤 또는 없으면 안내
+    const result = document.getElementById("result");
+    if (result && !result.classList.contains("hidden")) {
+      result.scrollIntoView({ behavior: "smooth" });
+    } else {
+      showToast("먼저 정보를 입력하고 복지서비스를 조회해 주세요 😊");
+      document.getElementById("bnav-home").classList.add("active");
+      activeTab && activeTab.classList.remove("active");
+    }
+  } else if (tab === "mypage") {
+    // 내 정보: 마이페이지 모달 오픈
+    openMyPage();
+    // 탭은 home으로 복귀 (모달이 닫히면 홈으로)
+    setTimeout(() => {
+      document.querySelectorAll(".bnav-tab").forEach(t => t.classList.remove("active"));
+      document.getElementById("bnav-home").classList.add("active");
+    }, 300);
+  }
+}
+
+// 결과가 표시될 때 내결과 탭 배지 업데이트
+function updateResultBadge(count) {
+  const badge = document.getElementById("bnavBadge");
+  if (!badge) return;
+  if (count > 0) {
+    badge.textContent = count;
+    badge.classList.remove("hidden");
+  } else {
+    badge.classList.add("hidden");
+  }
 }
 
 /* ── 음성 입력 (Web Speech API) ── */
