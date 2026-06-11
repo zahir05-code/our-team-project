@@ -1650,3 +1650,106 @@ body { padding-bottom: 68px; }
   white-space: nowrap;
 }
 .wallet-apply-btn:active { opacity: 0.8; }
+
+/* ══════════════════════════════════════
+   stepB+C 통합 — 인라인 동의 버튼
+══════════════════════════════════════ */
+.pledge-inline-btn {
+  width: 100%; margin-top: 14px;
+  display: flex; align-items: center; gap: 10px;
+  padding: 13px 16px;
+  background: #f8fafc; border: 2px solid #e2e8f0;
+  border-radius: 12px; cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  text-align: left;
+}
+.pledge-inline-btn[aria-pressed="true"] {
+  background: #eff6ff; border-color: #2563eb;
+}
+.pledge-inline-btn .pledge-confirm-icon {
+  font-size: 1.1rem; color: #9ca3af; flex-shrink: 0;
+}
+.pledge-inline-btn[aria-pressed="true"] .pledge-confirm-icon { color: #2563eb; }
+.pledge-inline-btn .pledge-confirm-text {
+  font-size: 0.82rem; font-weight: 700; color: #374151;
+}
+.pledge-legal-sm {
+  font-size: 0.68rem; color: #f97316; margin-top: 6px; line-height: 1.4;
+}
+
+/* ══════════════════════════════════════
+   결과 카테고리 필터
+══════════════════════════════════════ */
+.result-filter-wrap {
+  background: #fff; border-radius: 16px;
+  padding: 12px 14px; margin-bottom: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+.rfilter-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
+.rfilter-tab {
+  padding: 6px 14px; border-radius: 20px;
+  border: 1.5px solid #e2e8f0; background: #f8fafc;
+  font-size: 0.78rem; font-weight: 700; color: #374151; cursor: pointer;
+  transition: all 0.15s;
+}
+.rfilter-tab.active {
+  background: #1e40af; border-color: #1e40af; color: #fff;
+}
+.rfilter-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; padding-top: 8px; border-top: 1px solid #f1f5f9; }
+.rfilter-chip {
+  padding: 4px 11px; border-radius: 20px;
+  border: 1.5px solid #e2e8f0; background: #f8fafc;
+  font-size: 0.72rem; font-weight: 600; color: #374151; cursor: pointer;
+  transition: all 0.12s;
+}
+.rfilter-chip.active, .rfilter-chip:active { background: #dbeafe; border-color: #93c5fd; color: #1e40af; }
+.rfilter-chip--reset { color: #94a3b8; }
+
+/* ══════════════════════════════════════
+   복지로 스타일 카드 (bk-card)
+══════════════════════════════════════ */
+.bk-card {
+  background: #fff; border: 1.5px solid #e2e8f0;
+  border-radius: 16px; padding: 16px 16px 14px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  transition: box-shadow 0.15s;
+}
+.bk-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.10); }
+
+.bk-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+.bk-name { font-size: 0.95rem; font-weight: 900; color: #0f172a; flex: 1; line-height: 1.4; }
+.bk-online-badge {
+  font-size: 0.65rem; font-weight: 700; color: #0369a1;
+  background: #e0f2fe; border-radius: 20px; padding: 3px 8px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.bk-desc {
+  font-size: 0.78rem; color: #475569; line-height: 1.55;
+  margin-bottom: 10px;
+}
+
+/* 메타 정보 표 */
+.bk-meta { margin-bottom: 10px; display: flex; flex-direction: column; gap: 4px; }
+.bk-meta-row { display: flex; gap: 8px; align-items: flex-start; }
+.bk-meta-label {
+  font-size: 0.7rem; font-weight: 700; color: #2563eb;
+  width: 54px; flex-shrink: 0; padding-top: 1px;
+}
+.bk-meta-val { font-size: 0.72rem; color: #374151; flex: 1; line-height: 1.5; }
+
+/* 태그 */
+.bk-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+.bk-tag {
+  font-size: 0.65rem; font-weight: 600; color: #4f46e5;
+  background: #eef2ff; border-radius: 20px; padding: 2px 8px;
+}
+
+/* 자세히 보기 버튼 */
+.bk-detail-btn {
+  display: block; width: 100%; padding: 10px;
+  background: #1e293b; color: #fff; border-radius: 10px;
+  font-size: 0.82rem; font-weight: 800; text-align: center;
+  text-decoration: none; transition: background 0.15s;
+}
+.bk-detail-btn:active { background: #0f172a; }

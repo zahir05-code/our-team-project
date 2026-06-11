@@ -61,11 +61,11 @@
 
       <!-- 진행 도트 -->
       <div class="dot-progress" id="dotProgress"
-           role="progressbar" aria-valuemin="1" aria-valuemax="3" aria-valuenow="1"
-           aria-label="3단계 중 1단계 진행 중">
+           role="progressbar" aria-valuemin="1" aria-valuemax="2" aria-valuenow="1"
+           aria-label="2단계 중 1단계 진행 중">
         <span class="dot active" id="dot1" aria-hidden="true"></span>
         <span class="dot" id="dot2" aria-hidden="true"></span>
-        <span class="dot" id="dot3" aria-hidden="true"></span>
+        <span class="dot hidden" id="dot3" aria-hidden="true"></span>
       </div>
 
       <!-- ── STEP A: 기본정보 (지역+나이+가족+소득 통합 첫화면) ── -->
@@ -135,7 +135,7 @@
         </button>
       </div>
 
-      <!-- ── STEP B: 상황 선택 ── -->
+      <!-- ── STEP B: 상황 선택 + 동의 통합 ── -->
       <div class="step hidden" id="stepB">
         <p class="step-q" data-i18n="q_situation">지금 어떤 상황이신가요?</p>
         <p class="step-sub" data-i18n="sub_situation">해당하는 것을 모두 골라주세요</p>
@@ -143,43 +143,24 @@
         <div class="situation-grid" id="situationGrid"
              role="group" aria-label="현재 상황 선택 (복수 선택 가능)"></div>
 
-        <div class="btn-row-two">
-          <button class="btn-back-sm" onclick="goToA()" aria-label="이전 단계로 돌아가기" data-i18n="btn_prev">← 이전</button>
-          <button class="btn-main" id="btnB" onclick="goToC()" aria-label="다음 단계로 이동" data-i18n="btn_next">다음 →</button>
-        </div>
-      </div>
+        <!-- 동의 버튼 인라인 통합 -->
+        <button id="pledgeConfirmBtn" class="pledge-inline-btn"
+                onclick="onPledgeToggle()"
+                aria-pressed="false">
+          <span class="pledge-confirm-icon" id="pledgeIcon">○</span>
+          <span class="pledge-confirm-text" data-i18n="pledge_btn">입력한 정보가 사실임을 확인합니다</span>
+        </button>
+        <p class="pledge-legal-sm">📌 허위 신청 시 「사회보장기본법」에 따라 불이익이 발생할 수 있습니다.</p>
 
-      <!-- ── STEP C: 확인 (정직성 서약) ── -->
-      <div class="step hidden" id="stepC">
-        <p class="step-q" data-i18n="q_confirm">마지막 확인이에요</p>
-
-        <div class="pledge-box">
-          <p class="pledge-title" data-i18n="pledge_title">🤝 정확한 혜택 안내를 위해</p>
-          <p class="pledge-desc" data-i18n="pledge_desc">
-            입력하신 정보가 정확할수록 실제로 도움이 되는 혜택을 찾아드릴 수 있어요.
-            복지 혜택은 우리 모두가 함께 만드는 소중한 기회입니다.
-          </p>
-          <!-- 문장 전체 터치로 확인 -->
-          <button id="pledgeConfirmBtn" class="pledge-confirm-btn"
-                  onclick="onPledgeToggle()"
-                  aria-pressed="false"
-                  aria-describedby="pledgeLegal">
-            <span class="pledge-confirm-icon" id="pledgeIcon">○</span>
-            <span class="pledge-confirm-text" data-i18n="pledge_btn">입력한 정보가 사실임을 확인합니다</span>
-          </button>
-          <div class="pledge-legal" id="pledgeLegal" data-i18n="pledge_legal">
-            📌 허위 신청 시 「사회보장기본법」에 따라 불이익이 발생할 수 있습니다.
-          </div>
-        </div>
-
-        <div class="btn-row-two">
-          <button class="btn-back-sm" onclick="goToB()" aria-label="이전 단계로 돌아가기" data-i18n="btn_prev">← 이전</button>
+        <div class="btn-row-two" style="margin-top:12px">
+          <button class="btn-back-sm" onclick="goToA()" data-i18n="btn_prev">← 이전</button>
           <button class="btn-main disabled" id="btnC" onclick="submitProfile()"
-                  aria-label="내 맞춤 혜택 찾기 시작" data-i18n="btn_find">
-            🎯 내 혜택 찾기
-          </button>
+                  data-i18n="btn_find">🎯 내 혜택 찾기</button>
         </div>
       </div>
+
+      <!-- stepC 레거시 (hidden 유지) -->
+      <div class="step hidden" id="stepC"></div>
 
     </div><!-- /inputCard -->
 
@@ -255,6 +236,18 @@
       <div class="result-header">
         <h2 id="resultTitle">🎯 맞춤 혜택을 찾았습니다</h2>
       </div>
+
+      <!-- 카테고리 필터 -->
+      <div class="result-filter-wrap" id="resultFilterWrap">
+        <div class="rfilter-tabs" id="rfilterTabs">
+          <button class="rfilter-tab active" onclick="rfilterTab(this,'all')">전체</button>
+          <button class="rfilter-tab" onclick="rfilterTab(this,'lifecycle')">생애주기</button>
+          <button class="rfilter-tab" onclick="rfilterTab(this,'household')">가구상황</button>
+          <button class="rfilter-tab" onclick="rfilterTab(this,'topic')">관심주제</button>
+        </div>
+        <div class="rfilter-chips hidden" id="rfilterChips"></div>
+      </div>
+
       <div id="resultBody" aria-live="polite"></div>
 
       <!-- 부정수급 신고 안내 -->

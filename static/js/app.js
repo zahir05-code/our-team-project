@@ -402,10 +402,8 @@ function _shakeHint() {
 }
 
 function goToC() {
-  if (state.life_situations.length === 0) {
-    alert(T("alert_situation")); return;
-  }
-  show("stepC"); setDot(3);
+  // stepB+C 통합: stepC는 더 이상 별도 단계 없음 — 하위호환 유지
+  show("stepB"); setDot(2);
   document.getElementById("inputCard").scrollIntoView({ behavior: "smooth" });
 }
 
@@ -631,30 +629,12 @@ function renderResult(data, analysis) {
     body.insertAdjacentHTML("beforeend", html);
   }
 
-  /* Supabase 실시간 DB 정책 카드 */
+  /* Supabase 실시간 DB 정책 카드 — 복지로 스타일 */
   if (data.supabase_policies && data.supabase_policies.length > 0) {
-    let html = `<div class="supa-section">
-      <p class="supa-header">🗄️ 실시간 DB 추천 정책 <span class="supa-badge">${data.supabase_policies.length}건</span></p>`;
-    data.supabase_policies.forEach(p => {
-      const tags = (p.tags||[]).map(t=>`<span class="ont-tag">${t}</span>`).join("");
-      const benefit = p.benefit ? `<div class="supa-row">💰 <b>혜택</b> ${p.benefit}</div>` : "";
-      const contact = p.contact ? `<div class="supa-row">📞 <b>문의</b> ${p.contact}</div>` : "";
-      const source  = p.source  ? `<div class="supa-row">🏛️ <b>주관</b> ${p.source}</div>` : "";
-      const applyBadge = p.online_apply
-        ? `<span class="supa-online-badge">💻 온라인 신청 가능</span>` : "";
-      html += `<div class="supa-card">
-        <div class="supa-card-top">
-          <span class="supa-name">${p.name}</span>
-          <a class="supa-apply-btn" href="${p.url}" target="_blank" rel="noopener">바로 신청 →</a>
-        </div>
-        ${p.description ? `<p class="supa-desc">${p.description}</p>` : ""}
-        ${applyBadge}
-        ${benefit}${source}${contact}
-        ${tags ? `<div class="ont-tags">${tags}</div>` : ""}
-      </div>`;
-    });
-    html += `</div>`;
-    body.insertAdjacentHTML("beforeend", html);
+    _lastSupaPolicies = data.supabase_policies; // 필터용 저장
+    body.insertAdjacentHTML("beforeend",
+      `<div class="supa-section" id="supaSection">${renderSupaCards(data.supabase_policies)}</div>`);
+    initResultFilter(data.supabase_policies);
   }
 
   /* 링크 섹션 */
@@ -689,6 +669,93 @@ function renderResult(data, analysis) {
   const totalCards = (data.ontology ? (data.ontology.summary?.total || 0) : 0)
                    + (data.supabase_policies ? data.supabase_policies.length : 0);
   updateResultBadge(totalCards);
+}
+
+/* ══════════════════════════════════════
+   복지로 스타일 카드 렌더링 + 필터
+══════════════════════════════════════ */
+let _lastSupaPolicies = [];
+let _activeFilterTag = "";
+
+// 카테고리 정의
+const FILTER_CATS = {
+  lifecycle: ["임신·출산","영유아","아동","청소년","청년","중장년","노년","임산부"],
+  household: ["저소득","장애인","한부모","조손","다자녀","다문화","탈북민","보훈"],
+  topic:     ["신체건강","정신건강","생활지원","주거","일자리","문화","여가","안전","위기",
+               "보육","교육","입양","위탁","서민금융","법률","에너지","돌봄"],
+};
+
+function renderSupaCards(policies) {
+  if (!policies || !policies.length) return "";
+  let html = `<p class="supa-header">📋 맞춤 복지서비스 <span class="supa-badge">${policies.length}건</span></p>`;
+  policies.forEach(p => {
+    const tags = (p.tags||[]).map(t=>`<span class="bk-tag">${t}</span>`).join("");
+    const online = p.online_apply ? `<span class="bk-online-badge">💻 온라인 신청</span>` : "";
+    html += `<div class="bk-card" data-tags="${(p.tags||[]).join(",")}">
+      <div class="bk-card-head">
+        <div class="bk-name">${p.name}</div>
+        ${online}
+      </div>
+      ${p.description ? `<p class="bk-desc">${p.description}</p>` : ""}
+      <div class="bk-meta">
+        ${p.source  ? `<div class="bk-meta-row"><span class="bk-meta-label">담당부처</span><span class="bk-meta-val">${p.source}</span></div>` : ""}
+        ${p.benefit ? `<div class="bk-meta-row"><span class="bk-meta-label">제공유형</span><span class="bk-meta-val">${p.benefit}</span></div>` : ""}
+        ${p.how_to_apply && p.how_to_apply !== "Y" && p.how_to_apply !== "N"
+            ? `<div class="bk-meta-row"><span class="bk-meta-label">신청방법</span><span class="bk-meta-val">${p.how_to_apply}</span></div>` : ""}
+        ${p.contact ? `<div class="bk-meta-row"><span class="bk-meta-label">문의처</span><span class="bk-meta-val">${p.contact}</span></div>` : ""}
+      </div>
+      ${tags ? `<div class="bk-tags">${tags}</div>` : ""}
+      <a class="bk-detail-btn" href="${p.url||'https://www.bokjiro.go.kr'}" target="_blank" rel="noopener">자세히 보기</a>
+    </div>`;
+  });
+  return html;
+}
+
+function initResultFilter(policies) {
+  const wrap = document.getElementById("resultFilterWrap");
+  if (!wrap) return;
+  wrap.classList.remove("hidden");
+}
+
+function rfilterTab(btn, cat) {
+  document.querySelectorAll(".rfilter-tab").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  _activeFilterTag = "";
+
+  const chipsEl = document.getElementById("rfilterChips");
+  if (cat === "all") {
+    chipsEl.classList.add("hidden");
+    chipsEl.innerHTML = "";
+    _applyFilter("");
+    return;
+  }
+
+  const chips = FILTER_CATS[cat] || [];
+  chipsEl.innerHTML = chips.map(c =>
+    `<button class="rfilter-chip" onclick="rfilterChip(this,'${c}')">${c}</button>`
+  ).join("") + `<button class="rfilter-chip rfilter-chip--reset" onclick="rfilterChip(this,'')">전체보기</button>`;
+  chipsEl.classList.remove("hidden");
+}
+
+function rfilterChip(btn, tag) {
+  document.querySelectorAll(".rfilter-chip").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  _activeFilterTag = tag;
+  _applyFilter(tag);
+}
+
+function _applyFilter(tag) {
+  document.querySelectorAll(".bk-card").forEach(card => {
+    if (!tag) { card.style.display = ""; return; }
+    const cardTags = (card.dataset.tags || "").toLowerCase();
+    card.style.display = cardTags.includes(tag.toLowerCase()) ? "" : "none";
+  });
+  // ont-card도 태그 기반 필터
+  document.querySelectorAll(".ont-card").forEach(card => {
+    if (!tag) { card.style.display = ""; return; }
+    const text = card.textContent.toLowerCase();
+    card.style.display = text.includes(tag.toLowerCase()) ? "" : "none";
+  });
 }
 
 /* ── 온톨로지 카드 ── */
