@@ -1284,3 +1284,103 @@ body { padding-bottom: 68px; }
   font-size: 0.75rem; font-weight: 700;
   margin-top: 6px;
 }
+
+/* ══════════════════════════════════════
+   가족 구성원 토글 카드 v3 — 프리미엄
+══════════════════════════════════════ */
+
+/* 헤더 */
+.fc2-header {
+  background: linear-gradient(135deg,#1e3a8a,#3b82f6);
+  border-radius: 18px; padding: 16px 18px;
+  margin-bottom: 14px;
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: 0 4px 14px rgba(37,99,235,0.25);
+}
+.fc2-total-wrap { display: flex; align-items: baseline; gap: 5px; }
+.fc2-total-label { font-size: 0.78rem; color: rgba(255,255,255,0.75); font-weight: 600; }
+.fc2-total-num   { font-size: 2.2rem; font-weight: 900; color: #fff; line-height: 1; }
+.fc2-total-unit  { font-size: 0.95rem; color: rgba(255,255,255,0.9); font-weight: 700; }
+.fc2-self-chip   {
+  background: rgba(255,255,255,0.18); color: #fff;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px; padding: 6px 14px;
+  font-size: 0.78rem; font-weight: 700;
+}
+
+/* 2열 그리드 */
+.fc2-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* 카드 기본 */
+.fc2-card {
+  background: #f8fafc;
+  border: 2px solid #e9ecf0;
+  border-radius: 18px;
+  padding: 16px 10px 14px;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 5px; cursor: pointer;
+  position: relative; overflow: hidden;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.12s;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 130px; justify-content: center;
+}
+.fc2-card:active { transform: scale(0.95); }
+
+/* 선택된 카드 */
+.fc2-card--active {
+  background: #eff6ff;
+  border-color: #2563eb;
+  box-shadow: 0 4px 16px rgba(37,99,235,0.15);
+}
+
+/* 체크 뱃지 */
+.fc2-check {
+  position: absolute; top: 9px; right: 9px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: #2563eb; color: #fff;
+  font-size: 0.72rem; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 6px rgba(37,99,235,0.35);
+  animation: popIn 0.18s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes popIn {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+.fc2-icon  { font-size: 2rem; line-height: 1; }
+.fc2-name  { font-size: 0.83rem; font-weight: 700; color: #374151; text-align: center; }
+.fc2-hint  { font-size: 0.67rem; color: #94a3b8; text-align: center; }
+.fc2-card--active .fc2-name { color: #1e40af; }
+
+/* 비선택 안내 */
+.fc2-tap-hint {
+  font-size: 0.65rem; color: #c0c8d4; font-weight: 500; margin-top: 2px;
+}
+
+/* 배우자 선택 뱃지 */
+.fc2-selected-badge {
+  background: #2563eb; color: #fff;
+  border-radius: 20px; padding: 4px 14px;
+  font-size: 0.78rem; font-weight: 800; margin-top: 4px;
+  animation: popIn 0.18s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+/* 카운터 */
+.fc2-ctrl {
+  display: flex; align-items: center;
+  background: #fff; border: 1.5px solid #c7d2fe;
+  border-radius: 14px; overflow: hidden;
+  margin-top: 6px; box-shadow: 0 1px 4px rgba(37,99,235,0.1);
+  animation: popIn 0.18s cubic-bezier(0.34,1.56,0.64,1);
+}
+.fc2-btn {
+  width: 34px; height: 34px; background: none; border: none;
+  font-size: 1.15rem; font-weight: 800; color: #2563eb;
+  cursor: pointer; transition: background 0.12s;
+}
+.fc2-btn:hover:not(:disabled) { background: #e0e7ff; }
+.fc2-btn:disabled { color: #d1d5db; cursor: default; }
+.fc2-minus { border-right: 1.5px solid #c7d2fe; }
+.fc2-plus  { border-left:  1.5px solid #c7d2fe; }
+.fc2-num   { min-width: 30px; text-align: center; font-size: 1.05rem; font-weight: 800; color: #1e40af; }
