@@ -617,11 +617,14 @@ function renderResult(data, analysis) {
       html += `</div>`;
     }
     if (ont.future.length) {
+      const futId = "futBody_" + Date.now();
       html += `<div class="ont-group ont-group-fut">
-        <p class="ont-group-title">${T("ont_future", ont.future.length)}
-          <button class="ont-toggle-btn" onclick="toggleFuture(this)">${T("ont_expand")}</button>
-        </p>
-        <div class="ont-future-body hidden">`;
+        <div class="ont-group-title ont-fut-header">
+          <span>${T("ont_future", ont.future.length)}</span>
+          <button class="ont-toggle-btn" id="futBtn_${futId}"
+            onclick="toggleFuture('${futId}')">${T("ont_expand")}</button>
+        </div>
+        <div class="ont-future-body hidden" id="${futId}">`;
       ont.future.forEach(p => html += renderOntPolicy(p, "fut"));
       html += `</div></div>`;
     }
@@ -792,10 +795,12 @@ function renderOntPolicy(p, type) {
 }
 
 /* ── FUTURE 토글 ── */
-function toggleFuture(btn) {
-  const body    = btn.closest(".ont-group-fut").querySelector(".ont-future-body");
-  const hidden  = body.classList.toggle("hidden");
-  btn.textContent = hidden ? T("ont_expand") : T("ont_collapse");
+function toggleFuture(futId) {
+  const body = document.getElementById(futId);
+  const btn  = document.getElementById("futBtn_" + futId);
+  if (!body || !btn) return;
+  const nowHidden = body.classList.toggle("hidden");
+  btn.textContent = nowHidden ? T("ont_expand") : T("ont_collapse");
 }
 
 /* ══════════════════════════════════════
