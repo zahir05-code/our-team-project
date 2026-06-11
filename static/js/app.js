@@ -220,42 +220,46 @@ function renderFamilyComposer() {
   const wrap = document.getElementById("familyComposer");
   if (!wrap) return;
 
-  const rows = [
-    { key:"spouse",      icon:"💑",  labelKey:"fc_spouse" },
-    { key:"parent",      icon:"👨‍👩‍👦", labelKey:"fc_parent" },
-    { key:"child",       icon:"👶",  labelKey:"fc_child"  },
-    { key:"teen",        icon:"🧒",  labelKey:"fc_teen"   },
-    { key:"youth",       icon:"🧑",  labelKey:"fc_youth"  },
-    { key:"middle",      icon:"🧑‍💼", labelKey:"fc_middle" },
-    { key:"grandparent", icon:"👴",  labelKey:"fc_grandparent" },
+  const members = [
+    { key:"spouse",      icon:"💑",  label:"배우자·파트너", hint:"" },
+    { key:"parent",      icon:"👨‍👩‍👧", label:"부모",         hint:"최대 2명" },
+    { key:"child",       icon:"👶",  label:"아동 자녀",     hint:"0~12세" },
+    { key:"teen",        icon:"🧒",  label:"청소년 자녀",   hint:"13~18세" },
+    { key:"youth",       icon:"🧑",  label:"청년 자녀",     hint:"19~34세" },
+    { key:"middle",      icon:"🧑‍💼", label:"중장년 자녀",   hint:"35~64세" },
+    { key:"grandparent", icon:"👴",  label:"조부모",        hint:"65세 이상" },
   ];
 
+  const total = estimateHouseholdSize();
+
   wrap.innerHTML = `
-    <!-- 본인 (고정) -->
-    <div class="fc-row fc-self">
-      <span class="fc-icon">👤</span>
-      <span class="fc-label" data-i18n="fc_self">${T("fc_self") || "나 (본인)"}</span>
-      <div class="fc-counter-fixed"><span class="fc-num-fixed">1</span></div>
+    <!-- 총계 헤더 -->
+    <div class="fc2-header">
+      <div class="fc2-total-wrap">
+        <span class="fc2-total-label">총 가구원</span>
+        <span class="fc2-total-num" id="fcTotal">${total}</span>
+        <span class="fc2-total-unit">명</span>
+      </div>
+      <div class="fc2-self-chip">👤 나 (본인) 1명</div>
     </div>
-    ${rows.map(r => `
-    <div class="fc-row" id="fc_row_${r.key}">
-      <span class="fc-icon">${r.icon}</span>
-      <div class="fc-label-wrap">
-        <span class="fc-label" data-i18n="${r.labelKey}">${T(r.labelKey) || r.labelKey}</span>
-        <span class="fc-hint" data-i18n="${r.labelKey}_hint">${T(r.labelKey+"_hint") || ""}</span>
-      </div>
-      <div class="fc-counter">
-        <button class="fc-btn fc-minus" onclick="fcChange('${r.key}',-1)"
-                aria-label="감소" ${state.family_members[r.key] === 0 ? "disabled" : ""}>−</button>
-        <span class="fc-num" id="fcn_${r.key}">${state.family_members[r.key]}</span>
-        <button class="fc-btn fc-plus" onclick="fcChange('${r.key}',1)"
-                aria-label="증가" ${state.family_members[r.key] >= FC_MAX[r.key] ? "disabled" : ""}>+</button>
-      </div>
-    </div>`).join("")}
-    <!-- 합계 -->
-    <div class="fc-total-row">
-      <span data-i18n="fc_total">${T("fc_total") || "총 가구원 수"}</span>
-      <span class="fc-total-num" id="fcTotal">${estimateHouseholdSize()}명</span>
+    <!-- 구성원 그리드 -->
+    <div class="fc2-grid">
+      ${members.map(m => {
+        const val = state.family_members[m.key] || 0;
+        const active = val > 0 ? "fc2-card--active" : "";
+        return `<div class="fc2-card ${active}" id="fc2_${m.key}">
+          <div class="fc2-icon">${m.icon}</div>
+          <div class="fc2-name">${m.label}</div>
+          ${m.hint ? `<div class="fc2-hint">${m.hint}</div>` : ""}
+          <div class="fc2-ctrl">
+            <button class="fc2-btn fc2-minus" onclick="fcChange('${m.key}',-1)"
+              ${val === 0 ? "disabled" : ""}>−</button>
+            <span class="fc2-num" id="fcn_${m.key}">${val}</span>
+            <button class="fc2-btn fc2-plus" onclick="fcChange('${m.key}',1)"
+              ${val >= FC_MAX[m.key] ? "disabled" : ""}>+</button>
+          </div>
+        </div>`;
+      }).join("")}
     </div>`;
 }
 
@@ -275,11 +279,11 @@ function fcChange(key, delta) {
   if (totalEl) totalEl.textContent = estimateHouseholdSize() + "명";
 
   // 버튼 상태 업데이트
-  const row = document.getElementById(`fc_row_${key}`);
-  if (row) {
-    row.querySelector(".fc-minus").disabled = (next === 0);
-    row.querySelector(".fc-plus").disabled  = (next >= FC_MAX[key]);
-    row.classList.toggle("fc-active", next > 0);
+  const card = document.getElementById(`fc2_${key}`);
+  if (card) {
+    card.querySelector(".fc2-minus").disabled = (next === 0);
+    card.querySelector(".fc2-plus").disabled  = (next >= FC_MAX[key]);
+    card.classList.toggle("fc2-card--active", next > 0);
   }
 
   saveProfile();
