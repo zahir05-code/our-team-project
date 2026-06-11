@@ -23,6 +23,47 @@ except Exception as _e:
     _ONTOLOGY_AVAILABLE = False
     logging.getLogger(__name__).warning("온톨로지 모듈 로드 실패: %s", _e)
 
+
+def _get_supabase_policies(profile) -> list[dict]:
+    """
+    Supabase에서 사용자 프로파일에 맞는 정책 조회.
+    실패 시 빈 리스트 반환 (앱 중단 없음).
+    """
+    try:
+        from ontology.welfare_collector import get_policies_from_supabase
+        region = getattr(profile, "region", None)
+        # 생활상황 → 태그 변환
+        situations = getattr(profile, "life_situations", [])
+        tags = [s.value if hasattr(s, "value") else str(s) for s in situations]
+        income = getattr(profile, "income_range", None)
+        income_str = income.value if hasattr(income, "value") else str(income) if income else None
+
+        policies = get_policies_from_supabase(
+            region=region,
+            tags=tags if tags else None,
+            income_level=income_str,
+            limit=20,
+        )
+        return policies
+    except Exception as e:
+        logging.getLogger(__name__).warning("Supabase 정책 조회 실패 (정적 DB 사용): %s", e)
+        return []
+
+
+def _supabase_to_welfare_result(policies: list[dict]) -> "WelfareResult | None":
+    """Supabase 정책 목록 → WelfareResult 변환."""
+    if not policies:
+        return None
+    services = []
+    for p in policies:
+        name = p.get("name", "")
+        url  = p.get("url") or p.get("servDtlLink") or "https://www.bokjiro.go.kr"
+        if name:
+            services.append(ServiceLink(name=name, url=url))
+    if not services:
+        return None
+    return WelfareResult(section="🗄️ 실시간 DB 추천 정책", services=services)
+
 router = APIRouter(prefix="/welfare", tags=["복지서비스"])
 logger = logging.getLogger(__name__)
 
@@ -72,6 +113,11 @@ async def search_welfare(req: ProfileRequest):
             section=section,
             services=[ServiceLink(name=k, url=v) for k, v in items.items()]
         ))
+
+    # Supabase 실시간 정책 추가
+    supa_result = _supabase_to_welfare_result(_get_supabase_policies(profile))
+    if supa_result:
+        results.append(supa_result)
 
     # 온톨로지 매칭
     ont_dict = {}
