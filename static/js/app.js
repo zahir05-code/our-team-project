@@ -686,48 +686,191 @@ function toggleFuture(btn) {
   btn.textContent = hidden ? T("ont_expand") : T("ont_collapse");
 }
 
-/* ── 하단 탭 네비게이션 ── */
+/* ══════════════════════════════════════
+   하단 탭 네비게이션 (v3.4)
+══════════════════════════════════════ */
+
+// 현재 활성 탭
+let _currentTab = "home";
+
 function bnavGo(tab) {
-  // 탭 활성화 표시
+  _currentTab = tab;
+
+  // 탭 버튼 활성화
   document.querySelectorAll(".bnav-tab").forEach(t => t.classList.remove("active"));
   const activeTab = document.getElementById("bnav-" + tab);
   if (activeTab) activeTab.classList.add("active");
 
+  // 패널 전환
+  const main = document.querySelector(".main");
+  const calPanel  = document.getElementById("calendarPanel");
+  const locPanel  = document.getElementById("localPanel");
+
   if (tab === "home") {
-    // 홈: 입력 카드로 스크롤
-    const card = document.getElementById("inputCard") || document.querySelector(".input-card");
-    if (card) card.scrollIntoView({ behavior: "smooth" });
-  } else if (tab === "result") {
-    // 내 결과: 결과 영역으로 스크롤 또는 없으면 안내
-    const result = document.getElementById("result");
-    if (result && !result.classList.contains("hidden")) {
-      result.scrollIntoView({ behavior: "smooth" });
-    } else {
-      showToast("먼저 정보를 입력하고 복지서비스를 조회해 주세요 😊");
-      document.getElementById("bnav-home").classList.add("active");
-      activeTab && activeTab.classList.remove("active");
-    }
+    if (main) main.classList.remove("hidden");
+    calPanel && calPanel.classList.add("hidden");
+    locPanel && locPanel.classList.add("hidden");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+  } else if (tab === "calendar") {
+    if (main) main.classList.add("hidden");
+    calPanel && calPanel.classList.remove("hidden");
+    locPanel && locPanel.classList.add("hidden");
+    renderCalendar();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+  } else if (tab === "local") {
+    if (main) main.classList.add("hidden");
+    calPanel && calPanel.classList.add("hidden");
+    locPanel && locPanel.classList.remove("hidden");
+    renderLocal("서울특별시");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
   } else if (tab === "mypage") {
-    // 내 정보: 마이페이지 모달 오픈
     openMyPage();
-    // 탭은 home으로 복귀 (모달이 닫히면 홈으로)
-    setTimeout(() => {
-      document.querySelectorAll(".bnav-tab").forEach(t => t.classList.remove("active"));
-      document.getElementById("bnav-home").classList.add("active");
-    }, 300);
+    // 모달이 닫히면 이전 탭 복귀
+    setTimeout(() => bnavGo(_currentTab === "mypage" ? "home" : _currentTab), 100);
+    return;
   }
 }
 
-// 결과가 표시될 때 내결과 탭 배지 업데이트
 function updateResultBadge(count) {
-  const badge = document.getElementById("bnavBadge");
-  if (!badge) return;
-  if (count > 0) {
-    badge.textContent = count;
-    badge.classList.remove("hidden");
-  } else {
-    badge.classList.add("hidden");
+  // v3.4: 결과 배지 제거 (복지달력 배지로 대체)
+}
+
+/* ══════════════════════════════════════
+   📅 복지달력 — 연간 주요 복지 일정
+══════════════════════════════════════ */
+
+const WELFARE_CALENDAR = [
+  // 상시
+  { month:0,  name:"기초생활수급자 급여", desc:"매월 20일 지급 (생계·의료·주거·교육급여)", tag:"상시", color:"#16a34a", url:"https://www.bokjiro.go.kr" },
+  { month:0,  name:"장애인연금·수당", desc:"매월 20일 지급, 중증장애인 대상", tag:"상시", color:"#16a34a", url:"https://www.bokjiro.go.kr" },
+  // 1월
+  { month:1,  name:"근로·자녀장려금 반기 지급", desc:"하반기분 1월 지급 (국세청 신청)", tag:"1월", color:"#2563eb", url:"https://www.nts.go.kr" },
+  // 3월
+  { month:3,  name:"청년내일저축계좌 모집", desc:"소득 50% 이하 청년, 3년 적립 시 정부 매칭", tag:"3월", color:"#7c3aed", url:"https://www.bokjiro.go.kr" },
+  { month:3,  name:"에너지바우처 신청", desc:"취약계층 냉·난방 비용 지원", tag:"3월", color:"#ea580c", url:"https://www.energyv.or.kr" },
+  // 5월
+  { month:5,  name:"근로·자녀장려금 정기 신청", desc:"5월 1일~31일, 홈택스 신청", tag:"5월", color:"#2563eb", url:"https://www.hometax.go.kr" },
+  // 6월
+  { month:6,  name:"서울 청년수당 모집", desc:"서울 거주 만 19~34세, 월 50만원 6개월", tag:"6월", color:"#0891b2", url:"https://youth.seoul.go.kr" },
+  // 7월
+  { month:7,  name:"에너지바우처 하계 지원", desc:"여름철 전기요금 지원, 자동 차감", tag:"7월", color:"#ea580c", url:"https://www.energyv.or.kr" },
+  { month:7,  name:"기초연금 인상 적용", desc:"매년 물가상승률 반영 인상", tag:"7월", color:"#16a34a", url:"https://www.bokjiro.go.kr" },
+  // 9월
+  { month:9,  name:"청년도약계좌 모집", desc:"월 70만원 납입 시 정부 기여금 지원", tag:"9월", color:"#7c3aed", url:"https://www.kinfa.or.kr" },
+  // 10월
+  { month:10, name:"근로·자녀장려금 반기 신청", desc:"상반기분 10월 신청, 12월 지급", tag:"10월", color:"#2563eb", url:"https://www.hometax.go.kr" },
+  { month:10, name:"에너지바우처 동계 신청", desc:"겨울철 난방비 지원 신청 시작", tag:"10월", color:"#ea580c", url:"https://www.energyv.or.kr" },
+  // 11월
+  { month:11, name:"경기도 청년기본소득 신청", desc:"경기도 거주 만 24세, 분기별 25만원", tag:"11월", color:"#0891b2", url:"https://www.gg.go.kr" },
+  // 12월
+  { month:12, name:"연말정산 미리보기 시작", desc:"국세청 홈택스, 연말정산 간소화 서비스", tag:"12월", color:"#dc2626", url:"https://www.hometax.go.kr" },
+];
+
+function renderCalendar() {
+  const body = document.getElementById("calendarBody");
+  if (!body) return;
+
+  const now = new Date();
+  const thisMonth = now.getMonth() + 1;
+
+  // 이번 달 + 다음 달 + 상시 우선 정렬
+  const sorted = [...WELFARE_CALENDAR].sort((a, b) => {
+    const scoreA = a.month === 0 ? 99 : a.month >= thisMonth ? a.month - thisMonth : a.month + 12 - thisMonth;
+    const scoreB = b.month === 0 ? 99 : b.month >= thisMonth ? b.month - thisMonth : b.month + 12 - thisMonth;
+    return scoreA - scoreB;
+  });
+
+  // 달력 배지 (이번 달 항목 수)
+  const thisMonthCount = WELFARE_CALENDAR.filter(e => e.month === thisMonth).length;
+  const calBadge = document.getElementById("calBadge");
+  if (calBadge && thisMonthCount > 0) {
+    calBadge.textContent = thisMonthCount;
+    calBadge.classList.remove("hidden");
   }
+
+  let html = "";
+  let lastMonth = -1;
+
+  sorted.forEach(ev => {
+    const monthLabel = ev.month === 0 ? "🔄 상시 진행" : `${ev.month}월`;
+    if (ev.month !== lastMonth) {
+      const isNow = ev.month === thisMonth;
+      html += `<div class="cal-month-header ${isNow ? "cal-now" : ""}">
+        ${isNow ? "📍 이번 달 — " : ""}${monthLabel}
+        ${isNow ? '<span class="cal-now-badge">지금 신청!</span>' : ""}
+      </div>`;
+      lastMonth = ev.month;
+    }
+    html += `<div class="cal-card">
+      <div class="cal-card-top">
+        <span class="cal-tag" style="background:${ev.color}20;color:${ev.color}">${ev.tag}</span>
+        <a class="cal-link-btn" href="${ev.url}" target="_blank" rel="noopener">자세히 →</a>
+      </div>
+      <p class="cal-name">${ev.name}</p>
+      <p class="cal-desc">${ev.desc}</p>
+    </div>`;
+  });
+
+  body.innerHTML = html;
+}
+
+/* ══════════════════════════════════════
+   📍 우리동네 — 지역별 맞춤 혜택
+══════════════════════════════════════ */
+
+const LOCAL_BENEFITS = {
+  "서울특별시": [
+    { name:"서울시 청년수당", desc:"만 19~34세 미취업 청년, 월 50만원 × 6개월", contact:"02-2133-5186", url:"https://youth.seoul.go.kr", tag:"청년" },
+    { name:"서울시 안심소득 시범사업", desc:"기준 중위소득 85% 이하 가구, 부족분의 절반 지원", contact:"02-120", url:"https://www.seoul.go.kr", tag:"저소득" },
+    { name:"서울형 긴급복지 지원", desc:"위기 가구 생계·의료·주거비 신속 지원", contact:"주민센터", url:"https://www.bokjiro.go.kr", tag:"긴급" },
+    { name:"서울 희망두배 청년통장", desc:"월 10~15만원 저축 시 서울시 동일 금액 매칭", contact:"02-2133-7395", url:"https://www.seoul.go.kr", tag:"청년" },
+    { name:"서울 임신출산 의료비 지원", desc:"임산부 1인당 100만원 국민행복카드 지원", contact:"02-120", url:"https://www.seoul.go.kr", tag:"임신·출산" },
+    { name:"어르신 교통비 지원 (65세↑)", desc:"서울 거주 만 65세 이상, 연 10만원 교통카드 충전", contact:"주민센터", url:"https://www.seoul.go.kr", tag:"노인" },
+  ],
+  "경기도": [
+    { name:"경기도 청년기본소득", desc:"경기도 거주 만 24세, 분기 25만원 (연 100만원)", contact:"031-120", url:"https://www.gg.go.kr", tag:"청년" },
+    { name:"경기도 산후조리 지원금", desc:"출산 가정 산후조리비 최대 100만원 지원", contact:"031-8008-2114", url:"https://www.gg.go.kr", tag:"임신·출산" },
+    { name:"경기도 무한돌봄 긴급복지", desc:"위기 가구 생계·의료·주거비 신속 지원", contact:"031-120", url:"https://www.gg.go.kr", tag:"긴급" },
+    { name:"경기도 청년 노동자 통장", desc:"중소기업 재직 청년, 2년 저축 시 최대 1,080만원", contact:"031-120", url:"https://www.gg.go.kr", tag:"청년" },
+    { name:"경기도 어르신 교통비 지원", desc:"만 65세 이상, 연 12만원 교통카드 충전", contact:"주민센터", url:"https://www.gg.go.kr", tag:"노인" },
+    { name:"경기도 장애인 이동지원", desc:"장애인 콜택시·이동 차량 무료 이용", contact:"031-120", url:"https://www.gg.go.kr", tag:"장애인" },
+  ]
+};
+
+let _localRegion = "서울특별시";
+
+function localFilter(region) {
+  _localRegion = region;
+  document.querySelectorAll(".local-region-btn").forEach(b => {
+    b.classList.toggle("active", b.textContent.includes(region === "서울특별시" ? "서울" : "경기"));
+  });
+  renderLocal(region);
+}
+
+function renderLocal(region) {
+  const body = document.getElementById("localBody");
+  if (!body) return;
+
+  const list = LOCAL_BENEFITS[region] || [];
+  const tagColors = { "청년":"#7c3aed", "저소득":"#16a34a", "긴급":"#dc2626", "임신·출산":"#db2777", "노인":"#ea580c", "장애인":"#2563eb" };
+
+  let html = `<p class="local-count">${region} 맞춤 혜택 <b>${list.length}건</b></p>`;
+  list.forEach(b => {
+    const color = tagColors[b.tag] || "#6b7280";
+    html += `<div class="cal-card">
+      <div class="cal-card-top">
+        <span class="cal-tag" style="background:${color}20;color:${color}">${b.tag}</span>
+        <a class="cal-link-btn" href="${b.url}" target="_blank" rel="noopener">신청하기 →</a>
+      </div>
+      <p class="cal-name">${b.name}</p>
+      <p class="cal-desc">${b.desc}</p>
+      <p class="cal-contact">📞 ${b.contact}</p>
+    </div>`;
+  });
+  body.innerHTML = html;
 }
 
 /* ── 음성 입력 (Web Speech API) ── */

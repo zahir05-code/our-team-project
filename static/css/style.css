@@ -1075,3 +1075,69 @@ body { padding-bottom: 68px; }
 
 /* 헤더 마이페이지 버튼 → 하단 탭으로 대체되므로 숨김 */
 .mypage-shortcut { display: none !important; }
+
+/* ══════════════════════════════════════
+   탭 패널 공통 (v3.4)
+══════════════════════════════════════ */
+.tab-panel {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 20px 16px 80px;
+  min-height: 100vh;
+}
+.panel-header { margin-bottom: 20px; }
+.panel-title  { font-size: 1.3rem; font-weight: 900; color: #1e3a8a; }
+.panel-sub    { font-size: 0.82rem; color: #6b7280; margin-top: 4px; }
+
+/* 복지달력 */
+.cal-month-header {
+  font-size: 0.85rem; font-weight: 800; color: #374151;
+  padding: 10px 4px 6px; margin-top: 10px;
+  border-bottom: 2px solid #e5e7eb;
+  display: flex; align-items: center; gap: 6px;
+}
+.cal-month-header.cal-now { color: #2563eb; border-color: #2563eb; }
+.cal-now-badge {
+  background: #2563eb; color: #fff;
+  border-radius: 20px; padding: 1px 8px;
+  font-size: 0.72rem; font-weight: 700;
+}
+.cal-card {
+  background: #fff; border-radius: 14px;
+  padding: 14px 16px; margin: 8px 0;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+}
+.cal-card-top {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 8px;
+}
+.cal-tag {
+  border-radius: 20px; padding: 2px 10px;
+  font-size: 0.72rem; font-weight: 700;
+}
+.cal-link-btn {
+  font-size: 0.78rem; font-weight: 700; color: #2563eb;
+  text-decoration: none; white-space: nowrap;
+}
+.cal-name    { font-size: 0.97rem; font-weight: 700; color: #111827; margin-bottom: 4px; }
+.cal-desc    { font-size: 0.82rem; color: #6b7280; line-height: 1.5; }
+.cal-contact { font-size: 0.8rem; color: #4b5563; margin-top: 6px; }
+
+/* 우리동네 */
+.local-count { font-size: 0.88rem; color: #374151; margin-bottom: 12px; }
+.local-count b { color: #2563eb; }
+.local-region-bar, #localRegionBar {
+  display: flex; gap: 8px; margin-bottom: 16px;
+}
+.local-region-btn {
+  flex: 1; padding: 10px; border: 2px solid #e5e7eb;
+  border-radius: 12px; background: #fff;
+  font-size: 0.88rem; font-weight: 700; color: #6b7280;
+  cursor: pointer; transition: all 0.15s;
+}
+.local-region-btn.active {
+  border-color: #2563eb; background: #eff6ff; color: #2563eb;
+}
+
+/* 하단 탭 4개 */
+.bottom-nav { display: grid; grid-template-columns: repeat(4,1fr); }
