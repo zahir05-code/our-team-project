@@ -1264,3 +1264,23 @@ body { padding-bottom: 68px; }
 .myinfo-saved-del  { background: none; border: none; color: #d1d5db; cursor: pointer; font-size: 0.9rem; }
 .myinfo-saved-summary { font-size: 0.85rem; font-weight: 600; color: #374151; margin-bottom: 4px; }
 .myinfo-saved-count   { font-size: 0.75rem; color: #2563eb; font-weight: 700; }
+
+/* ── 가족 구성원 토글 카드 추가 스타일 ── */
+.fc2-card { cursor: pointer; user-select: none; position: relative; }
+.fc2-card:active { transform: scale(0.96); }
+.fc2-check {
+  position: absolute; top: 8px; right: 8px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #2563eb; color: #fff;
+  font-size: 0.72rem; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+}
+.fc2-tap-hint {
+  font-size: 0.65rem; color: #cbd5e1; margin-top: 4px;
+}
+.fc2-selected-badge {
+  background: #2563eb; color: #fff;
+  border-radius: 20px; padding: 3px 10px;
+  font-size: 0.75rem; font-weight: 700;
+  margin-top: 6px;
+}

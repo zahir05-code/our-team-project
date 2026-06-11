@@ -233,7 +233,6 @@ function renderFamilyComposer() {
   const total = estimateHouseholdSize();
 
   wrap.innerHTML = `
-    <!-- 총계 헤더 -->
     <div class="fc2-header">
       <div class="fc2-total-wrap">
         <span class="fc2-total-label">총 가구원</span>
@@ -242,25 +241,49 @@ function renderFamilyComposer() {
       </div>
       <div class="fc2-self-chip">👤 나 (본인) 1명</div>
     </div>
-    <!-- 구성원 그리드 -->
     <div class="fc2-grid">
       ${members.map(m => {
         const val = state.family_members[m.key] || 0;
-        const active = val > 0 ? "fc2-card--active" : "";
-        return `<div class="fc2-card ${active}" id="fc2_${m.key}">
+        const active = val > 0;
+        const isOne = FC_MAX[m.key] === 1; // 배우자는 토글만
+        return `<div class="fc2-card ${active ? "fc2-card--active" : ""}"
+                     id="fc2_${m.key}"
+                     onclick="fcToggle('${m.key}', ${isOne})"
+                     role="button" tabindex="0">
+          ${active ? `<div class="fc2-check">✓</div>` : ""}
           <div class="fc2-icon">${m.icon}</div>
           <div class="fc2-name">${m.label}</div>
           ${m.hint ? `<div class="fc2-hint">${m.hint}</div>` : ""}
-          <div class="fc2-ctrl">
+          ${active && !isOne ? `
+          <div class="fc2-ctrl" onclick="event.stopPropagation()">
             <button class="fc2-btn fc2-minus" onclick="fcChange('${m.key}',-1)"
-              ${val === 0 ? "disabled" : ""}>−</button>
+              ${val <= 1 ? "disabled" : ""}>−</button>
             <span class="fc2-num" id="fcn_${m.key}">${val}</span>
             <button class="fc2-btn fc2-plus" onclick="fcChange('${m.key}',1)"
               ${val >= FC_MAX[m.key] ? "disabled" : ""}>+</button>
-          </div>
+          </div>` : active && isOne ? `
+          <div class="fc2-selected-badge">1명</div>` : `
+          <div class="fc2-tap-hint">탭하여 추가</div>`}
         </div>`;
       }).join("")}
     </div>`;
+}
+
+// 카드 토글 (탭으로 선택/해제)
+function fcToggle(key, isOne) {
+  const cur = state.family_members[key] || 0;
+  if (cur > 0) {
+    // 선택 해제 → 0으로
+    state.family_members[key] = 0;
+  } else {
+    // 선택 → 1로 시작
+    state.family_members[key] = 1;
+  }
+  // 총계 업데이트 후 리렌더
+  const totalEl = document.getElementById("fcTotal");
+  if (totalEl) totalEl.textContent = estimateHouseholdSize();
+  renderFamilyComposer();
+  saveProfile();
 }
 
 // 카운터 +/- 처리
