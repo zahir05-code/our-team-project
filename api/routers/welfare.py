@@ -8,7 +8,7 @@ from fastapi import APIRouter, HTTPException
 from api.schemas import (
     ProfileRequest, ProfileResponse, WelfareResult, ServiceLink,
     NlpRequest, NlpResponse, NlpAnalysis,
-    OntologyMatchResult,
+    OntologyMatchResult, SupabasePolicy,
 )
 from chatbot.parser import build_profile
 from welfare_analyzer.api.link_connector import build_result_links
@@ -50,19 +50,26 @@ def _get_supabase_policies(profile) -> list[dict]:
         return []
 
 
-def _supabase_to_welfare_result(policies: list[dict]) -> "WelfareResult | None":
-    """Supabase 정책 목록 → WelfareResult 변환."""
-    if not policies:
-        return None
-    services = []
+def _supabase_to_policy_cards(policies: list[dict]) -> list[SupabasePolicy]:
+    """Supabase 정책 목록 → SupabasePolicy 카드 리스트 변환."""
+    cards = []
     for p in policies:
         name = p.get("name", "")
-        url  = p.get("url") or p.get("servDtlLink") or "https://www.bokjiro.go.kr"
-        if name:
-            services.append(ServiceLink(name=name, url=url))
-    if not services:
-        return None
-    return WelfareResult(section="🗄️ 실시간 DB 추천 정책", services=services)
+        if not name:
+            continue
+        cards.append(SupabasePolicy(
+            policy_id    = p.get("policy_id", ""),
+            name         = name,
+            description  = p.get("description") or "",
+            benefit      = p.get("benefit") or "",
+            how_to_apply = p.get("how_to_apply") or "",
+            contact      = p.get("contact") or "",
+            url          = p.get("url") or "https://www.bokjiro.go.kr",
+            source       = p.get("source") or "",
+            tags         = p.get("tags") or [],
+            online_apply = p.get("how_to_apply") == "Y",
+        ))
+    return cards
 
 router = APIRouter(prefix="/welfare", tags=["복지서비스"])
 logger = logging.getLogger(__name__)
@@ -114,10 +121,8 @@ async def search_welfare(req: ProfileRequest):
             services=[ServiceLink(name=k, url=v) for k, v in items.items()]
         ))
 
-    # Supabase 실시간 정책 추가
-    supa_result = _supabase_to_welfare_result(_get_supabase_policies(profile))
-    if supa_result:
-        results.append(supa_result)
+    # Supabase 실시간 정책 카드
+    supa_cards = _supabase_to_policy_cards(_get_supabase_policies(profile))
 
     # 온톨로지 매칭
     ont_dict = {}
@@ -161,6 +166,7 @@ async def search_welfare(req: ProfileRequest):
         active_sources=[s.value for s in profile.active_sources],
         results=results,
         ontology=ontology_result,
+        supabase_policies=supa_cards,
         draft_saved=draft_saved,
         message="맞춤 복지서비스를 찾았습니다.",
     )

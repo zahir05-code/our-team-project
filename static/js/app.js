@@ -586,6 +586,32 @@ function renderResult(data, analysis) {
     body.insertAdjacentHTML("beforeend", html);
   }
 
+  /* Supabase 실시간 DB 정책 카드 */
+  if (data.supabase_policies && data.supabase_policies.length > 0) {
+    let html = `<div class="supa-section">
+      <p class="supa-header">🗄️ 실시간 DB 추천 정책 <span class="supa-badge">${data.supabase_policies.length}건</span></p>`;
+    data.supabase_policies.forEach(p => {
+      const tags = (p.tags||[]).map(t=>`<span class="ont-tag">${t}</span>`).join("");
+      const benefit = p.benefit ? `<div class="supa-row">💰 <b>혜택</b> ${p.benefit}</div>` : "";
+      const contact = p.contact ? `<div class="supa-row">📞 <b>문의</b> ${p.contact}</div>` : "";
+      const source  = p.source  ? `<div class="supa-row">🏛️ <b>주관</b> ${p.source}</div>` : "";
+      const applyBadge = p.online_apply
+        ? `<span class="supa-online-badge">💻 온라인 신청 가능</span>` : "";
+      html += `<div class="supa-card">
+        <div class="supa-card-top">
+          <span class="supa-name">${p.name}</span>
+          <a class="supa-apply-btn" href="${p.url}" target="_blank" rel="noopener">바로 신청 →</a>
+        </div>
+        ${p.description ? `<p class="supa-desc">${p.description}</p>` : ""}
+        ${applyBadge}
+        ${benefit}${source}${contact}
+        ${tags ? `<div class="ont-tags">${tags}</div>` : ""}
+      </div>`;
+    });
+    html += `</div>`;
+    body.insertAdjacentHTML("beforeend", html);
+  }
+
   /* 링크 섹션 */
   if (data.results && data.results.some(s => s.services.length > 0)) {
     let html = `<div class="link-section-wrap">

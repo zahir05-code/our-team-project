@@ -90,6 +90,20 @@ class OntologyMatchResult(BaseModel):
     summary: dict   # definite_count, possible_count, future_count, total
 
 
+class SupabasePolicy(BaseModel):
+    """Supabase 실시간 DB 정책 카드."""
+    policy_id:   str
+    name:        str
+    description: Optional[str] = ""
+    benefit:     Optional[str] = ""
+    how_to_apply: Optional[str] = ""
+    contact:     Optional[str] = ""
+    url:         Optional[str] = ""
+    source:      Optional[str] = ""
+    tags:        list[str] = []
+    online_apply: bool = False
+
+
 class ProfileResponse(BaseModel):
     """프로파일 조회 응답."""
     summary:      str
@@ -98,6 +112,7 @@ class ProfileResponse(BaseModel):
     active_sources: list[str]
     results:      list[WelfareResult]
     ontology:     Optional[OntologyMatchResult] = None
+    supabase_policies: list[SupabasePolicy] = []
     draft_saved:  bool
     message:      str
 
@@ -111,6 +126,7 @@ class NlpResponse(BaseModel):
     active_sources: list[str]
     results:     list[WelfareResult]
     ontology:    Optional[OntologyMatchResult] = None
+    supabase_policies: list[SupabasePolicy] = []
     draft_saved: bool
     needs_region: bool
     message:     str
