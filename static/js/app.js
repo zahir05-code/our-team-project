@@ -368,6 +368,14 @@ function checkStepA() {
   const ok  = state.region && state.district && age >= 1 && age <= 120;
   const btn = document.getElementById("btnA");
   btn.classList.toggle("disabled", !ok);
+  // 힌트 텍스트 업데이트
+  const hint = document.getElementById("stepAHint");
+  if (hint) {
+    if (!state.region)        hint.textContent = "👆 서울 또는 경기를 선택해 주세요";
+    else if (!state.district) hint.textContent = "👆 시·군·구를 선택해 주세요";
+    else if (!age || age < 1) hint.textContent = "👆 나이를 입력해 주세요";
+    else                      hint.textContent = "";
+  }
 }
 
 /* ── 단계 이동 ── */
@@ -378,12 +386,19 @@ function goToA() {
 
 function goToB() {
   const age = parseInt(document.getElementById("inputAge").value);
-  if (!state.region)   { alert(T("alert_region")); return; }
-  if (!state.district) { alert(T("alert_district")); return; }
-  if (!age || age < 1 || age > 120) { alert(T("alert_age")); return; }
+  if (!state.region)             { showToast("📍 서울 또는 경기를 먼저 선택해 주세요"); _shakeHint(); return; }
+  if (!state.district)           { showToast("📍 시·군·구를 선택해 주세요"); _shakeHint(); return; }
+  if (!age || age < 1 || age > 120) { showToast("✏️ 나이를 올바르게 입력해 주세요 (1~120)"); _shakeHint(); return; }
   state.age = String(age);
   show("stepB"); setDot(2);
   document.getElementById("inputCard").scrollIntoView({ behavior: "smooth" });
+}
+function _shakeHint() {
+  const hint = document.getElementById("stepAHint");
+  if (!hint) return;
+  hint.classList.remove("hint-shake");
+  void hint.offsetWidth; // reflow
+  hint.classList.add("hint-shake");
 }
 
 function goToC() {

@@ -196,7 +196,7 @@ body {
   transition: background 0.15s, transform 0.1s; margin-top: 4px;
 }
 .btn-main:hover { background: #1d4ed8; transform: translateY(-1px); }
-.btn-main.disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+.btn-main.disabled { opacity: 0.55; cursor: pointer; }
 
 .btn-row-two { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: center; }
 .btn-back-sm {
@@ -1537,3 +1537,19 @@ body { padding-bottom: 68px; }
   transition: opacity 0.15s;
 }
 .sd-apply-btn:active { opacity: 0.85; }
+
+/* ── 스텝A 입력 안내 힌트 ── */
+.step-hint {
+  font-size: 0.78rem; font-weight: 700;
+  color: #f97316; text-align: center;
+  padding: 6px 0 2px; min-height: 24px;
+  transition: opacity 0.2s;
+}
+@keyframes hintShake {
+  0%,100% { transform: translateX(0); }
+  20%     { transform: translateX(-6px); }
+  40%     { transform: translateX(6px); }
+  60%     { transform: translateX(-4px); }
+  80%     { transform: translateX(4px); }
+}
+.hint-shake { animation: hintShake 0.38s ease; }
