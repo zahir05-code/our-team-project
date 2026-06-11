@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>아테나 복지서비스 | 내 혜택 찾기</title>
-  <link rel="stylesheet" href="/static/css/style.css?v=3.4">
+  <link rel="stylesheet" href="/static/css/style.css?v=3.5">
 </head>
 <body>
 
@@ -396,6 +396,88 @@
     </div>
   </div>
 
+  <!-- ══════════ 이웃혜택 패널 ══════════ -->
+  <div id="neighborPanel" class="tab-panel hidden">
+    <div class="panel-header">
+      <h2 class="panel-title">🤝 이웃 복지혜택</h2>
+      <p class="panel-sub">사회복지사·요양보호사·가족을 위한 복지 조회</p>
+    </div>
+
+    <!-- 빠른 유형 선택 -->
+    <div class="nbr-section">
+      <div class="nbr-section-title">👥 대상자 유형 선택</div>
+      <div class="nbr-type-grid" id="nbrTypeGrid">
+        <button class="nbr-type-btn" onclick="nbrSelectType('elderly')">👴 독거노인</button>
+        <button class="nbr-type-btn" onclick="nbrSelectType('disability')">♿ 장애인 가구</button>
+        <button class="nbr-type-btn" onclick="nbrSelectType('single_parent')">👩‍👦 한부모 가정</button>
+        <button class="nbr-type-btn" onclick="nbrSelectType('low_income')">💛 저소득 가정</button>
+        <button class="nbr-type-btn" onclick="nbrSelectType('infant')">🍼 영유아 가정</button>
+        <button class="nbr-type-btn" onclick="nbrSelectType('caregiver')">🏥 돌봄 필요 가정</button>
+      </div>
+    </div>
+
+    <!-- 직접 조회 -->
+    <div class="nbr-section">
+      <div class="nbr-section-title">🔍 대상자 정보 직접 입력</div>
+      <div class="nbr-form">
+        <div class="nbr-row">
+          <label class="nbr-label">나이</label>
+          <input type="number" id="nbrAge" class="nbr-input" placeholder="예: 72" min="0" max="120">
+        </div>
+        <div class="nbr-row">
+          <label class="nbr-label">지역</label>
+          <select id="nbrRegion" class="nbr-input">
+            <option value="서울특별시">서울특별시</option>
+            <option value="경기도">경기도</option>
+          </select>
+        </div>
+        <div class="nbr-row">
+          <label class="nbr-label">어려운 점</label>
+          <input type="text" id="nbrSituation" class="nbr-input" placeholder="예: 혼자 거주, 거동 불편">
+        </div>
+        <div class="nbr-row">
+          <label class="nbr-label">월 소득</label>
+          <input type="number" id="nbrIncome" class="nbr-input" placeholder="만원 단위 (예: 80)">
+        </div>
+        <button class="nbr-search-btn" onclick="nbrSearch()">🔍 이웃 복지혜택 조회</button>
+      </div>
+    </div>
+
+    <!-- 결과 영역 -->
+    <div id="nbrResult" class="nbr-result hidden">
+      <div class="nbr-section-title">📋 조회 결과</div>
+      <div id="nbrResultBody"></div>
+    </div>
+
+    <!-- 복지 안내 카드 (사회복지사용 팁) -->
+    <div class="nbr-section">
+      <div class="nbr-section-title">💡 전문가 안내</div>
+      <div class="nbr-tip-list">
+        <div class="nbr-tip-card">
+          <div class="nbr-tip-icon">📞</div>
+          <div class="nbr-tip-body">
+            <div class="nbr-tip-title">복지로 상담전화</div>
+            <div class="nbr-tip-desc">129 (보건복지부 콜센터) — 24시간 운영</div>
+          </div>
+        </div>
+        <div class="nbr-tip-card">
+          <div class="nbr-tip-icon">🏛</div>
+          <div class="nbr-tip-body">
+            <div class="nbr-tip-title">주민센터 복지 담당</div>
+            <div class="nbr-tip-desc">맞춤형급여 안내·신청 대행 가능</div>
+          </div>
+        </div>
+        <div class="nbr-tip-card">
+          <div class="nbr-tip-icon">🌐</div>
+          <div class="nbr-tip-body">
+            <div class="nbr-tip-title">복지로 바로가기</div>
+            <a href="https://www.bokjiro.go.kr" target="_blank" class="nbr-tip-link">www.bokjiro.go.kr →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ══════════ 하단 탭 네비게이션 ══════════ -->
   <nav class="bottom-nav" role="navigation" aria-label="주요 메뉴">
     <button class="bnav-tab active" id="bnav-home" onclick="bnavGo('home')" aria-label="혜택진단">
@@ -415,11 +497,15 @@
       <span class="bnav-icon">👤</span>
       <span class="bnav-label">내정보</span>
     </button>
+    <button class="bnav-tab" id="bnav-neighbor" onclick="bnavGo('neighbor')" aria-label="이웃혜택">
+      <span class="bnav-icon">🤝</span>
+      <span class="bnav-label">이웃혜택</span>
+    </button>
   </nav>
 
   <script src="/static/js/data.js?v=3.4"></script>
   <script src="/static/js/i18n.js?v=3.4"></script>
   <script src="/static/js/translations.js?v=3.4"></script>
-  <script src="/static/js/app.js?v=3.4"></script>
+  <script src="/static/js/app.js?v=3.5"></script>
 </body>
 </html>

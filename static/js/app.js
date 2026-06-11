@@ -250,20 +250,23 @@ function renderFamilyComposer() {
                      id="fc2_${m.key}"
                      onclick="fcToggle('${m.key}', ${isOne})"
                      role="button" tabindex="0">
-          ${active ? `<div class="fc2-check">✓</div>` : ""}
           <div class="fc2-icon">${m.icon}</div>
-          <div class="fc2-name">${m.label}</div>
-          ${m.hint ? `<div class="fc2-hint">${m.hint}</div>` : ""}
-          ${active && !isOne ? `
-          <div class="fc2-ctrl" onclick="event.stopPropagation()">
-            <button class="fc2-btn fc2-minus" onclick="fcChange('${m.key}',-1)"
-              ${val <= 1 ? "disabled" : ""}>−</button>
-            <span class="fc2-num" id="fcn_${m.key}">${val}</span>
-            <button class="fc2-btn fc2-plus" onclick="fcChange('${m.key}',1)"
-              ${val >= FC_MAX[m.key] ? "disabled" : ""}>+</button>
-          </div>` : active && isOne ? `
-          <div class="fc2-selected-badge">1명</div>` : `
-          <div class="fc2-tap-hint">탭하여 추가</div>`}
+          <div class="fc2-text">
+            <div class="fc2-name">${m.label}</div>
+            ${m.hint ? `<div class="fc2-hint">${m.hint}</div>` : ""}
+          </div>
+          <div class="fc2-right">
+            ${active && !isOne ? `
+            <div class="fc2-ctrl" onclick="event.stopPropagation()">
+              <button class="fc2-btn fc2-minus" onclick="fcChange('${m.key}',-1)"
+                ${val <= 1 ? "disabled" : ""}>−</button>
+              <span class="fc2-num" id="fcn_${m.key}">${val}</span>
+              <button class="fc2-btn fc2-plus" onclick="fcChange('${m.key}',1)"
+                ${val >= FC_MAX[m.key] ? "disabled" : ""}>+</button>
+            </div>` : active && isOne ? `
+            <div class="fc2-selected-badge">1명</div>` : `
+            <div class="fc2-check" style="display:none"></div>`}
+          </div>
         </div>`;
       }).join("")}
     </div>`;
@@ -733,16 +736,23 @@ function bnavGo(tab) {
   const calPanel  = document.getElementById("calendarPanel");
   const locPanel  = document.getElementById("localPanel");
 
+  const myinfoPanel = document.getElementById("myinfoPanel");
+  const nbrPanel    = document.getElementById("neighborPanel");
+
   if (tab === "home") {
     if (main) main.classList.remove("hidden");
     calPanel && calPanel.classList.add("hidden");
     locPanel && locPanel.classList.add("hidden");
+    myinfoPanel && myinfoPanel.classList.add("hidden");
+    nbrPanel && nbrPanel.classList.add("hidden");
     window.scrollTo({ top: 0, behavior: "smooth" });
 
   } else if (tab === "calendar") {
     if (main) main.classList.add("hidden");
     calPanel && calPanel.classList.remove("hidden");
     locPanel && locPanel.classList.add("hidden");
+    myinfoPanel && myinfoPanel.classList.add("hidden");
+    nbrPanel && nbrPanel.classList.add("hidden");
     renderCalendar();
     window.scrollTo({ top: 0, behavior: "smooth" });
 
@@ -750,6 +760,8 @@ function bnavGo(tab) {
     if (main) main.classList.add("hidden");
     calPanel && calPanel.classList.add("hidden");
     locPanel && locPanel.classList.remove("hidden");
+    myinfoPanel && myinfoPanel.classList.add("hidden");
+    nbrPanel && nbrPanel.classList.add("hidden");
     renderLocal("서울특별시");
     window.scrollTo({ top: 0, behavior: "smooth" });
 
@@ -757,9 +769,17 @@ function bnavGo(tab) {
     if (main) main.classList.add("hidden");
     calPanel && calPanel.classList.add("hidden");
     locPanel && locPanel.classList.add("hidden");
-    const myinfoPanel = document.getElementById("myinfoPanel");
     myinfoPanel && myinfoPanel.classList.remove("hidden");
+    nbrPanel && nbrPanel.classList.add("hidden");
     renderMyinfoPanel();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+  } else if (tab === "neighbor") {
+    if (main) main.classList.add("hidden");
+    calPanel && calPanel.classList.add("hidden");
+    locPanel && locPanel.classList.add("hidden");
+    myinfoPanel && myinfoPanel.classList.add("hidden");
+    nbrPanel && nbrPanel.classList.remove("hidden");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 }
@@ -1244,4 +1264,97 @@ function showToast(msg) {
   toast.classList.add("show");
   clearTimeout(toast._timer);
   toast._timer = setTimeout(() => toast.classList.remove("show"), 2800);
+}
+
+/* ══════════════════════════════════════
+   이웃혜택 탭 — 대상자 조회 기능
+══════════════════════════════════════ */
+
+const NBR_PRESETS = {
+  elderly:      { age:"75", situation:"혼자 거주 및 거동불편", income:"80" },
+  disability:   { age:"45", situation:"장애 및 의료비 부담", income:"120" },
+  single_parent:{ age:"35", situation:"한부모 및 아동양육", income:"150" },
+  low_income:   { age:"50", situation:"실직 및 생활비 부족", income:"70" },
+  infant:       { age:"30", situation:"임신 및 영유아 양육", income:"200" },
+  caregiver:    { age:"65", situation:"돌봄 필요 및 건강 악화", income:"90" },
+};
+
+function nbrSelectType(type) {
+  const p = NBR_PRESETS[type];
+  if (!p) return;
+  document.getElementById("nbrAge").value       = p.age;
+  document.getElementById("nbrSituation").value = p.situation;
+  document.getElementById("nbrIncome").value    = p.income;
+  // 버튼 활성화 표시
+  document.querySelectorAll(".nbr-type-btn").forEach(b => b.classList.remove("active"));
+  event.currentTarget.classList.add("active");
+  showToast("✅ 기본 정보가 채워졌습니다. 조회 버튼을 눌러주세요.");
+}
+
+async function nbrSearch() {
+  const age    = parseInt(document.getElementById("nbrAge").value || "0");
+  const region = document.getElementById("nbrRegion").value;
+  const situation = document.getElementById("nbrSituation").value.trim();
+  const income = parseInt(document.getElementById("nbrIncome").value || "0");
+
+  if (!age || age < 1) { showToast("⚠️ 나이를 입력해주세요."); return; }
+
+  const resultDiv = document.getElementById("nbrResult");
+  const resultBody = document.getElementById("nbrResultBody");
+  resultDiv.classList.remove("hidden");
+  resultBody.innerHTML = `<div class="nbr-loading">🔍 조회 중...</div>`;
+
+  try {
+    const payload = {
+      age, region,
+      district: "",
+      life_situations: situation ? [situation] : [],
+      work_status: "",
+      family_status: "",
+      income_range: income ? (income <= 100 ? "100만원 미만" : income <= 200 ? "100~200만원" : "200만원 이상") : "",
+      gender: ""
+    };
+    const res = await fetch("/api/welfare/search", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error("조회 실패");
+    const data = await res.json();
+
+    let html = `<div class="nbr-result-summary">
+      <span class="nbr-tag">나이 ${age}세</span>
+      <span class="nbr-tag">${region}</span>
+      ${income ? `<span class="nbr-tag">월 ${income}만원</span>` : ""}
+    </div>`;
+
+    if (data.supabase_policies && data.supabase_policies.length > 0) {
+      html += `<div class="nbr-card-list">`;
+      data.supabase_policies.forEach(p => {
+        html += `<div class="nbr-pol-card">
+          <div class="nbr-pol-name">${p.name}</div>
+          ${p.description ? `<div class="nbr-pol-desc">${p.description}</div>` : ""}
+          <a href="${p.url||'https://www.bokjiro.go.kr'}" target="_blank" class="nbr-pol-link">신청하기 →</a>
+        </div>`;
+      });
+      html += `</div>`;
+    } else {
+      // 정적 결과 표시
+      let count = 0;
+      html += `<div class="nbr-card-list">`;
+      (data.results||[]).forEach(section => {
+        (section.services||[]).forEach(svc => {
+          if (count++ >= 6) return;
+          html += `<div class="nbr-pol-card">
+            <div class="nbr-pol-name">${svc.name}</div>
+            <a href="${svc.url}" target="_blank" class="nbr-pol-link">바로가기 →</a>
+          </div>`;
+        });
+      });
+      html += `</div>`;
+    }
+    resultBody.innerHTML = html;
+  } catch(e) {
+    resultBody.innerHTML = `<div class="nbr-error">조회 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.</div>`;
+  }
 }
