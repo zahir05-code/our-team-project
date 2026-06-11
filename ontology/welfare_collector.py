@@ -55,15 +55,11 @@ def fetch_policy_list(page: int = 1, per_page: int = 100) -> list[dict]:
         logger.warning("[Collector] GOV_WELFARE_API_KEY 없음")
         return []
 
-    params = {
-        "serviceKey": api_key,
-        "pageNo": page,
-        "numOfRows": per_page,
-        "srchKeyCode": "001",    # 서울·경기 포함 전체
-    }
+    # data.go.kr는 serviceKey를 URL에 직접 삽입해야 함 (requests params 사용 시 이중 인코딩 오류)
+    url = f"{LIST_ENDPOINT}?serviceKey={api_key}&pageNo={page}&numOfRows={per_page}&srchKeyCode=001&inqTrgtCd=A&lifeArray=&trgterIndvdlArray="
 
     try:
-        resp = requests.get(LIST_ENDPOINT, params=params, timeout=15)
+        resp = requests.get(url, timeout=15)
         resp.raise_for_status()
         return _parse_list_xml(resp.text)
     except Exception as e:
