@@ -1753,3 +1753,69 @@ body { padding-bottom: 68px; }
   text-decoration: none; transition: background 0.15s;
 }
 .bk-detail-btn:active { background: #0f172a; }
+
+/* ══════════════════════════════════════
+   🏛 지역 공공서비스 탭
+══════════════════════════════════════ */
+
+/* 4탭 네비게이션으로 복원 */
+.bottom-nav { grid-template-columns: repeat(4, 1fr) !important; }
+
+/* 서비스 유형 필터 바 */
+.loc-type-bar {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  margin: 10px 0 14px; padding: 0 2px;
+}
+.loc-type-btn {
+  padding: 5px 12px; border-radius: 20px;
+  border: 1.5px solid #e2e8f0; background: #f8fafc;
+  font-size: 0.74rem; font-weight: 700; color: #374151;
+  cursor: pointer; transition: all 0.13s; white-space: nowrap;
+}
+.loc-type-btn.active {
+  background: #1e40af; border-color: #1e40af; color: #fff;
+}
+
+/* 공공서비스 카드 */
+.loc-card {
+  background: #fff; border: 1.5px solid #e9ecf0;
+  border-radius: 16px; padding: 14px 16px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.loc-card-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 7px;
+}
+.loc-type-tag {
+  font-size: 0.7rem; font-weight: 800;
+  border-radius: 20px; padding: 3px 9px;
+}
+.loc-hours {
+  font-size: 0.65rem; color: #94a3b8; font-weight: 600;
+}
+.loc-name {
+  font-size: 0.9rem; font-weight: 800; color: #0f172a;
+  margin-bottom: 5px;
+}
+.loc-desc {
+  font-size: 0.76rem; color: #475569; line-height: 1.5;
+  margin-bottom: 9px;
+}
+.loc-meta {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 10px; flex-wrap: wrap;
+}
+.loc-addr { font-size: 0.7rem; color: #64748b; }
+.loc-tel  {
+  font-size: 0.7rem; font-weight: 700; color: #2563eb;
+  text-decoration: none;
+}
+.loc-link-btn {
+  display: block; text-align: center;
+  padding: 8px; border-radius: 9px;
+  background: #f1f5f9; color: #374151;
+  font-size: 0.75rem; font-weight: 700;
+  text-decoration: none; transition: background 0.13s;
+}
+.loc-link-btn:active { background: #e2e8f0; }

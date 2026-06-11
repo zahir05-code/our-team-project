@@ -856,13 +856,6 @@ function bnavGo(tab) {
     renderMyinfoPanel();
     window.scrollTo({ top: 0, behavior: "smooth" });
 
-  } else if (tab === "neighbor") {
-    if (main) main.classList.add("hidden");
-    calPanel && calPanel.classList.add("hidden");
-    locPanel && locPanel.classList.add("hidden");
-    myinfoPanel && myinfoPanel.classList.add("hidden");
-    nbrPanel && nbrPanel.classList.remove("hidden");
-    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 }
 
@@ -972,34 +965,82 @@ const LOCAL_BENEFITS = {
   ]
 };
 
-let _localRegion = "서울특별시";
+/* ══════════════════════════════════════
+   🏛 지역 공공서비스 데이터
+══════════════════════════════════════ */
+const LOCAL_PUBLIC = {
+  "서울특별시": [
+    { type:"welfare",  name:"서울시 종합사회복지관",       addr:"각 구별 운영",           tel:"02-2133-7386", desc:"생활상담, 재가복지, 직업지원 등 종합 복지서비스", url:"https://wis.seoul.go.kr", hours:"평일 09:00~18:00" },
+    { type:"welfare",  name:"서울시니어플러스 (노인복지관)",addr:"25개 자치구 운영",        tel:"02-2133-5400", desc:"만 60세 이상 건강·교육·취업·여가 프로그램 운영",   url:"https://seniorplus.seoul.go.kr", hours:"평일 09:00~18:00" },
+    { type:"center",   name:"주민센터 (동 행정복지센터)",  addr:"내 동 주민센터",          tel:"120",          desc:"복지급여 신청, 주민등록, 증명서 발급, 통합사례관리",url:"https://www.gov.kr", hours:"평일 09:00~18:00" },
+    { type:"center",   name:"서울시 희망복지지원단",       addr:"각 구청 내",             tel:"02-2133-7386", desc:"위기가정 발굴·지원, 통합사례관리, 자원연계",        url:"https://welfare.seoul.go.kr", hours:"평일 09:00~18:00" },
+    { type:"meal",     name:"무료급식소 (경로식당)",       addr:"각 구별 운영",           tel:"120",          desc:"만 60세 이상 어르신 무료 또는 저렴한 식사 제공",    url:"https://wis.seoul.go.kr", hours:"월~금 점심" },
+    { type:"meal",     name:"서울 푸드뱅크·마켓",         addr:"구별 운영 (25개소)",     tel:"1688-1122",    desc:"식품·생활용품 무료 제공 (저소득·취약계층)",         url:"https://www.foodbank.or.kr", hours:"평일 09:00~17:00" },
+    { type:"health",   name:"서울시 보건소",              addr:"25개 자치구 운영",        tel:"120",          desc:"건강검진, 예방접종, 만성질환 관리, 정신건강 상담",  url:"https://health.seoul.go.kr", hours:"평일 09:00~18:00" },
+    { type:"health",   name:"서울 정신건강복지센터",       addr:"각 구별 운영",           tel:"1577-0199",    desc:"정신건강 상담·치료 연계, 자살예방 24시간 운영",     url:"https://blutouch.net", hours:"24시간" },
+    { type:"counsel",  name:"서울시 복지재단 상담센터",    addr:"서울 전역",              tel:"02-2011-0300", desc:"복지 서비스 안내, 위기 상담, 자원 연계 지원",       url:"https://welfare.seoul.go.kr", hours:"평일 09:00~18:00" },
+    { type:"counsel",  name:"다산콜 (서울시 통합민원)",    addr:"전화·온라인",            tel:"120",          desc:"서울시 각종 복지·행정 서비스 안내 및 연결",         url:"https://120.seoul.go.kr", hours:"24시간" },
+  ],
+  "경기도": [
+    { type:"welfare",  name:"경기도 종합사회복지관",       addr:"31개 시·군 운영",        tel:"031-120",      desc:"생활상담, 재가복지, 직업지원 등 종합 복지서비스",   url:"https://www.gg.go.kr", hours:"평일 09:00~18:00" },
+    { type:"welfare",  name:"경기도 노인복지관",           addr:"각 시·군 운영",          tel:"031-120",      desc:"만 60세 이상 건강·교육·취업·여가 프로그램",        url:"https://www.gg.go.kr", hours:"평일 09:00~18:00" },
+    { type:"center",   name:"주민센터 (행정복지센터)",     addr:"내 읍·면·동 주민센터",   tel:"031-120",      desc:"복지급여 신청, 주민등록, 통합사례관리, 위기상담",   url:"https://www.gov.kr", hours:"평일 09:00~18:00" },
+    { type:"center",   name:"경기도 희망복지지원단",       addr:"각 시·군청 내",          tel:"031-8008-2114",desc:"위기가정 통합사례관리, 자원 연계 지원",             url:"https://www.gg.go.kr", hours:"평일 09:00~18:00" },
+    { type:"meal",     name:"경기 무료급식소 (경로식당)",  addr:"각 시·군 운영",          tel:"031-120",      desc:"만 60세 이상 어르신 무료 또는 저렴한 식사 제공",    url:"https://www.gg.go.kr", hours:"월~금 점심" },
+    { type:"meal",     name:"경기 푸드뱅크·마켓",         addr:"시·군별 운영",           tel:"1688-1122",    desc:"식품·생활용품 무료 제공 (저소득·취약계층)",         url:"https://www.foodbank.or.kr", hours:"평일 09:00~17:00" },
+    { type:"health",   name:"경기도 보건소",              addr:"31개 시·군 운영",        tel:"031-120",      desc:"건강검진, 예방접종, 만성질환 관리, 정신건강 상담",  url:"https://health.gg.go.kr", hours:"평일 09:00~18:00" },
+    { type:"health",   name:"경기 정신건강복지센터",       addr:"각 시·군 운영",          tel:"1577-0199",    desc:"정신건강 상담·치료 연계, 자살예방 24시간 운영",     url:"https://www.ggmhc.or.kr", hours:"24시간" },
+    { type:"counsel",  name:"경기복지재단 상담센터",       addr:"경기 전역",              tel:"031-267-9500", desc:"복지 서비스 안내, 위기 상담, 자원 연계 지원",       url:"https://www.ggwf.or.kr", hours:"평일 09:00~18:00" },
+    { type:"counsel",  name:"경기도 통합민원 콜센터",      addr:"전화·온라인",            tel:"031-120",      desc:"경기도 각종 복지·행정 서비스 안내 및 연결",         url:"https://www.gg.go.kr", hours:"24시간" },
+  ],
+};
+
+const LOC_TYPE_LABELS = { welfare:"복지관", center:"주민센터", meal:"무료급식", health:"보건소", counsel:"상담센터" };
+const LOC_TYPE_COLORS = { welfare:"#2563eb", center:"#7c3aed", meal:"#ea580c", health:"#16a34a", counsel:"#db2777" };
+const LOC_TYPE_ICONS  = { welfare:"🏢", center:"🏛", meal:"🍱", health:"💊", counsel:"💬" };
+
+let _localRegion   = "서울특별시";
+let _localTypeFilter = "all";
 
 function localFilter(region) {
   _localRegion = region;
-  document.querySelectorAll(".local-region-btn").forEach(b => {
-    b.classList.toggle("active", b.textContent.includes(region === "서울특별시" ? "서울" : "경기"));
-  });
+  document.querySelectorAll(".local-region-btn").forEach(b =>
+    b.classList.toggle("active", b.textContent.includes(region === "서울특별시" ? "서울" : "경기"))
+  );
   renderLocal(region);
+}
+
+function locTypeFilter(btn, type) {
+  _localTypeFilter = type;
+  document.querySelectorAll(".loc-type-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  renderLocal(_localRegion);
 }
 
 function renderLocal(region) {
   const body = document.getElementById("localBody");
   if (!body) return;
 
-  const list = LOCAL_BENEFITS[region] || [];
-  const tagColors = { "청년":"#7c3aed", "저소득":"#16a34a", "긴급":"#dc2626", "임신·출산":"#db2777", "노인":"#ea580c", "장애인":"#2563eb" };
+  const all = LOCAL_PUBLIC[region] || [];
+  const list = _localTypeFilter === "all" ? all : all.filter(s => s.type === _localTypeFilter);
 
-  let html = `<p class="local-count">${region} 맞춤 혜택 <b>${list.length}건</b></p>`;
-  list.forEach(b => {
-    const color = tagColors[b.tag] || "#6b7280";
-    html += `<div class="cal-card">
-      <div class="cal-card-top">
-        <span class="cal-tag" style="background:${color}20;color:${color}">${b.tag}</span>
-        <a class="cal-link-btn" href="${b.url}" target="_blank" rel="noopener">신청하기 →</a>
+  let html = `<p class="local-count">${region} 공공서비스 <b>${list.length}곳</b></p>`;
+  list.forEach(s => {
+    const color = LOC_TYPE_COLORS[s.type] || "#6b7280";
+    const icon  = LOC_TYPE_ICONS[s.type]  || "📍";
+    const label = LOC_TYPE_LABELS[s.type] || s.type;
+    html += `<div class="loc-card">
+      <div class="loc-card-top">
+        <span class="loc-type-tag" style="background:${color}18;color:${color}">${icon} ${label}</span>
+        <span class="loc-hours">${s.hours}</span>
       </div>
-      <p class="cal-name">${b.name}</p>
-      <p class="cal-desc">${b.desc}</p>
-      <p class="cal-contact">📞 ${b.contact}</p>
+      <div class="loc-name">${s.name}</div>
+      <div class="loc-desc">${s.desc}</div>
+      <div class="loc-meta">
+        <span class="loc-addr">📍 ${s.addr}</span>
+        <a class="loc-tel" href="tel:${s.tel}">📞 ${s.tel}</a>
+      </div>
+      <a class="loc-link-btn" href="${s.url}" target="_blank" rel="noopener">자세히 보기 →</a>
     </div>`;
   });
   body.innerHTML = html;
