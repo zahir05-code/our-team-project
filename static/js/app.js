@@ -1103,14 +1103,83 @@ function renderMyinfoSaved() {
     return;
   }
   el.innerHTML = list.map((item, i) => `
-    <div class="myinfo-saved-card">
+    <div class="myinfo-saved-card" onclick="openSavedDetail(${i})" role="button" tabindex="0">
       <div class="myinfo-saved-top">
         <span class="myinfo-saved-date">${item.savedAt||""}</span>
-        <button class="myinfo-saved-del" onclick="deleteSavedResult(${i})">✕</button>
+        <button class="myinfo-saved-del" onclick="event.stopPropagation();deleteSavedResult(${i})">✕</button>
       </div>
       <p class="myinfo-saved-summary">${item.summary||""}</p>
-      <p class="myinfo-saved-count">혜택 ${item.count||0}건 저장됨</p>
+      <div class="myinfo-saved-footer">
+        <span class="myinfo-saved-count">혜택 ${item.count||0}건 저장됨</span>
+        <span class="myinfo-saved-open">자세히 보기 ›</span>
+      </div>
     </div>`).join("");
+}
+
+/* ── 저장된 혜택 상세 패널 열기 ── */
+function openSavedDetail(idx) {
+  const raw = localStorage.getItem(SAVED_KEY);
+  const list = raw ? JSON.parse(raw) : [];
+  const item = list[idx];
+  if (!item) return;
+
+  // 패널 생성 또는 재사용
+  let panel = document.getElementById("savedDetailPanel");
+  if (!panel) {
+    panel = document.createElement("div");
+    panel.id = "savedDetailPanel";
+    panel.className = "saved-detail-overlay";
+    panel.innerHTML = `
+      <div class="saved-detail-sheet" id="savedDetailSheet">
+        <div class="saved-detail-handle"></div>
+        <div class="saved-detail-header">
+          <h3 class="saved-detail-title" id="savedDetailTitle"></h3>
+          <button class="saved-detail-close" onclick="closeSavedDetail()">✕</button>
+        </div>
+        <div class="saved-detail-body" id="savedDetailBody"></div>
+      </div>`;
+    panel.addEventListener("click", e => { if (e.target === panel) closeSavedDetail(); });
+    document.body.appendChild(panel);
+  }
+
+  document.getElementById("savedDetailTitle").textContent = `📌 ${item.savedAt} 저장 혜택 (${item.count}건)`;
+
+  const items = item.items || [];
+  let bodyHtml = "";
+  if (items.length === 0) {
+    // 구버전 저장 데이터 (names 배열만 있는 경우)
+    const names = item.names || [];
+    bodyHtml = names.map(n => `
+      <div class="sd-card">
+        <div class="sd-name">${n}</div>
+        <a href="https://www.bokjiro.go.kr" target="_blank" class="sd-apply-btn">복지로에서 신청 →</a>
+      </div>`).join("");
+  } else {
+    bodyHtml = items.map(it => `
+      <div class="sd-card">
+        <div class="sd-name">${it.name}</div>
+        ${it.desc ? `<div class="sd-desc">${it.desc}</div>` : ""}
+        <a href="${it.url || 'https://www.bokjiro.go.kr'}" target="_blank" rel="noopener" class="sd-apply-btn">
+          ${it.url ? "바로 신청하기 →" : "복지로에서 신청 →"}
+        </a>
+      </div>`).join("");
+  }
+
+  document.getElementById("savedDetailBody").innerHTML = bodyHtml || `<p style="color:#94a3b8;text-align:center;padding:20px 0">상세 정보가 없습니다.</p>`;
+
+  panel.classList.remove("hidden");
+  requestAnimationFrame(() => {
+    document.getElementById("savedDetailSheet").classList.add("open");
+  });
+  document.body.style.overflow = "hidden";
+}
+
+function closeSavedDetail() {
+  const sheet = document.getElementById("savedDetailSheet");
+  const panel = document.getElementById("savedDetailPanel");
+  if (!sheet || !panel) return;
+  sheet.classList.remove("open");
+  setTimeout(() => { panel.classList.add("hidden"); document.body.style.overflow = ""; }, 280);
 }
 
 function myinfoEditProfile() {
@@ -1203,7 +1272,6 @@ function deleteSavedResult(idx) {
 
 /* ── 현재 결과 내정보에 저장 ── */
 function saveResultToMyPage() {
-  // 온톨로지 카드 + Supabase 카드 수집
   const ontCards  = document.querySelectorAll(".ont-card");
   const supaCards = document.querySelectorAll(".supa-card");
   const total = ontCards.length + supaCards.length;
@@ -1217,25 +1285,29 @@ function saveResultToMyPage() {
   const now = new Date();
   const dateStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,"0")}.${String(now.getDate()).padStart(2,"0")}`;
 
-  // 요약 정보 생성
-  const names = [];
+  // 카드별 상세 데이터 수집
+  const items = [];
   ontCards.forEach(c => {
-    const n = c.querySelector(".ont-policy-name");
-    if (n) names.push(n.textContent.trim());
+    const name = c.querySelector(".ont-policy-name")?.textContent.trim() || "";
+    const desc = c.querySelector(".ont-desc")?.textContent.trim() || "";
+    const url  = c.querySelector("a.ont-apply-btn")?.href || "";
+    if (name) items.push({ name, desc, url, type: "ont" });
   });
   supaCards.forEach(c => {
-    const n = c.querySelector(".supa-name");
-    if (n) names.push(n.textContent.trim());
+    const name = c.querySelector(".supa-name")?.textContent.trim() || "";
+    const desc = c.querySelector(".supa-desc")?.textContent.trim() || "";
+    const url  = c.querySelector("a.supa-apply-btn")?.href || "";
+    if (name) items.push({ name, desc, url, type: "supa" });
   });
 
+  const names = items.map(it => it.name);
   saved.unshift({
     savedAt: dateStr,
     summary: names.slice(0, 3).join(", ") + (names.length > 3 ? ` 외 ${names.length-3}건` : ""),
     count: total,
-    names: names,
+    items: items,   // ← 상세 데이터 포함
   });
 
-  // 최대 10개 유지
   if (saved.length > 10) saved.splice(10);
   localStorage.setItem(SAVED_KEY, JSON.stringify(saved));
   showToast(`✅ ${total}건 복지혜택을 내정보에 저장했습니다.`);

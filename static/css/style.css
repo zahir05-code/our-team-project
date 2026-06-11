@@ -1453,3 +1453,87 @@ body { padding-bottom: 68px; }
 
 /* ── 5탭 네비게이션 ── */
 .bottom-nav { grid-template-columns: repeat(5, 1fr); }
+
+/* ══════════════════════════════════════
+   저장된 혜택 상세 — 바텀시트 패널
+══════════════════════════════════════ */
+
+/* 저장 카드 footer */
+.myinfo-saved-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 4px;
+}
+.myinfo-saved-open {
+  font-size: 0.72rem; font-weight: 700; color: #2563eb;
+}
+.myinfo-saved-card { cursor: pointer; }
+.myinfo-saved-card:active { opacity: 0.85; }
+
+/* 오버레이 */
+.saved-detail-overlay {
+  position: fixed; inset: 0; z-index: 9000;
+  background: rgba(0,0,0,0.45);
+  display: flex; align-items: flex-end;
+}
+.saved-detail-overlay.hidden { display: none; }
+
+/* 바텀시트 */
+.saved-detail-sheet {
+  width: 100%; max-width: 480px; margin: 0 auto;
+  background: #fff; border-radius: 22px 22px 0 0;
+  padding: 12px 0 32px;
+  max-height: 82vh; display: flex; flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.28s cubic-bezier(0.32,0.72,0,1);
+  overflow: hidden;
+}
+.saved-detail-sheet.open { transform: translateY(0); }
+
+/* 핸들 바 */
+.saved-detail-handle {
+  width: 40px; height: 4px; background: #e2e8f0;
+  border-radius: 99px; margin: 0 auto 12px;
+}
+
+/* 헤더 */
+.saved-detail-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 18px 12px; border-bottom: 1px solid #f1f5f9;
+}
+.saved-detail-title {
+  font-size: 0.9rem; font-weight: 800; color: #1e293b; flex: 1;
+}
+.saved-detail-close {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: #f1f5f9; border: none; font-size: 0.85rem;
+  color: #64748b; cursor: pointer; flex-shrink: 0;
+}
+
+/* 스크롤 바디 */
+.saved-detail-body {
+  flex: 1; overflow-y: auto; padding: 14px 16px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+
+/* 개별 혜택 카드 */
+.sd-card {
+  background: #f8fafc; border: 1.5px solid #e2e8f0;
+  border-radius: 14px; padding: 14px 16px;
+}
+.sd-name {
+  font-size: 0.85rem; font-weight: 800; color: #1e293b;
+  margin-bottom: 5px;
+}
+.sd-desc {
+  font-size: 0.75rem; color: #64748b; line-height: 1.5;
+  margin-bottom: 8px;
+}
+.sd-apply-btn {
+  display: inline-block;
+  background: linear-gradient(135deg,#1e40af,#3b82f6);
+  color: #fff; border-radius: 8px; padding: 7px 14px;
+  font-size: 0.76rem; font-weight: 800;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.sd-apply-btn:active { opacity: 0.85; }
