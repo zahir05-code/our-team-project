@@ -1017,6 +1017,8 @@ function bnavGo(tab) {
     locPanel && locPanel.classList.add("hidden");
     myinfoPanel && myinfoPanel.classList.add("hidden");
     nbrPanel && nbrPanel.classList.add("hidden");
+    // 홈 버튼 = 처음 화면으로 리셋
+    resetToHome();
     window.scrollTo({ top: 0, behavior: "smooth" });
 
   } else if (tab === "calendar") {
@@ -1771,8 +1773,38 @@ function refreshDynamicUI() {
   });
 }
 
-/* ── 재조회 ── */
+/* ── 재조회 / 홈 리셋 ── */
 function retry() { location.reload(); }
+
+function resetToHome() {
+  // 결과·로딩 숨기고 입력 카드 복원
+  const result   = document.getElementById("result");
+  const loading  = document.getElementById("loading");
+  const nlpEntry = document.getElementById("nlpEntry");
+  const inputCard = document.getElementById("inputCard");
+  if (result)    result.classList.add("hidden");
+  if (loading)   loading.classList.add("hidden");
+  if (nlpEntry)  nlpEntry.classList.remove("hidden");
+  if (inputCard) inputCard.classList.remove("hidden");
+  // 챗봇 state 초기화
+  if (typeof state !== "undefined") {
+    Object.keys(state).forEach(k => { delete state[k]; });
+  }
+  // 지역 선택 초기화
+  const selRegion   = document.getElementById("selRegion");
+  const selDistrict = document.getElementById("selDistrict");
+  const inputAge    = document.getElementById("inputAge");
+  if (selRegion)   selRegion.value = "";
+  if (selDistrict) { selDistrict.innerHTML = '<option value="">시·군·구 선택</option>'; selDistrict.disabled = true; }
+  if (inputAge)    inputAge.value = "";
+  // 어려운 점 체크 초기화
+  document.querySelectorAll(".sit-chip.active, .opt-chip.active").forEach(el => {
+    el.classList.remove("active");
+    el.setAttribute("aria-checked", "false");
+  });
+  // 첫 단계로 이동
+  if (typeof show === "function") { show("stepA"); setDot(1); }
+}
 
 /* ══════════════════════════════════════════════
    마이페이지 — localStorage 기반 프로필·저장 결과
