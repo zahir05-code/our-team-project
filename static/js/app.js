@@ -670,40 +670,49 @@ function buildApplyUrl(p) {
   // 검색 키워드용 인코딩 (서비스명 → 공백 제거 핵심어만)
   const keyword = encodeURIComponent(name.replace(/\s*\(.*?\)\s*/g, "").trim());
 
-  // 1) 복지로 서비스 상세 직접 URL (wlfareInfoId 포함)
+  // 1) 복지로 서비스 상세 직접 URL (wlfareInfoId 포함) — DB에 정확한 ID가 있는 경우만
   if (url && url.includes("wlfareInfoId")) {
-    return { url, label: "복지로 신청화면 바로가기 →", type: "bokjiro" };
+    return { url, label: "복지로 해당 서비스 바로가기 →", type: "bokjiro" };
   }
 
-  // 2) policy_id → 복지로 서비스 상세 페이지 직접 링크
-  if (pid) {
-    const wlfId = pid.startsWith("WLF") ? pid : "WLF_" + pid;
-    return {
-      url: `https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=${wlfId}`,
-      label: "복지로 신청화면 바로가기 →",
-      type: "bokjiro",
-    };
-  }
-
-  // 3) 경기도 관련 정책 → 경기복지재단 서비스명 검색 결과로 직접 이동
+  // 2) 경기도 관련 정책 → 경기복지재단
   const isGyeonggi = src.includes("경기") || name.includes("경기") || pid.startsWith("GG");
   if (isGyeonggi) {
     return {
       url: `https://www.ggwf.or.kr/main/welfare/welfareInfo.do?searchKeyword=${keyword}`,
-      label: "경기복지재단 해당 서비스 검색 →",
+      label: "경기복지재단 해당 서비스 →",
       type: "ggwf",
     };
   }
 
-  // 4) 다른 기관 전용 URL이 있으면 사용
-  if (url && url !== "https://www.bokjiro.go.kr") {
-    return { url, label: "신청 페이지로 →", type: "external" };
+  // 3) 전용 URL이 있는 경우 (복지로 홈 / 기본값 제외한 실제 기관 사이트)
+  const GENERIC = ["https://www.bokjiro.go.kr"];
+  if (url && !GENERIC.includes(url)) {
+    // 사이트별 라벨 매핑
+    const siteLabel = {
+      "nhis.or.kr":        "국민건강보험공단 →",
+      "work.go.kr":        "워크넷(고용부) →",
+      "ei.go.kr":          "고용보험 →",
+      "semas.or.kr":       "소상공인시장진흥공단 →",
+      "saeil.mogef.go.kr": "새일센터 →",
+      "childcare.go.kr":   "임신육아종합포털 →",
+      "kinfa.or.kr":       "서민금융진흥원 →",
+      "energyvoucher.or.kr":"에너지바우처 →",
+      "lh.or.kr":          "LH한국토지주택공사 →",
+      "danuri.go.kr":      "다누리 →",
+      "moel.go.kr":        "고용노동부 →",
+      "wis.seoul.go.kr":   "서울복지포털 →",
+      "gg.go.kr":          "경기도청 →",
+      "ggwf.or.kr":        "경기복지재단 →",
+    };
+    const host = Object.keys(siteLabel).find(k => url.includes(k));
+    return { url, label: host ? siteLabel[host] : "관련 기관 바로가기 →", type: "external" };
   }
 
-  // 5) 서비스명으로 복지로 검색 결과 페이지 직접 이동 (홈 대신 검색 결과)
+  // 4) 복지로 기본 — 홈에서 서비스명 검색 유도
   return {
-    url: `https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAP01P00.do?searchStr=${keyword}`,
-    label: "복지로에서 해당 서비스 검색 →",
+    url: "https://www.bokjiro.go.kr",
+    label: "복지로 홈 → 서비스명 검색",
     type: "bokjiro",
   };
 }
