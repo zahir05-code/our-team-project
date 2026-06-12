@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>아테나 복지서비스 | 내 혜택 찾기</title>
-  <link rel="stylesheet" href="/static/css/style.css?v=4.0">
+  <link rel="stylesheet" href="/static/css/style.css?v=4.1">
 </head>
 <body>
 
@@ -260,15 +260,17 @@
         </ul>
       </div>
 
-      <!-- 선순환 섹션 -->
+      <!-- 선순환 섹션 — 1365 직접 연결 -->
       <div class="pay-forward-section">
         <p class="pay-forward-nudge">
-          <span data-i18n="pay_forward_nudge">삶이 조금 더 따뜻해지셨나요?</span><br>
-          <span data-i18n="pay_forward_sub" data-i18n-html="true"><strong>선순환의 주인공</strong>이 되어보세요.</span>
+          <span>삶이 조금 더 따뜻해지셨나요?</span><br>
+          <span><strong>재능 나눔·봉사활동</strong>으로 이웃에게 이어가세요.</span>
         </p>
-        <button class="pay-forward-btn" onclick="openPayForwardModal()" data-i18n="pay_forward_btn">
+        <a class="pay-forward-btn"
+           href="https://www.1365.go.kr/vols/main.do"
+           target="_blank" rel="noopener">
           🌱 오늘 받은 따뜻함, 이웃에게 이어가기
-        </button>
+        </a>
       </div>
 
       <button class="btn-save-result" onclick="saveResultToMyPage()" data-i18n="btn_save_result">
@@ -277,43 +279,6 @@
       <button class="btn-retry" onclick="retry()" data-i18n="btn_retry">↩ 다시 조회하기</button>
     </section>
 
-    <!-- 선순환 모달 -->
-    <div class="modal-overlay hidden" id="payForwardModal"
-         onclick="closeModalOutside(event)">
-      <div class="modal-content">
-        <h3 data-i18n="modal_title">💝 받은 도움 이어가기</h3>
-        <p class="modal-desc" data-i18n="modal_desc">
-          오늘 경험하신 따뜻한 마음을 다른 이웃에게도 전해보세요.<br>
-          당신의 작은 참여가 큰 변화를 만듭니다.
-        </p>
-        <div class="modal-options">
-          <button class="modal-option-btn" onclick="payForwardAction('community')">
-            <span class="modal-opt-icon">💬</span>
-            <span class="modal-opt-text">
-              <strong data-i18n="modal_community">따뜻한 응원 한마디 전하기</strong>
-              <small data-i18n="modal_comm_sub">복지로에서 복지 상담·정보를 나누고 이웃을 응원해주세요</small>
-            </span>
-          </button>
-          <button class="modal-option-btn" onclick="payForwardAction('talent')">
-            <span class="modal-opt-icon">🤝</span>
-            <span class="modal-opt-text">
-              <strong data-i18n="modal_talent">나의 작은 재능 나누기</strong>
-              <small data-i18n="modal_talent_sub">나눔포털(행안부) — 내 지식·기술로 이웃을 도와보세요</small>
-            </span>
-          </button>
-          <button class="modal-option-btn" onclick="payForwardAction('volunteer')">
-            <span class="modal-opt-icon">🏡</span>
-            <span class="modal-opt-text">
-              <strong data-i18n="modal_volunteer">우리 동네 봉사활동 참여하기</strong>
-              <small data-i18n="modal_vol_sub">1365 포털에서 내 동네 봉사활동을 찾아보세요</small>
-            </span>
-          </button>
-        </div>
-        <button class="modal-close-btn" onclick="closePayForwardModal()" data-i18n="modal_close">
-          다음에 할게요
-        </button>
-      </div>
-    </div>
 
   <!-- 마이페이지 모달 -->
   <div class="modal-overlay hidden" id="myPageModal" onclick="closeMyPageOutside(event)">
@@ -523,6 +488,6 @@
   <script src="/static/js/data.js?v=3.4"></script>
   <script src="/static/js/i18n.js?v=3.4"></script>
   <script src="/static/js/translations.js?v=3.4"></script>
-  <script src="/static/js/app.js?v=4.0"></script>
+  <script src="/static/js/app.js?v=4.1"></script>
 </body>
 </html>

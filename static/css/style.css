@@ -454,11 +454,13 @@ body {
 .pay-forward-nudge { font-size: 0.88rem; color: #374151; line-height: 1.7; margin-bottom: 14px; }
 .pay-forward-nudge strong { color: #15803d; }
 .pay-forward-btn {
+  display: block; text-align: center; text-decoration: none;
   background: #16a34a; color: #fff; border: none;
   border-radius: 50px; padding: 13px 24px; font-size: 0.9rem;
   font-weight: 700; cursor: pointer; width: 100%;
+  box-sizing: border-box;
 }
-.pay-forward-btn:hover { background: #15803d; }
+.pay-forward-btn:hover { background: #15803d; color: #fff; }
 
 /* ── 보안 배지 (STEP A 상단) ── */
 .security-badge {

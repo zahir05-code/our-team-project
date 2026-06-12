@@ -1460,30 +1460,7 @@ function toggleVoice() {
   _recognition.start();
 }
 
-/* ── 선순환 모달 ── */
-function openPayForwardModal() {
-  document.getElementById("payForwardModal").classList.remove("hidden");
-  document.body.style.overflow = "hidden";
-}
-function closePayForwardModal() {
-  document.getElementById("payForwardModal").classList.add("hidden");
-  document.body.style.overflow = "";
-}
-function closeModalOutside(e) {
-  if (e.target.id === "payForwardModal") closePayForwardModal();
-}
-function payForwardAction(type) {
-  const urls = {
-    // 💬 따뜻한 응원 → 복지로 공식 홈 (커뮤니티·상담 게시판 접근 가능)
-    community: "https://www.bokjiro.go.kr",
-    // 🤝 재능나누기 → 나눔포털 (행정안전부 공식 재능나눔 플랫폼)
-    talent:    "https://www.nanumkorea.go.kr",
-    // 🏡 우리 동네 봉사활동 → 1365 봉사활동 찾기
-    volunteer: "https://www.1365.go.kr/vols/main.do",
-  };
-  if (urls[type]) window.open(urls[type], "_blank", "noopener");
-  closePayForwardModal();
-}
+/* ── 선순환 버튼: HTML <a> 태그로 1365 직접 연결 (모달 제거됨) ── */
 
 /* ── 언어 전환 시 동적 UI 재렌더링 ── */
 function refreshDynamicUI() {
