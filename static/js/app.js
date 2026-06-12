@@ -950,15 +950,12 @@ function renderOntPolicy(p, type) {
   const uid = p.policy_id.replace(/\W/g,"_") + "_" + type;
   const howAcc  = p.apply_url
     ? _accRow("ont-how-" + uid, "📋", "신청방법",
-        `<a href="${p.apply_url}" target="_blank" rel="noopener" class="acc-apply-link">
-          복지로 신청 페이지 바로가기 →
+        `<a class="acc-site-link" href="${p.apply_url}" target="_blank" rel="noopener">
+          🔗 복지로 해당 서비스 바로가기 →
         </a>`) : "";
   const docsAcc = trDocs.length
     ? _accRow("ont-docs-" + uid, "📄", "필요서류",
         trDocs.map(d => `<span class="acc-doc-item">• ${d}</span>`).join("")) : "";
-  const tipAcc  = trReasons.length
-    ? _accRow("ont-tip-" + uid, "💡", "선정 이유",
-        trReasons.join("<br>")) : "";
 
   return `<div class="ont-card ont-card-${type}" data-tags="${trTags.join(",")}">
     <div class="ont-card-top">
@@ -970,10 +967,8 @@ function renderOntPolicy(p, type) {
       <a class="tel-link" href="tel:${p.phone.replace(/[^0-9]/g,'')}">${p.phone} ☎</a>
     </div>
     <div class="acc-group">
-      ${howAcc}${docsAcc}${tipAcc}
+      ${howAcc}${docsAcc}
     </div>
-    <a class="ont-apply-btn" href="${p.apply_url}" target="_blank" rel="noopener"
-       title="${name}">${T("ont_apply")}</a>
   </div>`;
 }
 
@@ -1402,9 +1397,12 @@ function openCalDetail(idx) {
     </div>`;
   });
 
-  bodyHtml += `<a class="cal-detail-apply-btn" href="${d.applyUrl}" target="_blank" rel="noopener">
-    ${d.applyLabel || "신청하기 →"}
-  </a>`;
+  if (d.applyUrl) {
+    bodyHtml += `<div class="acc-group cal-detail-acc">
+      ${_accRow("cal-how-" + idx, "📋", "신청방법",
+        `<a class="acc-site-link" href="${d.applyUrl}" target="_blank" rel="noopener">🔗 ${d.applyLabel || "해당 서비스 바로가기 →"}</a>`)}
+    </div>`;
+  }
 
   document.getElementById("calDetailBody").innerHTML = bodyHtml;
 
@@ -1631,12 +1629,11 @@ function renderProResult(data, age) {
     body.innerHTML = policies.map(({ type, p }) => {
       const name  = type === "bk" ? p.name : (getPolicyTr(p.policy_id,"name")||p.name);
       const desc  = type === "bk" ? (p.description||"") : (getPolicyTr(p.policy_id,"desc")||p.description);
-      const applyUrl  = type === "bk" ? buildApplyUrl(p).url : p.apply_url;
-      const applyLabel = type === "bk" ? buildApplyUrl(p).label : "복지로에서 신청 →";
+      const applyInfo = type === "bk" ? buildApplyUrl(p) : { url: p.apply_url, label: "복지로 해당 서비스 바로가기 →" };
       const uid = `pro-${type}-${p.policy_id||p.name}`.replace(/\W/g,"_");
-      const howContent = type === "bk"
-        ? (p.how_to_apply && p.how_to_apply !== "Y" && p.how_to_apply !== "N" ? p.how_to_apply : "")
-        : `<a href="${p.apply_url}" target="_blank" rel="noopener" class="acc-apply-link">복지로 신청 페이지 바로가기 →</a>`;
+      const howText = type === "bk" && p.how_to_apply && p.how_to_apply !== "Y" && p.how_to_apply !== "N"
+        ? `<p class="acc-how-text">${p.how_to_apply}</p>` : "";
+      const howContent = howText + `<a class="acc-site-link" href="${applyInfo.url}" target="_blank" rel="noopener">🔗 ${applyInfo.label}</a>`;
       const docsContent = type !== "bk" && p.required_docs?.length
         ? p.required_docs.map(d=>`<span class="acc-doc-item">• ${getTr(d)}</span>`).join("") : "";
       return `<div class="pro-card">
@@ -1649,9 +1646,6 @@ function renderProResult(data, age) {
           ${_accRow(`${uid}-how`, "📋", "신청방법", howContent)}
           ${docsContent ? _accRow(`${uid}-doc`, "📄", "필요서류", docsContent) : ""}
         </div>
-        <a class="pro-card-btn" href="${applyUrl}" target="_blank" rel="noopener">
-          ${applyLabel}
-        </a>
       </div>`;
     }).join("");
   }
@@ -2015,11 +2009,19 @@ function openSavedDetail(idx) {
   if (items.length === 0) {
     // 구버전 저장 데이터 (names 배열만 있는 경우)
     const names = item.names || [];
-    bodyHtml = names.map(n => `
+    const _sdHowId = (n,i) => `sd-how-old-${i}`;
+    bodyHtml = names.map((n,i) => {
+      const keyword = encodeURIComponent(n.replace(/\s*\(.*?\)\s*/g,"").trim());
+      const searchUrl = `https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAP01P00.do?searchStr=${keyword}`;
+      return `
       <div class="sd-card">
         <div class="sd-name">${n}</div>
-        <a href="https://www.bokjiro.go.kr" target="_blank" class="sd-apply-btn">복지로에서 신청 →</a>
-      </div>`).join("");
+        <div class="acc-group">
+          ${_accRow(_sdHowId(n,i), "📋", "신청방법",
+            `<a class="acc-site-link" href="${searchUrl}" target="_blank" rel="noopener">🔗 복지로 해당 서비스 바로가기 →</a>`)}
+        </div>
+      </div>`;
+    }).join("");
   } else {
     bodyHtml = items.map(it => {
       // buildApplyUrl 로직을 저장된 아이템에도 동일하게 적용
@@ -2029,13 +2031,15 @@ function openSavedDetail(idx) {
         name:      it.name || "",
         source:    it.source || "",
       });
+      const sdUid = `sd-${(it.policyId||it.name).replace(/\W/g,"_")}-${Math.random().toString(36).slice(2,6)}`;
       return `
       <div class="sd-card">
         <div class="sd-name">${it.name}</div>
         ${it.desc ? `<div class="sd-desc">${it.desc}</div>` : ""}
-        <a href="${applyInfo.url}" target="_blank" rel="noopener" class="sd-apply-btn">
-          ${applyInfo.label}
-        </a>
+        <div class="acc-group">
+          ${_accRow(sdUid+"-how", "📋", "신청방법",
+            `<a class="acc-site-link" href="${applyInfo.url}" target="_blank" rel="noopener">🔗 ${applyInfo.label}</a>`)}
+        </div>
       </div>`;
     }).join("");
   }
