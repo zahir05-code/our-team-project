@@ -1,5 +1,25 @@
 /* 아테나 복지서비스 — 3단계 미니멀 UX (v2.4 다국어) */
 
+/* ── 딥링크 테이블 (build_welfare_deeplinks.py 생성 JSON) ── */
+let _deepLinks = {};   // id → {detailUrl, applyUrl, matchType, ...}
+
+async function loadDeepLinks() {
+  try {
+    const res = await fetch("/static/js/welfareDeepLinks.json?v=5.1");
+    if (!res.ok) return;
+    const arr = await res.json();
+    arr.forEach(item => { _deepLinks[item.id] = item; });
+    console.log(`[딥링크] ${arr.length}개 로드 완료`);
+  } catch(e) {
+    console.warn("[딥링크] 로드 실패 — buildApplyUrl fallback 사용", e);
+  }
+}
+
+/** policy_id로 detailUrl 조회 (없으면 null) */
+function getDeepLink(policyId) {
+  return _deepLinks[policyId] || null;
+}
+
 /* ── 상태 ── */
 const state = {
   age: "", region: "", district: "",
@@ -23,6 +43,7 @@ const nlpState = {
 
 /* ── 초기화 ── */
 window.addEventListener("DOMContentLoaded", () => {
+  loadDeepLinks();   // 딥링크 JSON 비동기 로드
   renderSituationGrid();
   renderFamilyComposer();   // 가족 구성원 카운터 렌더링
   renderChips("nlpGenderChips",GENDER_OPTIONS,  false, "nlpGender",T("gender_options"));
@@ -674,6 +695,19 @@ function buildApplyUrl(p) {
   const name = (p.name || "").trim();
   const src  = (p.source || "").trim();
   const keyword = encodeURIComponent(name.replace(/\s*\(.*?\)\s*/g,"").trim());
+
+  /* ── 0순위: 딥링크 JSON 테이블 (build_welfare_deeplinks.py 생성) ── */
+  if (pid) {
+    const dl = getDeepLink(pid);
+    if (dl && dl.detailUrl && !dl.detailUrl.includes("search.do")) {
+      return {
+        url: dl.detailUrl,
+        label: `🔗 ${dl.title} 바로가기 →`,
+        type: "deeplink",
+        tier: 0,
+      };
+    }
+  }
 
   /* ── 1순위: 복지로 서비스 상세 직접 URL (wlfareInfoId 확보된 경우) ── */
   if (url && url.includes("wlfareInfoId")) {

@@ -1,0 +1,833 @@
+[
+  {
+    "id": "BOKJIRO_001",
+    "title": "국민기초생활수급",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004558",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004558",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "matchType": "partial",
+    "tags": [
+      "생계급여",
+      "의료급여",
+      "주거급여",
+      "교육급여",
+      "수급자"
+    ]
+  },
+  {
+    "id": "BOKJIRO_002",
+    "title": "긴급복지지원",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004563",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004563",
+    "authority": "읍·면·동 주민센터 또는 시·군·구청",
+    "phone": "129",
+    "matchType": "exact",
+    "tags": [
+      "긴급",
+      "위기",
+      "즉시지원",
+      "생계"
+    ]
+  },
+  {
+    "id": "BOKJIRO_003",
+    "title": "의료급여",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004559",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004559",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "matchType": "exact",
+    "tags": [
+      "병원비",
+      "의료비",
+      "치료비"
+    ]
+  },
+  {
+    "id": "BOKJIRO_004",
+    "title": "주거급여 (임차·수선)",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004560",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004560",
+    "authority": "읍·면·동 주민센터",
+    "phone": "1600-0777",
+    "matchType": "partial",
+    "tags": [
+      "월세",
+      "전세",
+      "임차료",
+      "주거비"
+    ]
+  },
+  {
+    "id": "BOKJIRO_005",
+    "title": "기초연금",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004555",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004555",
+    "authority": "읍·면·동 주민센터 또는 국민연금공단",
+    "phone": "1355",
+    "matchType": "exact",
+    "tags": [
+      "기초연금",
+      "노인",
+      "어르신",
+      "65세",
+      "연금"
+    ]
+  },
+  {
+    "id": "BOKJIRO_006",
+    "title": "장애인 활동지원",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003260",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003260",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "matchType": "exact",
+    "tags": [
+      "장애인",
+      "활동보조",
+      "돌봄",
+      "활동지원"
+    ]
+  },
+  {
+    "id": "BOKJIRO_007",
+    "title": "장애인연금",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004556",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004556",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "matchType": "exact",
+    "tags": [
+      "장애인연금",
+      "중증장애",
+      "연금"
+    ]
+  },
+  {
+    "id": "BOKJIRO_008",
+    "title": "한부모가족 지원",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004569",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004569",
+    "authority": "읍·면·동 주민센터",
+    "phone": "1644-6621",
+    "matchType": "exact",
+    "tags": [
+      "한부모",
+      "양육비",
+      "아동",
+      "편부",
+      "편모"
+    ]
+  },
+  {
+    "id": "BOKJIRO_009",
+    "title": "아동돌봄쿠폰 (아이돌봄서비스)",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.idolbom.go.kr",
+    "applyUrl": "https://www.childcare.go.kr",
+    "authority": "아이돌봄서비스 포털",
+    "phone": "1577-2306",
+    "matchType": "partial",
+    "tags": [
+      "아이돌봄",
+      "보육",
+      "돌봄",
+      "아동"
+    ]
+  },
+  {
+    "id": "MOEL_001",
+    "title": "청년 취업지원금 (국민취업지원제도)",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.work.go.kr/empInfo/neisWorkerService/neisWorkerServiceView.do",
+    "applyUrl": "https://www.work.go.kr/empInfo/neisWorkerService/neisWorkerServiceView.do",
+    "authority": "고용복지플러스센터",
+    "phone": "1350",
+    "matchType": "partial",
+    "tags": [
+      "청년",
+      "취업",
+      "구직",
+      "지원금"
+    ]
+  },
+  {
+    "id": "MOGEF_001",
+    "title": "경력단절여성 취업 지원 (새일센터)",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.saeil.mogef.go.kr",
+    "applyUrl": "https://www.saeil.mogef.go.kr",
+    "authority": "새일여성인력개발센터",
+    "phone": "1544-1199",
+    "matchType": "partial",
+    "tags": [
+      "경력단절",
+      "여성",
+      "재취업",
+      "새일센터"
+    ]
+  },
+  {
+    "id": "MOEL_002",
+    "title": "중장년 취업지원 (장년 워크넷)",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.work.go.kr/senior/info/seniorJobRecommInfo.do",
+    "applyUrl": "https://www.work.go.kr/senior/info/seniorJobRecommInfo.do",
+    "authority": "고용복지플러스센터",
+    "phone": "1350",
+    "matchType": "partial",
+    "tags": [
+      "중장년",
+      "40대",
+      "50대",
+      "재취업",
+      "워크넷"
+    ]
+  },
+  {
+    "id": "MSS_001",
+    "title": "소상공인 경영안정자금",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.semas.or.kr/web/SUB01/030101.kmdc",
+    "applyUrl": "https://www.semas.or.kr",
+    "authority": "소상공인진흥공단",
+    "phone": "1357",
+    "matchType": "exact",
+    "tags": [
+      "소상공인",
+      "자영업",
+      "폐업",
+      "경영안정"
+    ]
+  },
+  {
+    "id": "MOEL_003",
+    "title": "실업급여 (구직급여)",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.ei.go.kr/ei/eih/eg/b/ehFrontEIApply.do",
+    "applyUrl": "https://www.ei.go.kr/ei/eih/eg/b/ehFrontEIApply.do",
+    "authority": "고용복지플러스센터",
+    "phone": "1350",
+    "matchType": "partial",
+    "tags": [
+      "실업급여",
+      "구직급여",
+      "실직",
+      "해고"
+    ]
+  },
+  {
+    "id": "BOKJIRO_010",
+    "title": "노인 일자리 및 사회활동 지원",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004570",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004570",
+    "authority": "읍·면·동 주민센터 또는 노인복지관",
+    "phone": "129",
+    "matchType": "exact",
+    "tags": [
+      "노인일자리",
+      "어르신",
+      "60세",
+      "사회활동"
+    ]
+  },
+  {
+    "id": "NHIS_001",
+    "title": "노인장기요양보험",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004565",
+    "applyUrl": "https://www.nhis.or.kr/nhis/policy/wbhace03800m01.do",
+    "authority": "국민건강보험공단",
+    "phone": "1577-1000",
+    "matchType": "exact",
+    "tags": [
+      "장기요양",
+      "치매",
+      "요양",
+      "노인돌봄"
+    ]
+  },
+  {
+    "id": "SEOUL_001",
+    "title": "서울시 청년 월세 지원",
+    "sourceSite": "local",
+    "detailUrl": "https://youth.seoul.go.kr/site/main/content/monthlyrent",
+    "applyUrl": "https://youth.seoul.go.kr/site/main/content/monthlyrent",
+    "authority": "서울시 온라인 신청",
+    "phone": "120 (다산콜센터)",
+    "matchType": "exact",
+    "tags": [
+      "서울",
+      "청년",
+      "월세",
+      "1인가구"
+    ]
+  },
+  {
+    "id": "SEOUL_002",
+    "title": "서울형 긴급복지 지원",
+    "sourceSite": "local",
+    "detailUrl": "https://welfare.seoul.go.kr/site/main/content/emergency_welfare",
+    "applyUrl": "https://welfare.seoul.go.kr/site/main/content/emergency_welfare",
+    "authority": "읍·면·동 주민센터",
+    "phone": "120",
+    "matchType": "exact",
+    "tags": [
+      "서울",
+      "긴급",
+      "위기",
+      "생계"
+    ]
+  },
+  {
+    "id": "GYEONGGI_001",
+    "title": "경기도 청년 기본소득",
+    "sourceSite": "local",
+    "detailUrl": "https://basicincome.gg.go.kr",
+    "applyUrl": "https://basicincome.gg.go.kr",
+    "authority": "경기도 온라인 신청",
+    "phone": "031-120",
+    "matchType": "exact",
+    "tags": [
+      "경기도",
+      "청년",
+      "기본소득",
+      "24세",
+      "지역화폐"
+    ]
+  },
+  {
+    "id": "GYEONGGI_002",
+    "title": "경기도 긴급복지 지원",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004563",
+    "applyUrl": "https://www.ggwf.or.kr",
+    "authority": "읍·면·동 주민센터",
+    "phone": "031-120",
+    "matchType": "partial",
+    "tags": [
+      "경기도",
+      "긴급",
+      "위기",
+      "복지"
+    ]
+  },
+  {
+    "id": "CHILD_001",
+    "title": "아동수당",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00013233",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00013233",
+    "authority": "읍·면·동 주민센터 또는 복지로 온라인",
+    "phone": "129",
+    "matchType": "exact",
+    "tags": [
+      "아동수당",
+      "아동",
+      "영유아",
+      "0~7세",
+      "월10만원"
+    ]
+  },
+  {
+    "id": "CHILD_002",
+    "title": "부모급여",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00018613",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00018613",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "matchType": "exact",
+    "tags": [
+      "부모급여",
+      "영아",
+      "0세",
+      "1세",
+      "육아"
+    ]
+  },
+  {
+    "id": "CHILD_003",
+    "title": "첫만남이용권 (출산지원금)",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00018614",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00018614",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "matchType": "partial",
+    "tags": [
+      "출산지원금",
+      "첫만남",
+      "바우처",
+      "출생",
+      "신생아"
+    ]
+  },
+  {
+    "id": "CHILD_004",
+    "title": "산모·신생아 건강관리 서비스",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004568",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004568",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "matchType": "exact",
+    "tags": [
+      "산모",
+      "신생아",
+      "산후조리",
+      "건강관리사",
+      "출산"
+    ]
+  },
+  {
+    "id": "CHILD_005",
+    "title": "가정양육수당",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004567",
+    "applyUrl": "https://www.bokjiro.go.kr",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "matchType": "exact",
+    "tags": [
+      "양육수당",
+      "가정보육",
+      "영유아",
+      "0~5세"
+    ]
+  },
+  {
+    "id": "MULTI_001",
+    "title": "다문화가족 지원센터 서비스",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.danuri.go.kr",
+    "applyUrl": "https://www.danuri.go.kr",
+    "authority": "가까운 다문화가족지원센터",
+    "phone": "1577-1366",
+    "matchType": "exact",
+    "tags": [
+      "다문화",
+      "결혼이민자",
+      "외국인",
+      "한국어",
+      "통번역",
+      "다문화센터"
+    ]
+  },
+  {
+    "id": "MULTI_002",
+    "title": "결혼이민자 취업 교육 지원",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.danuri.go.kr/intro/KoreaLife_kor.do",
+    "applyUrl": "https://www.danuri.go.kr",
+    "authority": "다문화가족지원센터·새일센터",
+    "phone": "1577-1366",
+    "matchType": "exact",
+    "tags": [
+      "결혼이민자",
+      "취업",
+      "직업훈련",
+      "다문화",
+      "외국인여성"
+    ]
+  },
+  {
+    "id": "MULTI_003",
+    "title": "외국인 근로자 의료지원",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.moel.go.kr/info/medicSupport/index.do",
+    "applyUrl": "https://www.moel.go.kr/info/medicSupport/index.do",
+    "authority": "외국인노동자지원센터 (안산·서울·경기)",
+    "phone": "1644-0644",
+    "matchType": "exact",
+    "tags": [
+      "외국인",
+      "외국인근로자",
+      "의료지원",
+      "미등록",
+      "무료진료"
+    ]
+  },
+  {
+    "id": "MULTI_004",
+    "title": "다문화가족 아동 언어발달 지원",
+    "sourceSite": "bokjiro-search",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=%EB%8B%A4%EB%AC%B8%ED%99%94%EA%B0%80%EC%A1%B1%20%EC%95%84%EB%8F%99%20%EC%96%B8%EC%96%B4%EB%B0%9C%EB%8B%AC%20%EC%A7%80%EC%9B%90",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=%EB%8B%A4%EB%AC%B8%ED%99%94%EA%B0%80%EC%A1%B1%20%EC%95%84%EB%8F%99%20%EC%96%B8%EC%96%B4%EB%B0%9C%EB%8B%AC%20%EC%A7%80%EC%9B%90",
+    "authority": "다문화가족지원센터",
+    "phone": "1577-1366",
+    "matchType": "none",
+    "tags": [
+      "다문화",
+      "아동",
+      "언어발달",
+      "언어교육",
+      "이중언어"
+    ]
+  },
+  {
+    "id": "MULTI_005",
+    "title": "이주여성 긴급지원 및 보호시설",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004563",
+    "applyUrl": "https://www.danuri.go.kr",
+    "authority": "이주여성긴급지원센터",
+    "phone": "1577-1366",
+    "matchType": "partial",
+    "tags": [
+      "이주여성",
+      "가정폭력",
+      "쉼터",
+      "긴급지원",
+      "외국인여성"
+    ]
+  },
+  {
+    "id": "ENERGY_001",
+    "title": "에너지바우처 (냉·난방비 지원)",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00010086",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00010086",
+    "authority": "읍·면·동 주민센터",
+    "phone": "1600-3190",
+    "matchType": "partial",
+    "tags": [
+      "에너지바우처",
+      "냉방비",
+      "난방비",
+      "전기요금",
+      "취약계층"
+    ]
+  },
+  {
+    "id": "CULTURE_001",
+    "title": "문화누리카드",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004574",
+    "applyUrl": "https://www.mnuri.kr",
+    "authority": "읍·면·동 주민센터 또는 온라인",
+    "phone": "1544-3412",
+    "matchType": "exact",
+    "tags": [
+      "문화누리카드",
+      "문화바우처",
+      "여행",
+      "체육",
+      "수급자"
+    ]
+  },
+  {
+    "id": "TELECOM_001",
+    "title": "저소득층 통신요금 감면",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004575",
+    "applyUrl": "https://www.bokjiro.go.kr",
+    "authority": "각 통신사 또는 읍·면·동 주민센터",
+    "phone": "114",
+    "matchType": "partial",
+    "tags": [
+      "통신요금",
+      "감면",
+      "인터넷",
+      "휴대폰",
+      "수급자"
+    ]
+  },
+  {
+    "id": "FOOD_001",
+    "title": "저소득층 양곡 지원",
+    "sourceSite": "bokjiro-search",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=%EC%A0%80%EC%86%8C%EB%93%9D%EC%B8%B5%20%EC%96%91%EA%B3%A1%20%EC%A7%80%EC%9B%90",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=%EC%A0%80%EC%86%8C%EB%93%9D%EC%B8%B5%20%EC%96%91%EA%B3%A1%20%EC%A7%80%EC%9B%90",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "matchType": "none",
+    "tags": [
+      "양곡",
+      "쌀",
+      "식량지원",
+      "수급자",
+      "식비"
+    ]
+  },
+  {
+    "id": "YOUTH_001",
+    "title": "청년도약계좌",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.kinfa.or.kr/product/youthJumpAccount.do",
+    "applyUrl": "https://www.kinfa.or.kr",
+    "authority": "시중 은행 (온라인 신청)",
+    "phone": "1397",
+    "matchType": "exact",
+    "tags": [
+      "청년도약계좌",
+      "청년",
+      "저축",
+      "정부지원",
+      "목돈"
+    ]
+  },
+  {
+    "id": "YOUTH_002",
+    "title": "청년내일저축계좌",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00021311",
+    "applyUrl": "https://www.bokjiro.go.kr",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "matchType": "exact",
+    "tags": [
+      "청년내일저축",
+      "청년",
+      "자산형성",
+      "저소득",
+      "저축"
+    ]
+  },
+  {
+    "id": "SEOUL_003",
+    "title": "서울 희망두배 청년통장",
+    "sourceSite": "bokjiro-search",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=%EC%84%9C%EC%9A%B8%20%ED%9D%AC%EB%A7%9D%EB%91%90%EB%B0%B0%20%EC%B2%AD%EB%85%84%ED%86%B5%EC%9E%A5",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=%EC%84%9C%EC%9A%B8%20%ED%9D%AC%EB%A7%9D%EB%91%90%EB%B0%B0%20%EC%B2%AD%EB%85%84%ED%86%B5%EC%9E%A5",
+    "authority": "서울시 온라인 신청",
+    "phone": "120",
+    "matchType": "none",
+    "tags": [
+      "서울",
+      "청년통장",
+      "자산형성",
+      "희망두배",
+      "저소득청년"
+    ]
+  },
+  {
+    "id": "GYEONGGI_003",
+    "title": "경기도 청년 면접수당",
+    "sourceSite": "bokjiro-search",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=%EA%B2%BD%EA%B8%B0%EB%8F%84%20%EC%B2%AD%EB%85%84%20%EB%A9%B4%EC%A0%91%EC%88%98%EB%8B%B9",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=%EA%B2%BD%EA%B8%B0%EB%8F%84%20%EC%B2%AD%EB%85%84%20%EB%A9%B4%EC%A0%91%EC%88%98%EB%8B%B9",
+    "authority": "경기도 온라인 신청",
+    "phone": "031-120",
+    "matchType": "none",
+    "tags": [
+      "경기도",
+      "청년",
+      "면접수당",
+      "구직",
+      "취업지원"
+    ]
+  },
+  {
+    "id": "YOUTH_003",
+    "title": "청년 주거급여 분리지급",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004560",
+    "applyUrl": "https://www.bokjiro.go.kr",
+    "authority": "읍·면·동 주민센터",
+    "phone": "1600-0777",
+    "matchType": "partial",
+    "tags": [
+      "청년",
+      "주거급여",
+      "분리지급",
+      "월세",
+      "독립청년"
+    ]
+  },
+  {
+    "id": "SENIOR_001",
+    "title": "노인 무료급식 지원",
+    "sourceSite": "bokjiro-search",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=%EB%85%B8%EC%9D%B8%20%EB%AC%B4%EB%A3%8C%EA%B8%89%EC%8B%9D%20%EC%A7%80%EC%9B%90",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=%EB%85%B8%EC%9D%B8%20%EB%AC%B4%EB%A3%8C%EA%B8%89%EC%8B%9D%20%EC%A7%80%EC%9B%90",
+    "authority": "읍·면·동 주민센터 또는 노인복지관",
+    "phone": "129",
+    "matchType": "none",
+    "tags": [
+      "노인급식",
+      "무료급식",
+      "도시락",
+      "독거노인",
+      "어르신"
+    ]
+  },
+  {
+    "id": "SENIOR_002",
+    "title": "노인 틀니·임플란트 건강보험 지원",
+    "sourceSite": "bokjiro-search",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=%EB%85%B8%EC%9D%B8%20%ED%8B%80%EB%8B%88%C2%B7%EC%9E%84%ED%94%8C%EB%9E%80%ED%8A%B8%20%EA%B1%B4%EA%B0%95%EB%B3%B4%ED%97%98%20%EC%A7%80%EC%9B%90",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=%EB%85%B8%EC%9D%B8%20%ED%8B%80%EB%8B%88%C2%B7%EC%9E%84%ED%94%8C%EB%9E%80%ED%8A%B8%20%EA%B1%B4%EA%B0%95%EB%B3%B4%ED%97%98%20%EC%A7%80%EC%9B%90",
+    "authority": "치과 의료기관",
+    "phone": "1577-1000",
+    "matchType": "none",
+    "tags": [
+      "틀니",
+      "임플란트",
+      "노인치과",
+      "65세",
+      "의료비"
+    ]
+  },
+  {
+    "id": "SENIOR_003",
+    "title": "치매 치료관리비 지원",
+    "sourceSite": "bokjiro-search",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=%EC%B9%98%EB%A7%A4%20%EC%B9%98%EB%A3%8C%EA%B4%80%EB%A6%AC%EB%B9%84%20%EC%A7%80%EC%9B%90",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=%EC%B9%98%EB%A7%A4%20%EC%B9%98%EB%A3%8C%EA%B4%80%EB%A6%AC%EB%B9%84%20%EC%A7%80%EC%9B%90",
+    "authority": "치매안심센터",
+    "phone": "치매상담콜 1899-9988",
+    "matchType": "none",
+    "tags": [
+      "치매",
+      "치매치료비",
+      "노인",
+      "치매안심센터"
+    ]
+  },
+  {
+    "id": "SENIOR_004",
+    "title": "독거노인 생활관리사 파견",
+    "sourceSite": "bokjiro-search",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=%EB%8F%85%EA%B1%B0%EB%85%B8%EC%9D%B8%20%EC%83%9D%ED%99%9C%EA%B4%80%EB%A6%AC%EC%82%AC%20%ED%8C%8C%EA%B2%AC",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=%EB%8F%85%EA%B1%B0%EB%85%B8%EC%9D%B8%20%EC%83%9D%ED%99%9C%EA%B4%80%EB%A6%AC%EC%82%AC%20%ED%8C%8C%EA%B2%AC",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "matchType": "none",
+    "tags": [
+      "독거노인",
+      "생활관리사",
+      "방문서비스",
+      "안전확인",
+      "어르신"
+    ]
+  },
+  {
+    "id": "DISABLED_001",
+    "title": "장애아동 재활치료 서비스 (발달재활서비스)",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004571",
+    "applyUrl": "https://www.bokjiro.go.kr",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "matchType": "partial",
+    "tags": [
+      "장애아동",
+      "재활치료",
+      "발달장애",
+      "언어치료",
+      "바우처"
+    ]
+  },
+  {
+    "id": "DISABLED_002",
+    "title": "발달장애인 주간활동 서비스",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004572",
+    "applyUrl": "https://www.bokjiro.go.kr",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "matchType": "partial",
+    "tags": [
+      "발달장애",
+      "주간활동",
+      "성인장애인",
+      "돌봄"
+    ]
+  },
+  {
+    "id": "DISABLED_003",
+    "title": "장애인 보조기기 지원",
+    "sourceSite": "bokjiro-search",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=%EC%9E%A5%EC%95%A0%EC%9D%B8%20%EB%B3%B4%EC%A1%B0%EA%B8%B0%EA%B8%B0%20%EC%A7%80%EC%9B%90",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=%EC%9E%A5%EC%95%A0%EC%9D%B8%20%EB%B3%B4%EC%A1%B0%EA%B8%B0%EA%B8%B0%20%EC%A7%80%EC%9B%90",
+    "authority": "국민건강보험공단",
+    "phone": "1577-1000",
+    "matchType": "none",
+    "tags": [
+      "보조기기",
+      "휠체어",
+      "보청기",
+      "장애인",
+      "지원"
+    ]
+  },
+  {
+    "id": "CARE_001",
+    "title": "가사간병 방문서비스",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00009830",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00009830",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "matchType": "exact",
+    "tags": [
+      "가사도우미",
+      "간병",
+      "방문서비스",
+      "돌봄",
+      "저소득"
+    ]
+  },
+  {
+    "id": "HOUSING_001",
+    "title": "주거 취약계층 주거지원 (LH임대주택)",
+    "sourceSite": "bokjiro",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004576",
+    "applyUrl": "https://www.lh.or.kr",
+    "authority": "LH 콜센터 또는 읍·면·동 주민센터",
+    "phone": "1600-1004",
+    "matchType": "partial",
+    "tags": [
+      "공공임대",
+      "LH",
+      "쪽방",
+      "고시원",
+      "주거취약"
+    ]
+  },
+  {
+    "id": "MENTAL_001",
+    "title": "정신건강 위기상담 및 치료지원",
+    "sourceSite": "bokjiro-search",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=%EC%A0%95%EC%8B%A0%EA%B1%B4%EA%B0%95%20%EC%9C%84%EA%B8%B0%EC%83%81%EB%8B%B4%20%EB%B0%8F%20%EC%B9%98%EB%A3%8C%EC%A7%80%EC%9B%90",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=%EC%A0%95%EC%8B%A0%EA%B1%B4%EA%B0%95%20%EC%9C%84%EA%B8%B0%EC%83%81%EB%8B%B4%20%EB%B0%8F%20%EC%B9%98%EB%A3%8C%EC%A7%80%EC%9B%90",
+    "authority": "정신건강복지센터 (지역 내)",
+    "phone": "정신건강위기상담전화 1577-0199",
+    "matchType": "none",
+    "tags": [
+      "정신건강",
+      "우울",
+      "불안",
+      "상담",
+      "자살예방"
+    ]
+  },
+  {
+    "id": "WORK_001",
+    "title": "자활급여 (자활근로 프로그램)",
+    "sourceSite": "bokjiro-search",
+    "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=%EC%9E%90%ED%99%9C%EA%B8%89%EC%97%AC%20%28%EC%9E%90%ED%99%9C%EA%B7%BC%EB%A1%9C%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%A8%29",
+    "applyUrl": "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=%EC%9E%90%ED%99%9C%EA%B8%89%EC%97%AC%20%28%EC%9E%90%ED%99%9C%EA%B7%BC%EB%A1%9C%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%A8%29",
+    "authority": "읍·면·동 주민센터 또는 지역자활센터",
+    "phone": "129",
+    "matchType": "none",
+    "tags": [
+      "자활",
+      "자활근로",
+      "수급자",
+      "일자리",
+      "창업지원"
+    ]
+  }
+]

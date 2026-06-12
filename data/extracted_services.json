@@ -1,0 +1,733 @@
+[
+  {
+    "policy_id": "BOKJIRO_001",
+    "name": "국민기초생활수급",
+    "source": "복지로",
+    "apply_url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004558",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "tags": [
+      "생계급여",
+      "의료급여",
+      "주거급여",
+      "교육급여",
+      "수급자"
+    ]
+  },
+  {
+    "policy_id": "BOKJIRO_002",
+    "name": "긴급복지지원",
+    "source": "복지로",
+    "apply_url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004563",
+    "authority": "읍·면·동 주민센터 또는 시·군·구청",
+    "phone": "129",
+    "tags": [
+      "긴급",
+      "위기",
+      "즉시지원",
+      "생계"
+    ]
+  },
+  {
+    "policy_id": "BOKJIRO_003",
+    "name": "의료급여",
+    "source": "복지로",
+    "apply_url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004559",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "tags": [
+      "병원비",
+      "의료비",
+      "치료비"
+    ]
+  },
+  {
+    "policy_id": "BOKJIRO_004",
+    "name": "주거급여 (임차·수선)",
+    "source": "복지로",
+    "apply_url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004560",
+    "authority": "읍·면·동 주민센터",
+    "phone": "1600-0777",
+    "tags": [
+      "월세",
+      "전세",
+      "임차료",
+      "주거비"
+    ]
+  },
+  {
+    "policy_id": "BOKJIRO_005",
+    "name": "기초연금",
+    "source": "복지로",
+    "apply_url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004555",
+    "authority": "읍·면·동 주민센터 또는 국민연금공단",
+    "phone": "1355",
+    "tags": [
+      "기초연금",
+      "노인",
+      "어르신",
+      "65세",
+      "연금"
+    ]
+  },
+  {
+    "policy_id": "BOKJIRO_006",
+    "name": "장애인 활동지원",
+    "source": "복지로",
+    "apply_url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003260",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "tags": [
+      "장애인",
+      "활동보조",
+      "돌봄",
+      "활동지원"
+    ]
+  },
+  {
+    "policy_id": "BOKJIRO_007",
+    "name": "장애인연금",
+    "source": "복지로",
+    "apply_url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004556",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "tags": [
+      "장애인연금",
+      "중증장애",
+      "연금"
+    ]
+  },
+  {
+    "policy_id": "BOKJIRO_008",
+    "name": "한부모가족 지원",
+    "source": "복지로",
+    "apply_url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004569",
+    "authority": "읍·면·동 주민센터",
+    "phone": "1644-6621",
+    "tags": [
+      "한부모",
+      "양육비",
+      "아동",
+      "편부",
+      "편모"
+    ]
+  },
+  {
+    "policy_id": "BOKJIRO_009",
+    "name": "아동돌봄쿠폰 (아이돌봄서비스)",
+    "source": "복지로",
+    "apply_url": "https://www.childcare.go.kr",
+    "authority": "아이돌봄서비스 포털",
+    "phone": "1577-2306",
+    "tags": [
+      "아이돌봄",
+      "보육",
+      "돌봄",
+      "아동"
+    ]
+  },
+  {
+    "policy_id": "MOEL_001",
+    "name": "청년 취업지원금 (국민취업지원제도)",
+    "source": "고용노동부",
+    "apply_url": "https://www.work.go.kr/empInfo/neisWorkerService/neisWorkerServiceView.do",
+    "authority": "고용복지플러스센터",
+    "phone": "1350",
+    "tags": [
+      "청년",
+      "취업",
+      "구직",
+      "지원금"
+    ]
+  },
+  {
+    "policy_id": "MOGEF_001",
+    "name": "경력단절여성 취업 지원 (새일센터)",
+    "source": "여성가족부",
+    "apply_url": "https://www.saeil.mogef.go.kr",
+    "authority": "새일여성인력개발센터",
+    "phone": "1544-1199",
+    "tags": [
+      "경력단절",
+      "여성",
+      "재취업",
+      "새일센터"
+    ]
+  },
+  {
+    "policy_id": "MOEL_002",
+    "name": "중장년 취업지원 (장년 워크넷)",
+    "source": "고용노동부",
+    "apply_url": "https://www.work.go.kr/senior/info/seniorJobRecommInfo.do",
+    "authority": "고용복지플러스센터",
+    "phone": "1350",
+    "tags": [
+      "중장년",
+      "40대",
+      "50대",
+      "재취업",
+      "워크넷"
+    ]
+  },
+  {
+    "policy_id": "MSS_001",
+    "name": "소상공인 경영안정자금",
+    "source": "중소벤처기업부",
+    "apply_url": "https://www.semas.or.kr",
+    "authority": "소상공인진흥공단",
+    "phone": "1357",
+    "tags": [
+      "소상공인",
+      "자영업",
+      "폐업",
+      "경영안정"
+    ]
+  },
+  {
+    "policy_id": "MOEL_003",
+    "name": "실업급여 (구직급여)",
+    "source": "고용노동부",
+    "apply_url": "https://www.ei.go.kr/ei/eih/eg/b/ehFrontEIApply.do",
+    "authority": "고용복지플러스센터",
+    "phone": "1350",
+    "tags": [
+      "실업급여",
+      "구직급여",
+      "실직",
+      "해고"
+    ]
+  },
+  {
+    "policy_id": "BOKJIRO_010",
+    "name": "노인 일자리 및 사회활동 지원",
+    "source": "복지로",
+    "apply_url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004570",
+    "authority": "읍·면·동 주민센터 또는 노인복지관",
+    "phone": "129",
+    "tags": [
+      "노인일자리",
+      "어르신",
+      "60세",
+      "사회활동"
+    ]
+  },
+  {
+    "policy_id": "NHIS_001",
+    "name": "노인장기요양보험",
+    "source": "건강보험공단",
+    "apply_url": "https://www.nhis.or.kr/nhis/policy/wbhace03800m01.do",
+    "authority": "국민건강보험공단",
+    "phone": "1577-1000",
+    "tags": [
+      "장기요양",
+      "치매",
+      "요양",
+      "노인돌봄"
+    ]
+  },
+  {
+    "policy_id": "SEOUL_001",
+    "name": "서울시 청년 월세 지원",
+    "source": "서울시",
+    "apply_url": "https://youth.seoul.go.kr/site/main/content/monthlyrent",
+    "authority": "서울시 온라인 신청",
+    "phone": "120 (다산콜센터)",
+    "tags": [
+      "서울",
+      "청년",
+      "월세",
+      "1인가구"
+    ]
+  },
+  {
+    "policy_id": "SEOUL_002",
+    "name": "서울형 긴급복지 지원",
+    "source": "서울시",
+    "apply_url": "https://welfare.seoul.go.kr/site/main/content/emergency_welfare",
+    "authority": "읍·면·동 주민센터",
+    "phone": "120",
+    "tags": [
+      "서울",
+      "긴급",
+      "위기",
+      "생계"
+    ]
+  },
+  {
+    "policy_id": "GYEONGGI_001",
+    "name": "경기도 청년 기본소득",
+    "source": "경기도",
+    "apply_url": "https://basicincome.gg.go.kr",
+    "authority": "경기도 온라인 신청",
+    "phone": "031-120",
+    "tags": [
+      "경기도",
+      "청년",
+      "기본소득",
+      "24세",
+      "지역화폐"
+    ]
+  },
+  {
+    "policy_id": "GYEONGGI_002",
+    "name": "경기도 긴급복지 지원",
+    "source": "경기도",
+    "apply_url": "https://www.ggwf.or.kr",
+    "authority": "읍·면·동 주민센터",
+    "phone": "031-120",
+    "tags": [
+      "경기도",
+      "긴급",
+      "위기",
+      "복지"
+    ]
+  },
+  {
+    "policy_id": "CHILD_001",
+    "name": "아동수당",
+    "source": "복지로",
+    "apply_url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00013233",
+    "authority": "읍·면·동 주민센터 또는 복지로 온라인",
+    "phone": "129",
+    "tags": [
+      "아동수당",
+      "아동",
+      "영유아",
+      "0~7세",
+      "월10만원"
+    ]
+  },
+  {
+    "policy_id": "CHILD_002",
+    "name": "부모급여",
+    "source": "복지로",
+    "apply_url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00018613",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "tags": [
+      "부모급여",
+      "영아",
+      "0세",
+      "1세",
+      "육아"
+    ]
+  },
+  {
+    "policy_id": "CHILD_003",
+    "name": "첫만남이용권 (출산지원금)",
+    "source": "복지로",
+    "apply_url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00018614",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "tags": [
+      "출산지원금",
+      "첫만남",
+      "바우처",
+      "출생",
+      "신생아"
+    ]
+  },
+  {
+    "policy_id": "CHILD_004",
+    "name": "산모·신생아 건강관리 서비스",
+    "source": "복지로",
+    "apply_url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004568",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "tags": [
+      "산모",
+      "신생아",
+      "산후조리",
+      "건강관리사",
+      "출산"
+    ]
+  },
+  {
+    "policy_id": "CHILD_005",
+    "name": "가정양육수당",
+    "source": "복지로",
+    "apply_url": "https://www.bokjiro.go.kr",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "tags": [
+      "양육수당",
+      "가정보육",
+      "영유아",
+      "0~5세"
+    ]
+  },
+  {
+    "policy_id": "MULTI_001",
+    "name": "다문화가족 지원센터 서비스",
+    "source": "여성가족부",
+    "apply_url": "https://www.danuri.go.kr",
+    "authority": "가까운 다문화가족지원센터",
+    "phone": "1577-1366",
+    "tags": [
+      "다문화",
+      "결혼이민자",
+      "외국인",
+      "한국어",
+      "통번역",
+      "다문화센터"
+    ]
+  },
+  {
+    "policy_id": "MULTI_002",
+    "name": "결혼이민자 취업 교육 지원",
+    "source": "여성가족부",
+    "apply_url": "https://www.danuri.go.kr",
+    "authority": "다문화가족지원센터·새일센터",
+    "phone": "1577-1366",
+    "tags": [
+      "결혼이민자",
+      "취업",
+      "직업훈련",
+      "다문화",
+      "외국인여성"
+    ]
+  },
+  {
+    "policy_id": "MULTI_003",
+    "name": "외국인 근로자 의료지원",
+    "source": "고용노동부·지자체",
+    "apply_url": "https://www.moel.go.kr/info/medicSupport/index.do",
+    "authority": "외국인노동자지원센터 (안산·서울·경기)",
+    "phone": "1644-0644",
+    "tags": [
+      "외국인",
+      "외국인근로자",
+      "의료지원",
+      "미등록",
+      "무료진료"
+    ]
+  },
+  {
+    "policy_id": "MULTI_004",
+    "name": "다문화가족 아동 언어발달 지원",
+    "source": "여성가족부",
+    "apply_url": "https://www.danuri.go.kr",
+    "authority": "다문화가족지원센터",
+    "phone": "1577-1366",
+    "tags": [
+      "다문화",
+      "아동",
+      "언어발달",
+      "언어교육",
+      "이중언어"
+    ]
+  },
+  {
+    "policy_id": "MULTI_005",
+    "name": "이주여성 긴급지원 및 보호시설",
+    "source": "여성가족부",
+    "apply_url": "https://www.danuri.go.kr",
+    "authority": "이주여성긴급지원센터",
+    "phone": "1577-1366",
+    "tags": [
+      "이주여성",
+      "가정폭력",
+      "쉼터",
+      "긴급지원",
+      "외국인여성"
+    ]
+  },
+  {
+    "policy_id": "ENERGY_001",
+    "name": "에너지바우처 (냉·난방비 지원)",
+    "source": "산업통상자원부",
+    "apply_url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00010086",
+    "authority": "읍·면·동 주민센터",
+    "phone": "1600-3190",
+    "tags": [
+      "에너지바우처",
+      "냉방비",
+      "난방비",
+      "전기요금",
+      "취약계층"
+    ]
+  },
+  {
+    "policy_id": "CULTURE_001",
+    "name": "문화누리카드",
+    "source": "문화체육관광부",
+    "apply_url": "https://www.mnuri.kr",
+    "authority": "읍·면·동 주민센터 또는 온라인",
+    "phone": "1544-3412",
+    "tags": [
+      "문화누리카드",
+      "문화바우처",
+      "여행",
+      "체육",
+      "수급자"
+    ]
+  },
+  {
+    "policy_id": "TELECOM_001",
+    "name": "저소득층 통신요금 감면",
+    "source": "과학기술정보통신부",
+    "apply_url": "https://www.bokjiro.go.kr",
+    "authority": "각 통신사 또는 읍·면·동 주민센터",
+    "phone": "114",
+    "tags": [
+      "통신요금",
+      "감면",
+      "인터넷",
+      "휴대폰",
+      "수급자"
+    ]
+  },
+  {
+    "policy_id": "FOOD_001",
+    "name": "저소득층 양곡 지원",
+    "source": "농림축산식품부",
+    "apply_url": "https://www.bokjiro.go.kr",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "tags": [
+      "양곡",
+      "쌀",
+      "식량지원",
+      "수급자",
+      "식비"
+    ]
+  },
+  {
+    "policy_id": "YOUTH_001",
+    "name": "청년도약계좌",
+    "source": "금융위원회",
+    "apply_url": "https://www.kinfa.or.kr",
+    "authority": "시중 은행 (온라인 신청)",
+    "phone": "1397",
+    "tags": [
+      "청년도약계좌",
+      "청년",
+      "저축",
+      "정부지원",
+      "목돈"
+    ]
+  },
+  {
+    "policy_id": "YOUTH_002",
+    "name": "청년내일저축계좌",
+    "source": "보건복지부",
+    "apply_url": "https://www.bokjiro.go.kr",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "tags": [
+      "청년내일저축",
+      "청년",
+      "자산형성",
+      "저소득",
+      "저축"
+    ]
+  },
+  {
+    "policy_id": "SEOUL_003",
+    "name": "서울 희망두배 청년통장",
+    "source": "서울시",
+    "apply_url": "https://wis.seoul.go.kr",
+    "authority": "서울시 온라인 신청",
+    "phone": "120",
+    "tags": [
+      "서울",
+      "청년통장",
+      "자산형성",
+      "희망두배",
+      "저소득청년"
+    ]
+  },
+  {
+    "policy_id": "GYEONGGI_003",
+    "name": "경기도 청년 면접수당",
+    "source": "경기도",
+    "apply_url": "https://www.gg.go.kr",
+    "authority": "경기도 온라인 신청",
+    "phone": "031-120",
+    "tags": [
+      "경기도",
+      "청년",
+      "면접수당",
+      "구직",
+      "취업지원"
+    ]
+  },
+  {
+    "policy_id": "YOUTH_003",
+    "name": "청년 주거급여 분리지급",
+    "source": "국토교통부",
+    "apply_url": "https://www.bokjiro.go.kr",
+    "authority": "읍·면·동 주민센터",
+    "phone": "1600-0777",
+    "tags": [
+      "청년",
+      "주거급여",
+      "분리지급",
+      "월세",
+      "독립청년"
+    ]
+  },
+  {
+    "policy_id": "SENIOR_001",
+    "name": "노인 무료급식 지원",
+    "source": "복지로",
+    "apply_url": "https://www.bokjiro.go.kr",
+    "authority": "읍·면·동 주민센터 또는 노인복지관",
+    "phone": "129",
+    "tags": [
+      "노인급식",
+      "무료급식",
+      "도시락",
+      "독거노인",
+      "어르신"
+    ]
+  },
+  {
+    "policy_id": "SENIOR_002",
+    "name": "노인 틀니·임플란트 건강보험 지원",
+    "source": "건강보험공단",
+    "apply_url": "https://www.nhis.or.kr",
+    "authority": "치과 의료기관",
+    "phone": "1577-1000",
+    "tags": [
+      "틀니",
+      "임플란트",
+      "노인치과",
+      "65세",
+      "의료비"
+    ]
+  },
+  {
+    "policy_id": "SENIOR_003",
+    "name": "치매 치료관리비 지원",
+    "source": "복지로",
+    "apply_url": "https://www.bokjiro.go.kr",
+    "authority": "치매안심센터",
+    "phone": "치매상담콜 1899-9988",
+    "tags": [
+      "치매",
+      "치매치료비",
+      "노인",
+      "치매안심센터"
+    ]
+  },
+  {
+    "policy_id": "SENIOR_004",
+    "name": "독거노인 생활관리사 파견",
+    "source": "복지로",
+    "apply_url": "https://www.bokjiro.go.kr",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "tags": [
+      "독거노인",
+      "생활관리사",
+      "방문서비스",
+      "안전확인",
+      "어르신"
+    ]
+  },
+  {
+    "policy_id": "DISABLED_001",
+    "name": "장애아동 재활치료 서비스 (발달재활서비스)",
+    "source": "복지로",
+    "apply_url": "https://www.bokjiro.go.kr",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "tags": [
+      "장애아동",
+      "재활치료",
+      "발달장애",
+      "언어치료",
+      "바우처"
+    ]
+  },
+  {
+    "policy_id": "DISABLED_002",
+    "name": "발달장애인 주간활동 서비스",
+    "source": "복지로",
+    "apply_url": "https://www.bokjiro.go.kr",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "tags": [
+      "발달장애",
+      "주간활동",
+      "성인장애인",
+      "돌봄"
+    ]
+  },
+  {
+    "policy_id": "DISABLED_003",
+    "name": "장애인 보조기기 지원",
+    "source": "건강보험공단",
+    "apply_url": "https://www.nhis.or.kr",
+    "authority": "국민건강보험공단",
+    "phone": "1577-1000",
+    "tags": [
+      "보조기기",
+      "휠체어",
+      "보청기",
+      "장애인",
+      "지원"
+    ]
+  },
+  {
+    "policy_id": "CARE_001",
+    "name": "가사간병 방문서비스",
+    "source": "복지로",
+    "apply_url": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00009830",
+    "authority": "읍·면·동 주민센터",
+    "phone": "129",
+    "tags": [
+      "가사도우미",
+      "간병",
+      "방문서비스",
+      "돌봄",
+      "저소득"
+    ]
+  },
+  {
+    "policy_id": "HOUSING_001",
+    "name": "주거 취약계층 주거지원 (LH임대주택)",
+    "source": "국토교통부",
+    "apply_url": "https://www.lh.or.kr",
+    "authority": "LH 콜센터 또는 읍·면·동 주민센터",
+    "phone": "1600-1004",
+    "tags": [
+      "공공임대",
+      "LH",
+      "쪽방",
+      "고시원",
+      "주거취약"
+    ]
+  },
+  {
+    "policy_id": "MENTAL_001",
+    "name": "정신건강 위기상담 및 치료지원",
+    "source": "보건복지부",
+    "apply_url": "https://www.bokjiro.go.kr",
+    "authority": "정신건강복지센터 (지역 내)",
+    "phone": "정신건강위기상담전화 1577-0199",
+    "tags": [
+      "정신건강",
+      "우울",
+      "불안",
+      "상담",
+      "자살예방"
+    ]
+  },
+  {
+    "policy_id": "WORK_001",
+    "name": "자활급여 (자활근로 프로그램)",
+    "source": "복지로",
+    "apply_url": "https://www.bokjiro.go.kr",
+    "authority": "읍·면·동 주민센터 또는 지역자활센터",
+    "phone": "129",
+    "tags": [
+      "자활",
+      "자활근로",
+      "수급자",
+      "일자리",
+      "창업지원"
+    ]
+  }
+]
