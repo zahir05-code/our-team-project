@@ -1689,7 +1689,7 @@ function renderProResult(data, age) {
     body.innerHTML = policies.map(({ type, p }) => {
       const name  = type === "bk" ? p.name : (getPolicyTr(p.policy_id,"name")||p.name);
       const desc  = type === "bk" ? (p.description||"") : (getPolicyTr(p.policy_id,"desc")||p.description);
-      const applyInfo = type === "bk" ? buildApplyUrl(p) : { url: p.apply_url, label: "복지로 해당 서비스 바로가기 →" };
+      const applyInfo = buildApplyUrl(p);
       const uid = `pro-${type}-${p.policy_id||p.name}`.replace(/\W/g,"_");
       const howText = type === "bk" && p.how_to_apply && p.how_to_apply !== "Y" && p.how_to_apply !== "N"
         ? `<p class="acc-how-text">${p.how_to_apply}</p>` : "";
