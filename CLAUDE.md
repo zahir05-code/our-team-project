@@ -80,10 +80,11 @@ FastAPI (api/app.py)
 
 | 파일 | 버전 | 역할 |
 |------|------|------|
-| `templates/index.html` | v4.0 | 단일 HTML, 4탭 구조 |
-| `static/js/app.js` | v4.0 | 전체 앱 로직 |
+| `templates/index.html` | v5.9 | 단일 HTML, 3탭 구조 (맞춤복지 탭 제거) |
+| `static/js/app.js` | v5.9 | 전체 앱 로직 |
 | `static/js/i18n.js` | v3.4 | 한국어/영어 다국어 |
-| `static/css/style.css` | v4.0 | 전체 스타일 |
+| `static/css/style.css` | v5.7 | 전체 스타일 |
+| `static/js/welfareDeepLinks.json` | — | 복지서비스 직접 URL 딥링크 테이블 (50개) |
 
 **버전 캐시 무효화**: HTML에서 `?v=X.X` 쿼리스트링으로 관리. 파일 수정 시 반드시 버전 올릴 것.
 
@@ -91,13 +92,14 @@ FastAPI (api/app.py)
 
 ## 프론트엔드 구조 (app.js 핵심)
 
-### 4탭 구조
+### 3탭 구조 (하단 네비게이션)
 ```
-🎯 맞춤복지 (homePanel)   — 3단계 챗봇 + 결과
-📅 복지달력 (calendarPanel) — WELFARE_CALENDAR 데이터
-🏛 지역서비스 (localPanel)  — LOCAL_PUBLIC 오프라인 자원
-🛒 장바구니 (myinfoPanel)   — 저장 혜택 + 신청 현황 추적
+📅 복지달력  (calendarPanel) — WELFARE_CALENDAR 데이터, 월별 신청 일정
+🏛 지역서비스 (localPanel)   — LOCAL_PUBLIC 오프라인 자원 + 복지전문가 조회
+🛒 장바구니  (myinfoPanel)   — 저장 혜택 + 신청 현황 추적
 ```
+- 로고(🏛 아테나) 클릭 → `bnavGo('home')` → `resetToHome()` — 맞춤복지 입력 화면으로 복귀
+- 맞춤복지(homePanel/main)는 하단 탭 버튼 없이 로고로만 접근
 
 ### localStorage 키
 ```js
@@ -109,8 +111,31 @@ SAVED_KEY   = "athena_saved_results" // 저장된 혜택 장바구니
 - **온톨로지 카드** (`.ont-card`): 정적 DB 매칭 결과, DEFINITE/POSSIBLE/FUTURE 3단계
 - **복지로 스타일 카드** (`.bk-card`): Supabase 실시간 정책, 담당부처·제공유형·신청방법·문의처 메타행
 
-### 신청 URL 라우팅 (`buildApplyUrl(p)`)
-우선순위: `wlfareInfoId` 포함 URL → `policy_id`로 복지로 상세 → 경기도 정책 → 일반 URL → 서비스명 검색 fallback
+### 카드 UI 원칙 (전 탭 통일)
+- **선정이유 아코디언 없음** — 제거 완료
+- **하단 단독 신청 버튼 없음** — 제거 완료
+- **신청 링크 위치**: "신청하기" 아코디언 내부 `.acc-site-link` 파란 버튼
+- 적용 탭: 맞춤복지 결과, 복지전문가 조회, 장바구니 상세, 복지달력 상세
+
+### 신청 URL 라우팅 (`buildApplyUrl(p)`) — 4순위
+```
+0순위: welfareDeepLinks.json 딥링크 테이블 (직접 상세 URL)
+1순위: wlfareInfoId 포함 URL → 복지로 서비스 상세 페이지
+2순위: SITE_LABELS 기관 전용 URL (nhis, moel, mogef 등)
+3순위: 경기도 → ggwf 검색
+4순위: bokjiro 통합검색 fallback (최후 수단)
+```
+- **모든 카드 타입(ont/bk) buildApplyUrl() 통일 적용** (v5.6 ~)
+
+### 딥링크 시스템
+```
+scripts/build_welfare_deeplinks.py   — 자동 매칭 스크립트
+data/extracted_services.json         — 앱 DB 추출 서비스 목록
+data/official_welfare_services.csv   — 공식 복지서비스 기준 데이터 (43개)
+static/js/welfareDeepLinks.json      — 빌드 결과 (50개 서비스, 직접 URL)
+```
+매칭 우선순위: 완전일치 → 포함일치 → 유사도(≥0.75) → fallback  
+**원칙**: 검색 페이지 URL 금지. 반드시 서비스 상세 페이지 직접 URL 저장.
 
 ### 복지달력 상세 시트 (`openCalDetail(idx)`)
 카드 클릭 → 앱 내 슬라이드업 시트 (외부 이동 없음)  
@@ -218,10 +243,85 @@ item.status = "none"(미신청) | "pending"(신청예정) | "done"(완료)
 
 ---
 
+## 장바구니 프로필 수정 기능 (v5.7~)
+
+```
+장바구니 탭 → "✏️ 정보 수정하기" 버튼 → profileEditModal 하단 시트
+수정 항목: 지역(서울/경기) / 시·군·구 / 나이 / 소득구간
+저장 → localStorage PROFILE_KEY 즉시 업데이트 → renderMyinfoProfile() 갱신
+```
+관련 함수: `myinfoEditProfile()`, `pePickRegion()`, `saveEditProfile()`, `closeProfileEdit()`
+
+---
+
+## URL 관리 원칙 (중요)
+
+### 복지서비스 URL 우선순위
+1. **복지로 직접 상세**: `moveTWAT52011M.do?wlfareInfoId=WLF00XXXXXX` ← 최우선
+2. **기관 공식 사이트 직접 페이지**: nhis.or.kr, mogef.go.kr, moel.go.kr 등 특정 정책 페이지
+3. **지자체 공식 사이트**: youth.seoul.go.kr, basicincome.gg.go.kr 등
+4. **bokjiro 통합검색 금지**: 검색 결과 페이지도 금지. 반드시 해당 서비스 상세 페이지
+
+### 확인된 작동 URL 패턴
+```
+복지로 상세: https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00XXXXXX
+복지로 검색: https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=XXX  ← 최후 fallback만
+```
+
+### 확인된 작동 기관 URL
+| 기관 | URL |
+|------|-----|
+| 복지로 | bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/... |
+| 국민건강보험 | nhis.or.kr/nhis/policy/... |
+| 워크넷 | work.go.kr/empInfo/... |
+| 고용보험 | ei.go.kr/ei/eih/... |
+| 새일센터 | saeil.mogef.go.kr |
+| 여성가족부 | mogef.go.kr/mp/pcd/... |
+| 서민금융진흥원 | kinfa.or.kr/product/... |
+| 소상공인진흥공단 | semas.or.kr/web/... |
+| 문화누리카드 | mnuri.kr |
+| 에너지바우처 | energyvoucher.or.kr |
+| LH공사 | lh.or.kr |
+| 중앙치매센터 | nid.or.kr |
+| 서울청년포털 | youth.seoul.go.kr |
+| 서울복지포털 | welfare.seoul.go.kr |
+| 경기도기본소득 | basicincome.gg.go.kr |
+| 경기일자리재단 | jobaba.net |
+| 서울정신건강 | seoulmentalhealth.kr |
+| 경기정신건강 | gmhc.or.kr |
+| 아이돌봄 | idolbom.go.kr |
+
+### 사용 금지 URL (연결 불가 확인)
+- `www.danuri.go.kr` — ERR_CONNECTION_REFUSED (다누리 포털 접속 불가)
+- `www.ggmhc.or.kr` — DNS_NXDOMAIN (오타, 실제: gmhc.or.kr)
+- `blutouch.net` — 불안정 (대체: seoulmentalhealth.kr)
+- `liveinkorea.kr` — 서비스 종료 (대체: danuri → mogef)
+- `bokjiro.go.kr` 홈(/)  — 서비스 첫 페이지, 직접 연결 불가
+
+---
+
 ## 수정 시 체크리스트
 
-- JS/CSS 수정 → `index.html`의 `?v=X.X` 버전 올리기
+- JS/CSS 수정 → `index.html`의 `?v=X.X` 버전 올리기 (app.js: v5.9, style.css: v5.7)
 - 새 복지 항목 추가 → `WELFARE_CALENDAR` detail 객체 필수 포함
+- 딥링크 추가/수정 → `static/js/welfareDeepLinks.json` 직접 편집 (검색 URL 금지)
 - 지역 추가 → `welfare_analyzer/models/user_profile.py` ALLOWED 목록 + `api/routers/welfare.py` 검증 동시 수정
 - Supabase 정책 구조 변경 → `api/schemas.py:SupabasePolicy` + `ontology/welfare_collector.py` 동시 수정
 - 배포: `git push origin main` → Railway 자동 빌드 (1~2분 소요)
+
+---
+
+## 작업 이력 (v5.x)
+
+| 버전 | 주요 변경 |
+|------|----------|
+| v5.0 | 맞춤복지 하단 탭 제거 → 3탭 네비게이션, 로고 클릭 = 홈 리셋 |
+| v5.1 | 선정이유 제거, 하단 신청버튼 제거, 신청링크 아코디언 내부 이동 |
+| v5.2 | 딥링크 JSON 시스템 구축 (welfareDeepLinks.json, build_welfare_deeplinks.py) |
+| v5.3 | policies_db.py 실제 WLF ID 22개 교체, WELFARE_CALENDAR 가짜 ID 수정 |
+| v5.4 | buildApplyUrl 4순위 라우팅, 복지전문가 조회 신설 |
+| v5.5 | 경기 정신건강복지센터 URL 수정 (ggmhc→gmhc) |
+| v5.6 | 복지전문가 ont카드 buildApplyUrl 우회 버그 수정 |
+| v5.7 | API 오류 [object Object] 수정, 장바구니 프로필 인라인 편집 모달 |
+| v5.8 | danuri.go.kr 전체 교체, blutouch→seoulmentalhealth |
+| v5.9 | 검색 URL 전량 제거 → 서비스별 직접 상세 URL 완전 교체 |
