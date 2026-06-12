@@ -586,80 +586,52 @@ function renderResult(data, analysis) {
     body.insertAdjacentHTML("beforeend", html);
   }
 
-  /* 온톨로지 결과 */
+  /* ── 전체 정책을 중앙부처 / 지자체 / 민간 버킷으로 분류 ── */
+  const buckets = { central: [], local: [], private: [] };
+
+  // 온톨로지 카드 분류
   if (data.ontology && data.ontology.summary.total > 0) {
-    const ont  = data.ontology;
-    const summ = ont.summary;
-
-    let html = `<div class="ont-section">
-      <p class="ont-header">${T("ont_qualify")}
-        <span class="ont-badge ont-badge-def">${T("ont_definite", summ.definite_count)}</span>
-        <span class="ont-badge ont-badge-pos">${T("ont_possible", summ.possible_count)}</span>
-        <span class="ont-badge ont-badge-fut">${T("ont_future", summ.future_count)}</span>
-      </p>
-      <div class="ont-disclaimer">
-        ${T("disclaimer")}
-        <span class="disclaimer-legal">
-          ${T("pledge_legal")}
-        </span>
-      </div>`;
-
-    if (ont.definite.length) {
-      html += `<div class="ont-group ont-group-def">
-        <p class="ont-group-title">${T("ont_definite", ont.definite.length)}</p>`;
-      ont.definite.forEach(p => html += renderOntPolicy(p, "def"));
-      html += `</div>`;
-    }
-    if (ont.possible.length) {
-      html += `<div class="ont-group ont-group-pos">
-        <p class="ont-group-title">${T("ont_possible", ont.possible.length)}</p>`;
-      ont.possible.forEach(p => html += renderOntPolicy(p, "pos"));
-      html += `</div>`;
-    }
-    if (ont.future.length) {
-      const futId = "futBody_" + Date.now();
-      html += `<div class="ont-group ont-group-fut">
-        <div class="ont-group-title ont-fut-header">
-          <span>${T("ont_future", ont.future.length)}</span>
-          <button class="ont-toggle-btn" id="futBtn_${futId}"
-            onclick="toggleFuture('${futId}')">${T("ont_expand")}</button>
-        </div>
-        <div class="ont-future-body hidden" id="${futId}">`;
-      ont.future.forEach(p => html += renderOntPolicy(p, "fut"));
-      html += `</div></div>`;
-    }
-    html += `</div>`;
-    body.insertAdjacentHTML("beforeend", html);
-  }
-
-  /* Supabase 실시간 DB 정책 카드 — 복지로 스타일 */
-  if (data.supabase_policies && data.supabase_policies.length > 0) {
-    _lastSupaPolicies = data.supabase_policies; // 필터용 저장
-    body.insertAdjacentHTML("beforeend",
-      `<div class="supa-section" id="supaSection">${renderSupaCards(data.supabase_policies)}</div>`);
-    initResultFilter(data.supabase_policies);
-  }
-
-  /* 링크 섹션 */
-  if (data.results && data.results.some(s => s.services.length > 0)) {
-    let html = `<div class="link-section-wrap">
-      <p class="link-section-header">${T("link_header")}</p>`;
-    data.results.forEach(sec => {
-      if (!sec.services.length) return;
-      const icon     = SECTION_ICONS[sec.section] || "📋";
-      const secNames = T("section_names") || {};
-      const secLabel = secNames[sec.section] || sec.section;
-      html += `<div class="result-section">
-        <p class="section-title">${icon} ${secLabel}</p>`;
-      sec.services.forEach(svc =>
-        html += `<div class="service-item">
-          <span class="service-name">${getTr(svc.name)}</span>
-          <a class="service-link" href="${svc.url}" target="_blank" rel="noopener">${T("link_go")}</a>
-        </div>`);
-      html += `</div>`;
+    const ont = data.ontology;
+    [...ont.definite, ...ont.possible, ...ont.future].forEach(p => {
+      const lv = (p.level || "").trim();
+      if (lv === "지자체") buckets.local.push({ src:"ont", policy:p, match: _ontMatchLabel(p, ont) });
+      else if (lv === "민간") buckets.private.push({ src:"ont", policy:p, match: _ontMatchLabel(p, ont) });
+      else buckets.central.push({ src:"ont", policy:p, match: _ontMatchLabel(p, ont) });
     });
-    html += `</div>`;
-    body.insertAdjacentHTML("beforeend", html);
+  }
+
+  // Supabase 카드 분류
+  if (data.supabase_policies && data.supabase_policies.length > 0) {
+    _lastSupaPolicies = data.supabase_policies;
+    data.supabase_policies.forEach(p => {
+      const src = (p.source || "").trim();
+      if (/서울|경기|시청|구청|군청|지자체/.test(src)) buckets.local.push({ src:"bk", policy:p });
+      else if (/민간|협회|재단|법인|NGO/.test(src))    buckets.private.push({ src:"bk", policy:p });
+      else buckets.central.push({ src:"bk", policy:p });
+    });
+  }
+
+  // 링크 섹션 → 지자체 버킷에 추가
+  if (data.results && data.results.some(s => s.services.length > 0)) {
+    data.results.forEach(sec => {
+      sec.services.forEach(svc => {
+        buckets.local.push({ src:"link", policy:{ name: svc.name, url: svc.url, description: sec.section } });
+      });
+    });
+  }
+
+  const totalAll = buckets.central.length + buckets.local.length + buckets.private.length;
+  if (totalAll === 0) {
+    body.insertAdjacentHTML("beforeend",
+      `<p style="text-align:center;color:#94a3b8;padding:30px 0">조건에 맞는 서비스를 찾지 못했습니다.<br>정보를 더 입력하면 더 많은 결과가 나올 수 있습니다.</p>`);
+  } else {
+    // 면책 고지
+    body.insertAdjacentHTML("beforeend", `
+      <div class="ont-disclaimer" style="margin-bottom:8px">
+        ${T("disclaimer")}
+        <span class="disclaimer-legal">${T("pledge_legal")}</span>
+      </div>`);
+    body.insertAdjacentHTML("beforeend", renderSourceTabs(buckets));
   }
 
   document.getElementById("result").classList.remove("hidden");
@@ -757,6 +729,130 @@ function _accRow(id, icon, label, content) {
       <span class="acc-label">${label}</span>
     </button>
     <div class="acc-body" id="${id}">${content}</div>
+  </div>`;
+}
+
+/* ══════════════════════════════════════
+   중앙부처 / 지자체 / 민간 탭 UI
+══════════════════════════════════════ */
+function _ontMatchLabel(p, ont) {
+  if (ont.definite.find(x => x.policy_id === p.policy_id)) return "def";
+  if (ont.possible.find(x => x.policy_id === p.policy_id)) return "pos";
+  return "fut";
+}
+
+const _MATCH_META = {
+  def: { label:"✅ 즉시 신청 가능",  cls:"badge-def" },
+  pos: { label:"🔍 조건 확인 필요",  cls:"badge-pos" },
+  fut: { label:"📌 향후 해당 가능",  cls:"badge-fut" },
+};
+
+function renderSourceTabs(buckets) {
+  const tabs = [
+    { key:"central", label:"중앙부처", desc:"정부 부처가 제공하는 전국민 복지서비스" },
+    { key:"local",   label:"지자체",   desc:"서울·경기 지역 전용 복지서비스" },
+    { key:"private", label:"민간",     desc:"민간·재단·협회 복지서비스" },
+  ].filter(t => buckets[t.key].length > 0);
+
+  if (!tabs.length) return "";
+
+  let html = `<div class="src-tabs-wrap">
+    <div class="src-tabs" id="srcTabs">`;
+  tabs.forEach((t, i) =>
+    html += `<button class="src-tab${i===0?" active":""}"
+      onclick="switchSrcTab('${t.key}',this)">${t.label}
+      <span class="src-tab-cnt">${buckets[t.key].length}</span>
+    </button>`);
+  html += `</div>`;
+
+  tabs.forEach((t, i) => {
+    html += `<div class="src-panel${i===0?"":" hidden"}" id="srcPanel-${t.key}">
+      <p class="src-desc">${t.desc}</p>
+      <div class="src-cards">`;
+    buckets[t.key].forEach((item, ci) => html += renderUnifiedCard(item, t.key, ci));
+    html += `</div></div>`;
+  });
+  html += `</div>`;
+  return html;
+}
+
+function switchSrcTab(key, btn) {
+  document.querySelectorAll(".src-tab").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".src-panel").forEach(p => p.classList.add("hidden"));
+  btn.classList.add("active");
+  const panel = document.getElementById("srcPanel-" + key);
+  if (panel) panel.classList.remove("hidden");
+}
+
+function renderUnifiedCard(item, bucket, ci) {
+  if (item.src === "link") {
+    const p = item.policy;
+    return `<div class="uni-card">
+      <div class="uni-name">${p.name}</div>
+      <p class="uni-desc">${p.description || ""}</p>
+      <a class="uni-apply-btn" href="${p.url}" target="_blank" rel="noopener">
+        신청 페이지로 →
+      </a>
+    </div>`;
+  }
+
+  if (item.src === "bk") {
+    const p = item.policy;
+    const applyInfo = buildApplyUrl(p);
+    const tags = (p.tags||[]).map(t=>`<span class="uni-tag">${t}</span>`).join("");
+    const uid = `bk-${bucket}-${ci}`;
+    return `<div class="uni-card" data-tags="${(p.tags||[]).join(",")}">
+      ${tags ? `<div class="uni-tags">${tags}</div>` : ""}
+      <div class="uni-name">${p.name}</div>
+      <p class="uni-desc">${p.description || ""}</p>
+      <div class="uni-meta">
+        ${p.source  ? `<span class="uni-meta-item">🏢 ${p.source}</span>` : ""}
+        ${p.contact ? `<span class="uni-meta-item">☎ ${p.contact}</span>` : ""}
+      </div>
+      <div class="acc-group">
+        ${_accRow(`${uid}-how`, "📋", "신청방법", p.how_to_apply)}
+        ${_accRow(`${uid}-ben`, "💰", "지원내용", p.benefit && p.benefit !== p.description ? p.benefit : "")}
+      </div>
+      <a class="uni-apply-btn" href="${applyInfo.url}" target="_blank" rel="noopener">
+        ${applyInfo.label}
+      </a>
+    </div>`;
+  }
+
+  // ont 카드
+  const p    = item.policy;
+  const match = item.match || "pos";
+  const meta  = _MATCH_META[match] || _MATCH_META.pos;
+  const name  = getPolicyTr(p.policy_id, "name") || p.name;
+  const desc  = getPolicyTr(p.policy_id, "desc") || p.description;
+  const auth  = getTr(p.authority) || p.authority;
+  const trDocs    = (p.required_docs||[]).map(d => getTr(d));
+  const trTags    = (p.tags||[]).map(t => getTr(t));
+  const trReasons = (p.reasons||[]).map(r => getTr(r));
+  const uid = `ont-${bucket}-${ci}`;
+
+  return `<div class="uni-card uni-card--${match}" data-tags="${trTags.join(",")}">
+    <div class="uni-tags">
+      <span class="uni-match-badge ${meta.cls}">${meta.label}</span>
+      ${trTags.map(t=>`<span class="uni-tag">${t}</span>`).join("")}
+    </div>
+    <div class="uni-name">${name}</div>
+    <p class="uni-desc">${desc}</p>
+    <div class="uni-meta">
+      <span class="uni-meta-item">📞 ${auth}</span>
+      <a class="uni-meta-item tel-link" href="tel:${p.phone.replace(/[^0-9]/g,'')}">${p.phone} ☎</a>
+    </div>
+    <div class="acc-group">
+      ${_accRow(`${uid}-how`, "📋", "신청방법",
+          `<a href="${p.apply_url}" target="_blank" rel="noopener" class="acc-apply-link">복지로 신청 페이지 바로가기 →</a>`)}
+      ${trDocs.length ? _accRow(`${uid}-doc`, "📄", "필요서류",
+          trDocs.map(d=>`<span class="acc-doc-item">• ${d}</span>`).join("")) : ""}
+      ${trReasons.length ? _accRow(`${uid}-tip`, "💡", "선정 이유",
+          trReasons.join("<br>")) : ""}
+    </div>
+    <a class="uni-apply-btn" href="${p.apply_url}" target="_blank" rel="noopener">
+      복지로에서 직접 신청 →
+    </a>
   </div>`;
 }
 
