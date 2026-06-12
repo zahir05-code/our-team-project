@@ -1688,6 +1688,20 @@ a.uni-meta-item { color: #2563eb; text-decoration: none; }
   font-size: 0.82rem;
 }
 .acc-apply-link:hover { text-decoration: underline; }
+/* 신청방법 아코디언 내부 — 링크 버튼 */
+.acc-site-link {
+  display: block; margin-top: 8px;
+  background: linear-gradient(135deg, #1e40af, #3b82f6);
+  color: #fff; border-radius: 10px; padding: 11px 14px;
+  font-size: 0.86rem; font-weight: 800;
+  text-decoration: none; text-align: center;
+  transition: opacity 0.15s;
+}
+.acc-site-link:active { opacity: 0.8; color: #fff; }
+.acc-how-text {
+  font-size: 0.82rem; color: #374151; line-height: 1.55;
+  margin: 0 0 4px;
+}
 .acc-doc-item {
   display: block; margin-bottom: 3px;
 }
