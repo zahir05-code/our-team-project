@@ -660,60 +660,80 @@ const FILTER_CATS = {
                "보육","교육","입양","위탁","서민금융","법률","에너지","돌봄"],
 };
 
-/* ── 정책별 신청 URL 및 라벨 결정 ── */
+/* ────────────────────────────────────────────────────────
+   buildApplyUrl — ChatGPT resolveWelfareDeepLink 개념 반영
+   우선순위:
+     1순위 wlfareInfoId 포함 URL → 복지로 해당 서비스 상세 직접 연결
+     2순위 전용 기관 URL         → 워크넷/고용보험/건강보험 등 직접 연결
+     3순위 경기도                → 경기복지재단 검색
+     4순위 fallback              → 복지로 통합검색 (실제 작동 URL)
+   ──────────────────────────────────────────────────────── */
 function buildApplyUrl(p) {
-  const pid   = (p.policy_id || "").trim();
-  const url   = (p.url || "").trim();
-  const name  = (p.name || "").trim();
-  const src   = (p.source || "").trim();
+  const pid  = (p.policy_id || "").trim();
+  const url  = (p.url || p.apply_url || "").trim();
+  const name = (p.name || "").trim();
+  const src  = (p.source || "").trim();
+  const keyword = encodeURIComponent(name.replace(/\s*\(.*?\)\s*/g,"").trim());
 
-  // 검색 키워드용 인코딩 (서비스명 → 공백 제거 핵심어만)
-  const keyword = encodeURIComponent(name.replace(/\s*\(.*?\)\s*/g, "").trim());
-
-  // 1) 복지로 서비스 상세 직접 URL (wlfareInfoId 포함) — DB에 정확한 ID가 있는 경우만
+  /* ── 1순위: 복지로 서비스 상세 직접 URL (wlfareInfoId 확보된 경우) ── */
   if (url && url.includes("wlfareInfoId")) {
-    return { url, label: "복지로 해당 서비스 바로가기 →", type: "bokjiro" };
+    return {
+      url,
+      label: "🔗 복지로 해당 서비스 바로가기 →",
+      type: "bokjiro",
+      tier: 1,
+    };
   }
 
-  // 2) 경기도 관련 정책 → 경기복지재단
-  const isGyeonggi = src.includes("경기") || name.includes("경기") || pid.startsWith("GG");
-  if (isGyeonggi) {
+  /* ── 2순위: 타 공공기관 전용 서비스 페이지 ── */
+  const GENERIC = ["https://www.bokjiro.go.kr", ""];
+  if (url && !GENERIC.includes(url)) {
+    const SITE_LABELS = {
+      "nhis.or.kr":          "🔗 국민건강보험공단 바로가기 →",
+      "work.go.kr":          "🔗 워크넷 바로가기 →",
+      "ei.go.kr":            "🔗 고용보험 신청 바로가기 →",
+      "semas.or.kr":         "🔗 소상공인진흥공단 바로가기 →",
+      "saeil.mogef.go.kr":   "🔗 새일센터 바로가기 →",
+      "childcare.go.kr":     "🔗 아이돌봄서비스 바로가기 →",
+      "kinfa.or.kr":         "🔗 서민금융진흥원 바로가기 →",
+      "energyvoucher.or.kr": "🔗 에너지바우처 바로가기 →",
+      "lh.or.kr":            "🔗 LH공사 바로가기 →",
+      "danuri.go.kr":        "🔗 다누리(다문화가족) 바로가기 →",
+      "moel.go.kr":          "🔗 고용노동부 바로가기 →",
+      "youth.seoul.go.kr":   "🔗 서울청년포털 바로가기 →",
+      "welfare.seoul.go.kr": "🔗 서울복지포털 바로가기 →",
+      "wis.seoul.go.kr":     "🔗 서울복지포털 바로가기 →",
+      "basicincome.gg.go.kr":"🔗 경기도 청년기본소득 바로가기 →",
+      "gg.go.kr":            "🔗 경기도청 바로가기 →",
+      "ggwf.or.kr":          "🔗 경기복지재단 바로가기 →",
+      "mnuri.kr":            "🔗 문화누리카드 바로가기 →",
+      "ableservice.or.kr":   "🔗 장애인활동지원 공식 사이트 →",
+    };
+    const host = Object.keys(SITE_LABELS).find(k => url.includes(k));
+    return {
+      url,
+      label: host ? SITE_LABELS[host] : "🔗 관련 기관 바로가기 →",
+      type: "external",
+      tier: 2,
+    };
+  }
+
+  /* ── 3순위: 경기도 서비스 → 경기복지재단 검색 ── */
+  if (src.includes("경기") || name.includes("경기") || pid.startsWith("GG")) {
     return {
       url: `https://www.ggwf.or.kr/main/welfare/welfareInfo.do?searchKeyword=${keyword}`,
-      label: "경기복지재단 해당 서비스 →",
+      label: "🔗 경기복지재단 서비스 검색 →",
       type: "ggwf",
+      tier: 3,
     };
   }
 
-  // 3) 전용 URL이 있는 경우 (복지로 홈 / 기본값 제외한 실제 기관 사이트)
-  const GENERIC = ["https://www.bokjiro.go.kr"];
-  if (url && !GENERIC.includes(url)) {
-    // 사이트별 라벨 매핑
-    const siteLabel = {
-      "nhis.or.kr":        "국민건강보험공단 →",
-      "work.go.kr":        "워크넷(고용부) →",
-      "ei.go.kr":          "고용보험 →",
-      "semas.or.kr":       "소상공인시장진흥공단 →",
-      "saeil.mogef.go.kr": "새일센터 →",
-      "childcare.go.kr":   "임신육아종합포털 →",
-      "kinfa.or.kr":       "서민금융진흥원 →",
-      "energyvoucher.or.kr":"에너지바우처 →",
-      "lh.or.kr":          "LH한국토지주택공사 →",
-      "danuri.go.kr":      "다누리 →",
-      "moel.go.kr":        "고용노동부 →",
-      "wis.seoul.go.kr":   "서울복지포털 →",
-      "gg.go.kr":          "경기도청 →",
-      "ggwf.or.kr":        "경기복지재단 →",
-    };
-    const host = Object.keys(siteLabel).find(k => url.includes(k));
-    return { url, label: host ? siteLabel[host] : "관련 기관 바로가기 →", type: "external" };
-  }
-
-  // 4) 복지로 기본 — 홈에서 서비스명 검색 유도
+  /* ── 4순위: 복지로 통합검색 fallback (실제 작동 URL) ── */
   return {
-    url: "https://www.bokjiro.go.kr",
-    label: "복지로 홈 → 서비스명 검색",
-    type: "bokjiro",
+    url: `https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=${keyword}`,
+    label: "🔍 복지로에서 서비스 검색 →",
+    type: "bokjiro-search",
+    tier: 4,
   };
 }
 
@@ -857,8 +877,7 @@ function renderUnifiedCard(item, bucket, ci) {
     <div class="acc-group">
       ${trDocs.length ? _accRow(`${uid}-doc`, "📄", "필요서류",
           trDocs.map(d=>`<span class="acc-doc-item">• ${d}</span>`).join("")) : ""}
-      ${_accRow(`${uid}-how`, "📋", "신청방법",
-          `<a class="acc-site-link" href="${p.apply_url}" target="_blank" rel="noopener">🔗 복지로 해당 서비스 바로가기 →</a>`)}
+      ${(()=>{ const ai=buildApplyUrl({url:p.apply_url,name:p.name,source:p.source||"",policy_id:p.policy_id||""}); return _accRow(`${uid}-how`,"📋","신청방법",`<a class="acc-site-link" href="${ai.url}" target="_blank" rel="noopener">${ai.label}</a>`); })()}
     </div>
   </div>`;
 }
@@ -958,10 +977,8 @@ function renderOntPolicy(p, type) {
   // 아코디언용 고유 ID
   const uid = p.policy_id.replace(/\W/g,"_") + "_" + type;
   const howAcc  = p.apply_url
-    ? _accRow("ont-how-" + uid, "📋", "신청방법",
-        `<a class="acc-site-link" href="${p.apply_url}" target="_blank" rel="noopener">
-          🔗 복지로 해당 서비스 바로가기 →
-        </a>`) : "";
+    ? (()=>{ const ai=buildApplyUrl({url:p.apply_url,name:p.name,source:p.source||"",policy_id:p.policy_id||""}); return _accRow("ont-how-"+uid,"📋","신청방법",`<a class="acc-site-link" href="${ai.url}" target="_blank" rel="noopener">${ai.label}</a>`); })()
+    : "";
   const docsAcc = trDocs.length
     ? _accRow("ont-docs-" + uid, "📄", "필요서류",
         trDocs.map(d => `<span class="acc-doc-item">• ${d}</span>`).join("")) : "";
