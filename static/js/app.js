@@ -736,13 +736,38 @@ function buildApplyUrl(p) {
   };
 }
 
+/* ── 아코디언 토글 (bk-card / ont-card 공용) ── */
+function toggleAccordion(id) {
+  const body = document.getElementById(id);
+  const btn  = document.getElementById("acc-btn-" + id);
+  if (!body || !btn) return;
+  const opening = body.classList.toggle("acc-open");
+  btn.setAttribute("aria-expanded", opening);
+  btn.querySelector(".acc-arrow").textContent = opening ? "▾" : "▶";
+}
+
+function _accRow(id, icon, label, content) {
+  if (!content || content === "Y" || content === "N") return "";
+  return `
+  <div class="acc-row">
+    <button class="acc-trigger" id="acc-btn-${id}"
+            onclick="toggleAccordion('${id}')" aria-expanded="false">
+      <span class="acc-arrow">▶</span>
+      <span class="acc-icon">${icon}</span>
+      <span class="acc-label">${label}</span>
+    </button>
+    <div class="acc-body" id="${id}">${content}</div>
+  </div>`;
+}
+
 function renderSupaCards(policies) {
   if (!policies || !policies.length) return "";
   let html = `<p class="supa-header">📋 맞춤 복지서비스 <span class="supa-badge">${policies.length}건</span></p>`;
-  policies.forEach(p => {
+  policies.forEach((p, i) => {
     const tags = (p.tags||[]).map(t=>`<span class="bk-tag">${t}</span>`).join("");
     const online = p.online_apply ? `<span class="bk-online-badge">💻 온라인 신청</span>` : "";
     const applyInfo = buildApplyUrl(p);
+    const howId = `bk-how-${i}-${Date.now()}`;
     html += `<div class="bk-card" data-tags="${(p.tags||[]).join(",")}"
                data-policy-id="${p.policy_id||''}" data-url="${p.url||''}" data-name="${p.name}">
       <div class="bk-card-head">
@@ -753,10 +778,9 @@ function renderSupaCards(policies) {
       <div class="bk-meta">
         ${p.source  ? `<div class="bk-meta-row"><span class="bk-meta-label">담당부처</span><span class="bk-meta-val">${p.source}</span></div>` : ""}
         ${p.benefit ? `<div class="bk-meta-row"><span class="bk-meta-label">제공유형</span><span class="bk-meta-val">${p.benefit}</span></div>` : ""}
-        ${p.how_to_apply && p.how_to_apply !== "Y" && p.how_to_apply !== "N"
-            ? `<div class="bk-meta-row"><span class="bk-meta-label">신청방법</span><span class="bk-meta-val">${p.how_to_apply}</span></div>` : ""}
         ${p.contact ? `<div class="bk-meta-row"><span class="bk-meta-label">문의처</span><span class="bk-meta-val">${p.contact}</span></div>` : ""}
       </div>
+      ${_accRow(howId, "📋", "신청방법", p.how_to_apply)}
       ${tags ? `<div class="bk-tags">${tags}</div>` : ""}
       <a class="bk-detail-btn bk-detail-btn--${applyInfo.type}" href="${applyInfo.url}" target="_blank" rel="noopener">
         ${applyInfo.label}
@@ -815,34 +839,47 @@ function _applyFilter(tag) {
 
 /* ── 온톨로지 카드 ── */
 function renderOntPolicy(p, type) {
-  // 번역 적용
   const name  = getPolicyTr(p.policy_id, "name") || p.name;
   const desc  = getPolicyTr(p.policy_id, "desc") || p.description;
   const auth  = getTr(p.authority) || p.authority;
-  const trDocs  = p.required_docs.map(d => getTr(d)).join(" · ");
-  const trTags  = p.tags.map(t => getTr(t));
+  const trDocs    = p.required_docs.map(d => getTr(d));
+  const trTags    = p.tags.map(t => getTr(t));
   const trReasons = p.reasons.map(r => getTr(r));
 
-  const docs   = p.required_docs.length
-    ? `<div class="ont-docs">${T("ont_docs")} ${trDocs}</div>` : "";
-  const reason = trReasons.length
-    ? `<div class="ont-reason">💡 ${trReasons.join(" / ")}</div>` : "";
-  const tags   = trTags.length
+  const tags = trTags.length
     ? `<div class="ont-tags">${trTags.map(t=>`<span class="ont-tag">${t}</span>`).join("")}</div>` : "";
   const deadline = p.deadline
     ? `<div class="ont-deadline">⚠️ ${T("ont_deadline", p.deadline)}</div>`
     : `<div class="ont-deadline calm">${T("ont_open")}</div>`;
-  return `<div class="ont-card ont-card-${type}">
+
+  // 아코디언용 고유 ID
+  const uid = p.policy_id.replace(/\W/g,"_") + "_" + type;
+  const howAcc  = p.apply_url
+    ? _accRow("ont-how-" + uid, "📋", "신청방법",
+        `<a href="${p.apply_url}" target="_blank" rel="noopener" class="acc-apply-link">
+          복지로 신청 페이지 바로가기 →
+        </a>`) : "";
+  const docsAcc = trDocs.length
+    ? _accRow("ont-docs-" + uid, "📄", "필요서류",
+        trDocs.map(d => `<span class="acc-doc-item">• ${d}</span>`).join("")) : "";
+  const tipAcc  = trReasons.length
+    ? _accRow("ont-tip-" + uid, "💡", "선정 이유",
+        trReasons.join("<br>")) : "";
+
+  return `<div class="ont-card ont-card-${type}" data-tags="${trTags.join(",")}">
     <div class="ont-card-top">
       <span class="ont-policy-name">${name}</span>
-      <a class="ont-apply-btn" href="${p.apply_url}" target="_blank" rel="noopener"
-         title="${name}">${T("ont_apply")}</a>
     </div>
     <p class="ont-desc">${desc}</p>
-    ${deadline}${tags}${docs}${reason}
+    ${deadline}${tags}
     <div class="ont-authority">📞 ${auth}${T("ont_authority_sep")}
       <a class="tel-link" href="tel:${p.phone.replace(/[^0-9]/g,'')}">${p.phone} ☎</a>
     </div>
+    <div class="acc-group">
+      ${howAcc}${docsAcc}${tipAcc}
+    </div>
+    <a class="ont-apply-btn" href="${p.apply_url}" target="_blank" rel="noopener"
+       title="${name}">${T("ont_apply")}</a>
   </div>`;
 }
 
