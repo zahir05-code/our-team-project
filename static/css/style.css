@@ -1141,8 +1141,8 @@ body { padding-bottom: 68px; }
   border-color: #2563eb; background: #eff6ff; color: #2563eb;
 }
 
-/* 하단 탭 4개 */
-.bottom-nav { display: grid; grid-template-columns: repeat(4,1fr); }
+/* 하단 탭 3개 */
+.bottom-nav { display: grid; grid-template-columns: repeat(3,1fr); }
 
 /* ══════════════════════════════════════
    가족 구성원 v2 — 그리드 카드형 (v3.4)
@@ -1453,8 +1453,8 @@ body { padding-bottom: 68px; }
 .nbr-tip-desc  { font-size: 0.72rem; color: #64748b; margin-top: 2px; }
 .nbr-tip-link  { font-size: 0.72rem; font-weight: 700; color: #2563eb; text-decoration: none; }
 
-/* ── 5탭 네비게이션 ── */
-.bottom-nav { grid-template-columns: repeat(5, 1fr); }
+/* ── 3탭 네비게이션 ── */
+.bottom-nav { grid-template-columns: repeat(3, 1fr); }
 
 /* ══════════════════════════════════════
    저장된 혜택 상세 — 바텀시트 패널
@@ -1906,8 +1906,8 @@ a.uni-meta-item { color: #2563eb; text-decoration: none; }
    🏛 지역 공공서비스 탭
 ══════════════════════════════════════ */
 
-/* 4탭 네비게이션으로 복원 */
-.bottom-nav { grid-template-columns: repeat(4, 1fr) !important; }
+/* 3탭 네비게이션 */
+.bottom-nav { grid-template-columns: repeat(3, 1fr) !important; }
 
 /* 서비스 유형 필터 바 */
 .loc-type-bar {

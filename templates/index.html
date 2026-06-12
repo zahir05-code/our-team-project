@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>아테나 복지서비스 | 내 혜택 찾기</title>
-  <link rel="stylesheet" href="/static/css/style.css?v=4.5">
+  <link rel="stylesheet" href="/static/css/style.css?v=4.6">
 </head>
 <body>
 
   <!-- 헤더 -->
   <header class="header">
     <div class="header-inner">
-      <h1 class="logo" data-i18n="logo">🏛 아테나</h1>
+      <h1 class="logo" data-i18n="logo" onclick="bnavGo('home')" style="cursor:pointer;" title="처음으로 돌아가기">🏛 아테나</h1>
       <p class="tagline" data-i18n="tagline">나에게 맞는 복지혜택, 3분 안에</p>
       <button class="mypage-shortcut" onclick="openMyPage()" aria-label="마이페이지">
         👤 <span data-i18n="mypage_btn">마이페이지</span>
@@ -508,12 +508,8 @@
     </div>
   </div>
 
-  <!-- ══════════ 하단 탭 네비게이션 ══════════ -->
+  <!-- ══════════ 하단 탭 네비게이션 (홈 탭 제거, 3탭) ══════════ -->
   <nav class="bottom-nav" role="navigation" aria-label="주요 메뉴">
-    <button class="bnav-tab active" id="bnav-home" onclick="bnavGo('home')" aria-label="홈 (처음으로)">
-      <span class="bnav-icon">🏠</span>
-      <span class="bnav-label">홈</span>
-    </button>
     <button class="bnav-tab" id="bnav-calendar" onclick="bnavGo('calendar')" aria-label="복지달력">
       <span class="bnav-icon">📅</span>
       <span class="bnav-label">복지달력</span>
@@ -532,6 +528,6 @@
   <script src="/static/js/data.js?v=3.4"></script>
   <script src="/static/js/i18n.js?v=3.4"></script>
   <script src="/static/js/translations.js?v=3.4"></script>
-  <script src="/static/js/app.js?v=4.5"></script>
+  <script src="/static/js/app.js?v=4.6"></script>
 </body>
 </html>
