@@ -1527,7 +1527,7 @@ const LOCAL_PUBLIC = {
     { type:"center",   name:"경기도 희망복지지원단",       addr:"각 시·군청 내",          tel:"031-8008-2114",desc:"위기가정 통합사례관리, 자원 연계 지원",             url:"https://www.gg.go.kr", hours:"평일 09:00~18:00" },
     { type:"meal",     name:"경기 무료급식소 (경로식당)",  addr:"각 시·군 운영",          tel:"031-120",      desc:"만 60세 이상 어르신 무료 또는 저렴한 식사 제공",    url:"https://www.gg.go.kr", hours:"월~금 점심" },
     { type:"meal",     name:"경기 푸드뱅크·마켓",         addr:"시·군별 운영",           tel:"1688-1122",    desc:"식품·생활용품 무료 제공 (저소득·취약계층)",         url:"https://www.foodbank.or.kr", hours:"평일 09:00~17:00" },
-    { type:"health",   name:"경기도 보건소",              addr:"31개 시·군 운영",        tel:"031-120",      desc:"건강검진, 예방접종, 만성질환 관리, 정신건강 상담",  url:"https://health.gg.go.kr", hours:"평일 09:00~18:00" },
+    { type:"health",   name:"경기도 보건소",              addr:"31개 시·군 운영",        tel:"031-120",      desc:"건강검진, 예방접종, 만성질환 관리, 정신건강 상담",  url:"https://www.gg.go.kr/gg_info/health_center_info.do", hours:"평일 09:00~18:00" },
     { type:"health",   name:"경기 정신건강복지센터",       addr:"각 시·군 운영",          tel:"1577-0199",    desc:"정신건강 상담·치료 연계, 자살예방 24시간 운영",     url:"https://www.ggmhc.or.kr", hours:"24시간" },
     { type:"counsel",  name:"경기복지재단 상담센터",       addr:"경기 전역",              tel:"031-267-9500", desc:"복지 서비스 안내, 위기 상담, 자원 연계 지원",       url:"https://www.ggwf.or.kr", hours:"평일 09:00~18:00" },
     { type:"counsel",  name:"경기도 통합민원 콜센터",      addr:"전화·온라인",            tel:"031-120",      desc:"경기도 각종 복지·행정 서비스 안내 및 연결",         url:"https://www.gg.go.kr", hours:"24시간" },
