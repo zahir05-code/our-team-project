@@ -959,7 +959,7 @@ POLICIES: list[PolicyNode] = [
         name        = "가사간병 방문서비스",
         description = "거동 불편 저소득 가구에 가사·간병 도우미 파견 (월 24~40시간, 무료~소액)",
         source      = "복지로",
-        apply_url   = "https://www.bokjiro.go.kr",
+        apply_url   = "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAP01P00.do?searchStr=%EA%B0%80%EC%82%AC%EA%B0%84%EB%B3%91+%EB%B0%A9%EB%AC%B8%EC%84%9C%EB%B9%84%EC%8A%A4",
         income_max  = IR.MIDDLE_LOW,
         required_situations = [LS.CARE, LS.DISABILITY, LS.MEDICAL],
         required_docs = [

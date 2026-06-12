@@ -810,11 +810,11 @@ function renderUnifiedCard(item, bucket, ci) {
         ${p.contact ? `<span class="uni-meta-item">☎ ${p.contact}</span>` : ""}
       </div>
       <div class="acc-group">
-        ${_accRow(`${uid}-how`, "📋", "신청방법", p.how_to_apply)}
         ${_accRow(`${uid}-ben`, "💰", "지원내용", p.benefit && p.benefit !== p.description ? p.benefit : "")}
+        ${p.how_to_apply ? _accRow(`${uid}-how`, "📋", "신청안내", p.how_to_apply) : ""}
       </div>
-      <a class="uni-apply-btn" href="${applyInfo.url}" target="_blank" rel="noopener">
-        ${applyInfo.label}
+      <a class="uni-apply-btn uni-apply-btn--primary" href="${applyInfo.url}" target="_blank" rel="noopener">
+        🖊️ 신청하기 →
       </a>
     </div>`;
   }
@@ -843,15 +843,11 @@ function renderUnifiedCard(item, bucket, ci) {
       <a class="uni-meta-item tel-link" href="tel:${p.phone.replace(/[^0-9]/g,'')}">${p.phone} ☎</a>
     </div>
     <div class="acc-group">
-      ${_accRow(`${uid}-how`, "📋", "신청방법",
-          `<a href="${p.apply_url}" target="_blank" rel="noopener" class="acc-apply-link">복지로 신청 페이지 바로가기 →</a>`)}
       ${trDocs.length ? _accRow(`${uid}-doc`, "📄", "필요서류",
           trDocs.map(d=>`<span class="acc-doc-item">• ${d}</span>`).join("")) : ""}
-      ${trReasons.length ? _accRow(`${uid}-tip`, "💡", "선정 이유",
-          trReasons.join("<br>")) : ""}
     </div>
-    <a class="uni-apply-btn" href="${p.apply_url}" target="_blank" rel="noopener">
-      복지로에서 직접 신청 →
+    <a class="uni-apply-btn uni-apply-btn--primary" href="${p.apply_url}" target="_blank" rel="noopener">
+      🖊️ 신청하기 →
     </a>
   </div>`;
 }
@@ -876,10 +872,10 @@ function renderSupaCards(policies) {
         ${p.benefit ? `<div class="bk-meta-row"><span class="bk-meta-label">제공유형</span><span class="bk-meta-val">${p.benefit}</span></div>` : ""}
         ${p.contact ? `<div class="bk-meta-row"><span class="bk-meta-label">문의처</span><span class="bk-meta-val">${p.contact}</span></div>` : ""}
       </div>
-      ${_accRow(howId, "📋", "신청방법", p.how_to_apply)}
+      ${p.how_to_apply ? _accRow(howId, "📋", "신청안내", p.how_to_apply) : ""}
       ${tags ? `<div class="bk-tags">${tags}</div>` : ""}
       <a class="bk-detail-btn bk-detail-btn--${applyInfo.type}" href="${applyInfo.url}" target="_blank" rel="noopener">
-        ${applyInfo.label}
+        🖊️ 신청하기 →
       </a>
     </div>`;
   });
