@@ -1538,6 +1538,32 @@ body { padding-bottom: 68px; }
 }
 .sd-apply-btn:active { opacity: 0.85; }
 
+/* ── 복지달력 상세 시트 내부 ── */
+.cal-detail-desc {
+  font-size: 0.82rem; color: #475569; line-height: 1.55;
+  margin-bottom: 14px; padding-bottom: 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.cal-detail-row {
+  background: #f8fafc; border-radius: 12px;
+  padding: 11px 14px; display: flex; flex-direction: column; gap: 4px;
+}
+.cal-detail-label {
+  font-size: 0.72rem; font-weight: 800; color: #2563eb; letter-spacing: 0.02em;
+}
+.cal-detail-val {
+  font-size: 0.82rem; color: #1e293b; line-height: 1.65;
+}
+.cal-detail-apply-btn {
+  display: block; text-align: center; margin-top: 6px;
+  background: linear-gradient(135deg,#ea580c,#f97316);
+  color: #fff; border-radius: 14px; padding: 14px 16px;
+  font-size: 0.9rem; font-weight: 800;
+  text-decoration: none; letter-spacing: 0.01em;
+  transition: opacity 0.15s;
+}
+.cal-detail-apply-btn:active { opacity: 0.85; }
+
 /* ── 스텝A 입력 안내 힌트 ── */
 .step-hint {
   font-size: 0.78rem; font-weight: 700;

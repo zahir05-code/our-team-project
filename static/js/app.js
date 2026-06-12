@@ -688,13 +688,63 @@ const FILTER_CATS = {
                "보육","교육","입양","위탁","서민금융","법률","에너지","돌봄"],
 };
 
+/* ── 정책별 신청 URL 및 라벨 결정 ── */
+function buildApplyUrl(p) {
+  const pid   = (p.policy_id || "").trim();
+  const url   = (p.url || "").trim();
+  const name  = (p.name || "").trim();
+  const src   = (p.source || "").trim();
+
+  // 검색 키워드용 인코딩 (서비스명 → 공백 제거 핵심어만)
+  const keyword = encodeURIComponent(name.replace(/\s*\(.*?\)\s*/g, "").trim());
+
+  // 1) 복지로 서비스 상세 직접 URL (wlfareInfoId 포함)
+  if (url && url.includes("wlfareInfoId")) {
+    return { url, label: "복지로 신청화면 바로가기 →", type: "bokjiro" };
+  }
+
+  // 2) policy_id → 복지로 서비스 상세 페이지 직접 링크
+  if (pid) {
+    const wlfId = pid.startsWith("WLF") ? pid : "WLF_" + pid;
+    return {
+      url: `https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=${wlfId}`,
+      label: "복지로 신청화면 바로가기 →",
+      type: "bokjiro",
+    };
+  }
+
+  // 3) 경기도 관련 정책 → 경기복지재단 서비스명 검색 결과로 직접 이동
+  const isGyeonggi = src.includes("경기") || name.includes("경기") || pid.startsWith("GG");
+  if (isGyeonggi) {
+    return {
+      url: `https://www.ggwf.or.kr/main/welfare/welfareInfo.do?searchKeyword=${keyword}`,
+      label: "경기복지재단 해당 서비스 검색 →",
+      type: "ggwf",
+    };
+  }
+
+  // 4) 다른 기관 전용 URL이 있으면 사용
+  if (url && url !== "https://www.bokjiro.go.kr") {
+    return { url, label: "신청 페이지로 →", type: "external" };
+  }
+
+  // 5) 서비스명으로 복지로 검색 결과 페이지 직접 이동 (홈 대신 검색 결과)
+  return {
+    url: `https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAP01P00.do?searchStr=${keyword}`,
+    label: "복지로에서 해당 서비스 검색 →",
+    type: "bokjiro",
+  };
+}
+
 function renderSupaCards(policies) {
   if (!policies || !policies.length) return "";
   let html = `<p class="supa-header">📋 맞춤 복지서비스 <span class="supa-badge">${policies.length}건</span></p>`;
   policies.forEach(p => {
     const tags = (p.tags||[]).map(t=>`<span class="bk-tag">${t}</span>`).join("");
     const online = p.online_apply ? `<span class="bk-online-badge">💻 온라인 신청</span>` : "";
-    html += `<div class="bk-card" data-tags="${(p.tags||[]).join(",")}">
+    const applyInfo = buildApplyUrl(p);
+    html += `<div class="bk-card" data-tags="${(p.tags||[]).join(",")}"
+               data-policy-id="${p.policy_id||''}" data-url="${p.url||''}" data-name="${p.name}">
       <div class="bk-card-head">
         <div class="bk-name">${p.name}</div>
         ${online}
@@ -708,7 +758,9 @@ function renderSupaCards(policies) {
         ${p.contact ? `<div class="bk-meta-row"><span class="bk-meta-label">문의처</span><span class="bk-meta-val">${p.contact}</span></div>` : ""}
       </div>
       ${tags ? `<div class="bk-tags">${tags}</div>` : ""}
-      <a class="bk-detail-btn" href="${p.url||'https://www.bokjiro.go.kr'}" target="_blank" rel="noopener">자세히 보기</a>
+      <a class="bk-detail-btn bk-detail-btn--${applyInfo.type}" href="${applyInfo.url}" target="_blank" rel="noopener">
+        ${applyInfo.label}
+      </a>
     </div>`;
   });
   return html;
@@ -873,30 +925,254 @@ function updateResultBadge(count) {
 ══════════════════════════════════════ */
 
 const WELFARE_CALENDAR = [
-  // 상시
-  { month:0,  name:"기초생활수급자 급여", desc:"매월 20일 지급 (생계·의료·주거·교육급여)", tag:"상시", color:"#16a34a", url:"https://www.bokjiro.go.kr" },
-  { month:0,  name:"장애인연금·수당", desc:"매월 20일 지급, 중증장애인 대상", tag:"상시", color:"#16a34a", url:"https://www.bokjiro.go.kr" },
-  // 1월
-  { month:1,  name:"근로·자녀장려금 반기 지급", desc:"하반기분 1월 지급 (국세청 신청)", tag:"1월", color:"#2563eb", url:"https://www.nts.go.kr" },
-  // 3월
-  { month:3,  name:"청년내일저축계좌 모집", desc:"소득 50% 이하 청년, 3년 적립 시 정부 매칭", tag:"3월", color:"#7c3aed", url:"https://www.bokjiro.go.kr" },
-  { month:3,  name:"에너지바우처 신청", desc:"취약계층 냉·난방 비용 지원", tag:"3월", color:"#ea580c", url:"https://www.energyv.or.kr" },
-  // 5월
-  { month:5,  name:"근로·자녀장려금 정기 신청", desc:"5월 1일~31일, 홈택스 신청", tag:"5월", color:"#2563eb", url:"https://www.hometax.go.kr" },
-  // 6월
-  { month:6,  name:"서울 청년수당 모집", desc:"서울 거주 만 19~34세, 월 50만원 6개월", tag:"6월", color:"#0891b2", url:"https://youth.seoul.go.kr" },
-  // 7월
-  { month:7,  name:"에너지바우처 하계 지원", desc:"여름철 전기요금 지원, 자동 차감", tag:"7월", color:"#ea580c", url:"https://www.energyv.or.kr" },
-  { month:7,  name:"기초연금 인상 적용", desc:"매년 물가상승률 반영 인상", tag:"7월", color:"#16a34a", url:"https://www.bokjiro.go.kr" },
-  // 9월
-  { month:9,  name:"청년도약계좌 모집", desc:"월 70만원 납입 시 정부 기여금 지원", tag:"9월", color:"#7c3aed", url:"https://www.kinfa.or.kr" },
-  // 10월
-  { month:10, name:"근로·자녀장려금 반기 신청", desc:"상반기분 10월 신청, 12월 지급", tag:"10월", color:"#2563eb", url:"https://www.hometax.go.kr" },
-  { month:10, name:"에너지바우처 동계 신청", desc:"겨울철 난방비 지원 신청 시작", tag:"10월", color:"#ea580c", url:"https://www.energyv.or.kr" },
-  // 11월
-  { month:11, name:"경기도 청년기본소득 신청", desc:"경기도 거주 만 24세, 분기별 25만원", tag:"11월", color:"#0891b2", url:"https://www.gg.go.kr" },
-  // 12월
-  { month:12, name:"연말정산 미리보기 시작", desc:"국세청 홈택스, 연말정산 간소화 서비스", tag:"12월", color:"#dc2626", url:"https://www.hometax.go.kr" },
+  /* ────── 상시 ────── */
+  {
+    month:0, tag:"상시", color:"#16a34a",
+    name:"기초생활수급자 급여",
+    desc:"생계·의료·주거·교육급여 매월 20일 지급",
+    detail:{
+      target:"소득인정액이 기준 중위소득 이하인 가구 (급여 종류별 상이)\n• 생계급여: 중위소득 32% 이하\n• 의료급여: 중위소득 40% 이하\n• 주거급여: 중위소득 48% 이하\n• 교육급여: 중위소득 50% 이하",
+      benefit:"• 생계급여: 현금 지급 (1인 가구 월 최대 71만 3,102원, 2026년 기준)\n• 의료급여: 병·의원 본인 부담 면제 또는 감면\n• 주거급여: 임차료 지원(최대 월 33만 원) 또는 주택 수선 지원\n• 교육급여: 학용품비·입학금·수업료 등 연 최대 65만 4,000원",
+      how:"① 가까운 읍·면·동 주민센터(행정복지센터) 방문 신청\n② 복지로 온라인(www.bokjiro.go.kr) 신청\n③ 복지로 앱(모바일) 신청",
+      period:"연중 상시 신청 가능 (언제든지)",
+      contact:"보건복지부 복지로 콜센터 ☎ 129",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF_STND0007",
+      applyLabel:"복지로 기초생활수급 신청하기 →",
+    },
+  },
+  {
+    month:0, tag:"상시", color:"#16a34a",
+    name:"주거급여 — 주택 수선 지원",
+    desc:"저소득 가구 낡은 집 수리·보수 무상 지원 (중위소득 48% 이하)",
+    detail:{
+      target:"소득인정액 기준 중위소득 48% 이하 가구 중 자가 주택 거주자\n(예: 1인 가구 월 소득 약 106만 원 이하, 2026년 기준)",
+      benefit:"경보수(도배·장판 등): 최대 457만 원\n중보수(창호·단열 등): 최대 849만 원\n대보수(지붕·기둥 등): 최대 1,241만 원\n※ 수선 주기: 경보수 3년, 중보수 5년, 대보수 7년\n※ 장애인·고령자는 편의시설 추가 설치 가능",
+      how:"① 가까운 읍·면·동 주민센터 방문 신청\n② 복지로 온라인 신청\n③ LH 마이홈 콜센터 문의 후 신청 안내",
+      period:"연중 상시 신청 가능",
+      contact:"LH 마이홈 콜센터 ☎ 1600-1004\n복지로 ☎ 129",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF_STND0008",
+      applyLabel:"복지로 주거급여 신청하기 →",
+    },
+  },
+  {
+    month:0, tag:"상시", color:"#16a34a",
+    name:"긴급복지지원 — 위기상황 즉시 지원",
+    desc:"갑작스러운 위기(실직·화재·질병 등) 발생 시 생계·의료·주거 신속 지원",
+    detail:{
+      target:"갑작스러운 위기 상황으로 생계 유지가 곤란한 저소득 가구\n(실직, 주소득자 사망·행방불명, 화재, 중한 질병·부상, 가정폭력 피해 등)\n소득·재산 기준: 기준 중위소득 75% 이하, 금융재산 600만 원 이하",
+      benefit:"• 생계지원: 4인 가구 기준 월 154만 원 (최대 6회)\n• 의료지원: 300만 원 이내 (최대 2회)\n• 주거지원: 임시거소 제공 또는 주거비 지원 (최대 12회)\n• 복지시설 이용: 사회복지시설 입소 지원 (최대 6개월)\n• 교육지원: 초·중·고 학비 지원 (최대 2회)\n• 연료비·해산비·장제비 등 추가 지원",
+      how:"① 읍·면·동 주민센터 또는 시·군·구청 방문 신청\n② 복지로 온라인 신청\n③ ☎ 129 전화 신고 (복지 공무원 현장 출동 가능)",
+      period:"연중 상시 (위기 발생 즉시 신청 가능)",
+      contact:"보건복지부 복지로 콜센터 ☎ 129",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF_STND0013",
+      applyLabel:"복지로 긴급복지지원 신청하기 →",
+    },
+  },
+  {
+    month:0, tag:"상시", color:"#16a34a",
+    name:"장애인연금·장애수당",
+    desc:"중증장애인 연금 및 경증장애인 수당 매월 20일 지급",
+    detail:{
+      target:"• 장애인연금: 만 18세 이상 중증장애인(1·2급 및 3급 중복) 중 소득인정액 기준 이하\n• 장애수당: 국민기초생활수급자 또는 차상위계층 중 경증장애인(3~6급)",
+      benefit:"• 장애인연금 기초급여: 월 최대 34만 2,510원 (2026년)\n• 장애인연금 부가급여: 수급 유형별 월 2만~40만 8,000원 추가\n• 장애수당: 월 6만 원 (차상위: 월 5만 원)",
+      how:"① 읍·면·동 주민센터 방문 신청\n② 복지로 온라인 신청",
+      period:"연중 상시 신청 가능",
+      contact:"보건복지부 장애인정책과 ☎ 129\n국민연금공단 콜센터 ☎ 1355",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF_STND0002",
+      applyLabel:"복지로 장애인연금 신청하기 →",
+    },
+  },
+  {
+    month:0, tag:"상시", color:"#16a34a",
+    name:"기초연금",
+    desc:"만 65세 이상 저소득 어르신 매월 20일 지급 (최대 월 33만 4,810원)",
+    detail:{
+      target:"만 65세 이상 대한민국 국적자 중 소득인정액 기준 이하\n• 단독가구: 월 소득인정액 213만 원 이하\n• 부부가구: 월 소득인정액 340만 8,000원 이하 (2026년 기준)",
+      benefit:"• 단독가구: 월 최대 33만 4,810원\n• 부부가구: 각 20% 감액 → 최대 53만 5,680원 (합산)\n※ 국민연금 수령액에 따라 일부 감액될 수 있음",
+      how:"① 읍·면·동 주민센터 방문 신청 (대리 신청 가능)\n② 국민연금공단 지사 방문 신청\n③ 복지로 온라인 신청\n④ 스마트폰: 국민연금 앱",
+      period:"만 65세 도달 생일 1개월 전부터 신청 가능, 연중 상시",
+      contact:"보건복지부 기초연금 ☎ 129\n국민연금공단 ☎ 1355",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF_STND0001",
+      applyLabel:"복지로 기초연금 신청하기 →",
+    },
+  },
+  /* ────── 1월 ────── */
+  {
+    month:1, tag:"1월", color:"#2563eb",
+    name:"근로·자녀장려금 반기 지급",
+    desc:"하반기분(7~12월 소득) 근로장려금 1월 지급",
+    detail:{
+      target:"근로소득·사업소득·종교인소득이 있는 가구 중 소득·재산 요건 충족자\n• 단독가구: 총소득 2,200만 원 미만\n• 홑벌이 가구: 총소득 3,200만 원 미만\n• 맞벌이 가구: 총소득 3,800만 원 미만\n※ 가구원 전체 재산합계액 2억 4,000만 원 미만",
+      benefit:"• 근로장려금: 최대 330만 원 (맞벌이 기준)\n• 자녀장려금: 자녀 1명당 최대 100만 원\n※ 반기 신청은 상·하반기 소득의 35%를 선지급, 차액은 정산",
+      how:"① 홈택스(hometax.go.kr) 온라인 신청\n② 손택스(모바일 앱) 신청\n③ ARS ☎ 1544-9944\n④ 세무서 방문 신청",
+      period:"반기 신청: 상반기 소득분은 9월 신청 → 12월 지급\n하반기 소득분은 3월 신청 → 6월 지급\n(1월은 하반기분 자동 지급 월)",
+      contact:"국세청 세미래 콜센터 ☎ 126",
+      applyUrl:"https://www.hometax.go.kr/websquare/websquare.html?w2xPath=/ui/pp/index_easy.xml",
+      applyLabel:"홈택스 간편 신청하기 →",
+    },
+  },
+  /* ────── 3월 ────── */
+  {
+    month:3, tag:"3월", color:"#7c3aed",
+    name:"청년내일저축계좌 모집",
+    desc:"차상위 이하 청년, 월 10만 원 저축 시 정부 30만 원 매칭 (3년 만기)",
+    detail:{
+      target:"신청 당시 만 19~34세 (수급자·차상위는 만 15~39세)\n소득: 기준 중위소득 100% 이하 (근로·사업 소득 있어야 함)\n재산: 대도시 3.5억·중소도시 2억·농어촌 1.7억 원 미만\n※ 현재 생계·의료급여 수급 중인 경우 별도 요건 적용",
+      benefit:"본인 월 10만 원 저축 + 정부 매칭 월 30만 원 → 3년 후 총 1,440만 원 + 이자\n(일반 청년 기준; 수급자·차상위는 매칭액 다름)\n※ 자산형성지원 교육 이수 및 근로 유지 조건 있음",
+      how:"① 복지로 온라인 신청 (www.bokjiro.go.kr)\n② 읍·면·동 주민센터 방문 신청\n③ 복지로 앱 신청",
+      period:"매년 3~4월 중 모집 (연 1회, 조기 마감 가능)",
+      contact:"보건복지부 자립지원과 ☎ 129",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF_STND0021",
+      applyLabel:"복지로 청년내일저축계좌 신청하기 →",
+    },
+  },
+  {
+    month:3, tag:"3~10월", color:"#ea580c",
+    name:"에너지바우처 신청",
+    desc:"취약계층 냉·난방비 지원 — 하절기 6월 15일~12월 31일 신청",
+    detail:{
+      target:"기초생활수급자(생계·의료급여) 가구 중 아래 중 1명 이상 포함\n• 노인 (65세 이상)\n• 영유아 (6세 미만)\n• 장애인 (등록 장애인)\n• 임산부\n• 중증질환자·희귀질환자·중증난치질환자\n• 한부모가족\n• 소년소녀가정 아동\n※ 주거·교육급여 수급자는 대상 제외",
+      benefit:"하절기(7~9월): 전기요금 바우처 자동 차감\n• 1인: 5만 5,000원 / 2인: 7만 3,000원 / 3인 이상: 9만 1,000원\n동절기(10~4월): 전기·도시가스·지역난방·등유·LPG·연탄 중 선택\n• 1인: 20만 9,000원 / 2인: 31만 2,000원 / 3인 이상: 41만 5,000원\n(2026년 기준, 취약 노인 가구 추가 지원 있음)",
+      how:"① 읍·면·동 주민센터(행정복지센터) 방문 신청 (본인·대리인 가능)\n② 복지로 온라인 신청 불가 — 반드시 주민센터 방문 또는 ☎ 신청\n③ 에너지바우처 콜센터 ☎ 1600-3190 문의",
+      period:"하절기: 2026년 6월 15일 ~ 12월 31일\n동절기: 2026년 10월 중 ~ 2027년 4월 30일\n(연간 2회 각각 신청 필요)",
+      contact:"에너지바우처 콜센터 ☎ 1600-3190\n한국에너지공단 ☎ 1600-3101",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF_STND0033",
+      applyLabel:"복지로 에너지바우처 안내 보기 →",
+    },
+  },
+  /* ────── 5월 ────── */
+  {
+    month:5, tag:"5월", color:"#2563eb",
+    name:"근로·자녀장려금 정기 신청",
+    desc:"5월 1일~31일 홈택스 신청, 6월 말 지급",
+    detail:{
+      target:"전년도 근로·사업·종교인 소득이 있는 가구\n• 단독가구 총소득 2,200만 원 미만\n• 홑벌이 가구 3,200만 원 미만\n• 맞벌이 가구 3,800만 원 미만\n재산합계액 2억 4,000만 원 미만",
+      benefit:"근로장려금: 단독 최대 165만 원 / 홑벌이 최대 285만 원 / 맞벌이 최대 330만 원\n자녀장려금: 자녀 1명당 최대 100만 원",
+      how:"① 홈택스 (hometax.go.kr) → 장려금·연말정산·전자기부금 → 근로·자녀장려금 신청\n② 손택스 앱 신청\n③ ARS ☎ 1544-9944\n④ 세무서 방문\n※ 안내문 받은 경우 QR코드 스캔으로 간편 신청 가능",
+      period:"정기 신청: 매년 5월 1일 ~ 5월 31일\n기한 후 신청: 6월 1일 ~ 11월 30일 (10% 감액 지급)",
+      contact:"국세청 세미래 콜센터 ☎ 126",
+      applyUrl:"https://www.hometax.go.kr/websquare/websquare.html?w2xPath=/ui/pp/index_easy.xml",
+      applyLabel:"홈택스 간편 신청하기 →",
+    },
+  },
+  /* ────── 6월 ────── */
+  {
+    month:6, tag:"6월", color:"#0891b2",
+    name:"서울 청년수당 모집",
+    desc:"서울 거주 만 19~34세 미취업 청년, 월 50만 원 × 최대 6개월",
+    detail:{
+      target:"신청일 기준 서울 거주 만 19~34세\n미취업 상태 (주 30시간 미만 취·창업 포함)\n기준 중위소득 150% 이하\n※ 국민취업지원제도 등 타 취업지원 수당 중복 수혜 불가",
+      benefit:"월 50만 원 × 최대 6개월 (총 300만 원)\n사용처 제한 없는 현금 지급\n취업 활동 계획 작성 및 활동 보고 필요",
+      how:"① 서울청년포털 (youth.seoul.go.kr) 온라인 신청\n② 방문 접수 불가 — 온라인만 가능\n※ 매년 상반기(5~6월) 모집, 경쟁률 높아 조기 신청 권장",
+      period:"2026년 상반기 모집: 6월 중 (정확한 일정은 서울청년포털 공지 확인)\n※ 매년 1~2회 모집",
+      contact:"서울청년포털 ☎ 02-2133-5497\n다산콜센터 ☎ 120",
+      applyUrl:"https://youth.seoul.go.kr/site/main/content/youthAllowance",
+      applyLabel:"서울청년포털 청년수당 신청하기 →",
+    },
+  },
+  /* ────── 7월 ────── */
+  {
+    month:7, tag:"7월", color:"#ea580c",
+    name:"에너지바우처 하계 지원 시작",
+    desc:"하절기 전기요금 자동 차감 (7~9월) — 6월 15일부터 주민센터 신청",
+    detail:{
+      target:"기초생활수급자(생계·의료급여) 가구 중 노인·영유아·장애인·임산부·중증질환자·한부모·소년소녀가정 중 1명 이상 포함\n※ 이미 동절기 바우처를 받은 경우 별도 신청 필요",
+      benefit:"하절기 전기요금 바우처 (7~9월 자동 차감)\n1인 가구: 5만 5,000원\n2인 가구: 7만 3,000원\n3인 이상: 9만 1,000원\n(2026년 기준)",
+      how:"① 읍·면·동 주민센터 방문 신청 (6월 15일 ~ 12월 31일)\n② 전기요금 바우처는 별도 수령 없이 전기요금에서 자동 차감됨\n③ 문의: ☎ 1600-3190",
+      period:"신청 기간: 2026년 6월 15일 ~ 12월 31일\n지원 기간: 2026년 7월 ~ 9월",
+      contact:"에너지바우처 콜센터 ☎ 1600-3190",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF_STND0033",
+      applyLabel:"복지로 에너지바우처 안내 보기 →",
+    },
+  },
+  {
+    month:7, tag:"7월", color:"#16a34a",
+    name:"기초연금 인상 적용",
+    desc:"매년 1월 물가상승률 반영 인상 (2026년 최대 월 33만 4,810원)",
+    detail:{
+      target:"만 65세 이상, 단독가구 소득인정액 213만 원 이하\n부부가구 340만 8,000원 이하 (2026년 기준)",
+      benefit:"2026년 기준 단독가구 최대 월 33만 4,810원\n부부가구 최대 합산 53만 5,680원\n매년 1월 1일 기준 물가상승률 반영 자동 인상",
+      how:"이미 수급 중이면 별도 신청 불필요 — 자동 인상 지급\n신규 신청: 주민센터 방문 또는 복지로 온라인",
+      period:"매년 1월 인상 적용 (7월에 상반기 소급 차액 지급되는 경우 있음)",
+      contact:"보건복지부 ☎ 129 / 국민연금공단 ☎ 1355",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF_STND0001",
+      applyLabel:"복지로 기초연금 신청하기 →",
+    },
+  },
+  /* ────── 9월 ────── */
+  {
+    month:9, tag:"9월", color:"#7c3aed",
+    name:"청년도약계좌 모집",
+    desc:"만 19~34세 청년, 월 70만 원 저축 시 정부 기여금 지원 (5년 만기)",
+    detail:{
+      target:"만 19~34세 (병역 이행 시 최대 6년 연장)\n개인소득: 총급여 7,500만 원 이하 (사업소득 6,300만 원 이하)\n가구소득: 기준 중위소득 250% 이하\n직전 3개 연도 중 1회 이상 금융소득종합과세 대상자 제외",
+      benefit:"본인 월 최대 70만 원 저축\n정부 기여금: 소득 구간별 월 최대 2만 4,000원\n5년 만기 시 비과세 이자소득 혜택\n※ 5년 유지 시 총 약 5,000만 원 형성 가능",
+      how:"① 취급 은행 앱에서 신청 (KB·신한·우리·하나·NH·IBK·SC·부산·광주·전북·경남·iM뱅크)\n② 매월 2주간 신청 창구 운영\n③ 금융위원회·서민금융진흥원 공식 안내: www.kinfa.or.kr",
+      period:"매월 2주간 신청 창구 운영 (은행별 상이, 9월 등 대규모 모집)\n※ 정확한 일정은 서민금융진흥원 홈페이지 확인",
+      contact:"서민금융진흥원 ☎ 1397\n각 취급 은행 고객센터",
+      applyUrl:"https://www.kinfa.or.kr/product/youthJumpAccount.do",
+      applyLabel:"서민금융진흥원 청년도약계좌 안내 →",
+    },
+  },
+  /* ────── 10월 ────── */
+  {
+    month:10, tag:"10월", color:"#2563eb",
+    name:"근로·자녀장려금 반기 신청",
+    desc:"상반기분(1~6월 소득) 10월 신청 → 12월 지급",
+    detail:{
+      target:"2026년 1~6월 근로·사업·종교인 소득이 있는 가구\n(정기 신청과 동일 소득·재산 요건)",
+      benefit:"상반기 소득분의 35% 선지급 (정산은 내년 5월 정기신청 시)\n최대 지급액 기준: 맞벌이 최대 330만 원 × 35% = 약 115만 원",
+      how:"① 홈택스 (hometax.go.kr) 온라인 신청\n② 손택스 앱\n③ ARS ☎ 1544-9944",
+      period:"매년 9월 1일 ~ 9월 15일 신청\n지급: 12월",
+      contact:"국세청 세미래 콜센터 ☎ 126",
+      applyUrl:"https://www.hometax.go.kr/websquare/websquare.html?w2xPath=/ui/pp/index_easy.xml",
+      applyLabel:"홈택스 간편 신청하기 →",
+    },
+  },
+  {
+    month:10, tag:"10~4월", color:"#ea580c",
+    name:"에너지바우처 동계 신청",
+    desc:"겨울철 난방비 지원 — 전기·도시가스·등유·LPG·연탄 중 선택",
+    detail:{
+      target:"기초생활수급자(생계·의료급여) 가구 중 노인·영유아·장애인·임산부·중증질환자·한부모·소년소녀가정 포함 가구",
+      benefit:"동절기 바우처 (10월~4월)\n1인 가구: 20만 9,000원\n2인 가구: 31만 2,000원\n3인 이상: 41만 5,000원\n(2026~27 동절기 기준)\n연료 종류 선택 가능 — 전기·도시가스·지역난방·등유·LPG·연탄",
+      how:"① 읍·면·동 주민센터(행정복지센터) 방문 신청 필수\n② 온라인 신청 불가\n③ 대리 신청 가능 (가족 지참 서류 필요)\n④ 문의: ☎ 1600-3190",
+      period:"신청 기간: 2026년 10월 중 ~ 2027년 4월 30일\n(정확한 시작일은 10월 초 한국에너지공단 공지 확인)",
+      contact:"에너지바우처 콜센터 ☎ 1600-3190",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF_STND0033",
+      applyLabel:"복지로 에너지바우처 안내 보기 →",
+    },
+  },
+  /* ────── 11월 ────── */
+  {
+    month:11, tag:"11월", color:"#0891b2",
+    name:"경기도 청년기본소득 신청",
+    desc:"경기도 거주 만 24세, 분기별 25만 원 (연 100만 원) 지역화폐",
+    detail:{
+      target:"신청일 기준 경기도 거주 만 24세 청년\n3년 이상 경기도 거주 또는 합산 10년 이상 거주\n소득·재산 기준 없음 (보편 지급)\n※ 주민등록상 경기도 주소 기준",
+      benefit:"분기별 25만 원 × 4회 = 연 100만 원\n지역화폐(지역사랑상품권)로 지급 — 해당 시·군 내 사용 가능\n대형마트·백화점·유흥업소 등 사용 제한",
+      how:"① 경기도 청년기본소득 포털 (basicincome.gg.go.kr) 신청\n② 카카오톡 '청년기본소득' 채널 신청\n③ 해당 시·군 주민센터 방문 신청",
+      period:"분기별 신청 (1·4·7·10월 초)\n11월 신청분: 4분기 (10~12월) 지급분 대상",
+      contact:"경기도 청년기본소득 ☎ 031-120\n각 시·군 담당 부서",
+      applyUrl:"https://basicincome.gg.go.kr",
+      applyLabel:"경기도 청년기본소득 신청하기 →",
+    },
+  },
+  /* ────── 12월 ────── */
+  {
+    month:12, tag:"12월", color:"#dc2626",
+    name:"연말정산 미리보기 서비스",
+    desc:"국세청 홈택스에서 올해 예상 세금 환급액 미리 확인",
+    detail:{
+      target:"근로소득이 있는 모든 직장인 (일용근로자 제외)\n중도 퇴직자 포함",
+      benefit:"• 연말정산 예상 세액 조회 및 공제 최적화 안내\n• 내년 1~2월 연말정산 준비 자료 미리 확인\n※ 실제 환급·납부는 내년 2월 급여 또는 3월 신청 후 처리",
+      how:"① 홈택스 (hometax.go.kr) → 장려금·연말정산 → 연말정산 미리보기\n② 공인인증서(공동인증서) 또는 간편인증 로그인 필요",
+      period:"매년 11월 중 ~ 12월 (국세청 공지 기준)\n실제 연말정산 신청: 다음 해 1월 15일 ~ 2월 28일",
+      contact:"국세청 세미래 콜센터 ☎ 126",
+      applyUrl:"https://www.hometax.go.kr/websquare/websquare.html?w2xPath=/ui/pp/index_easy.xml",
+      applyLabel:"홈택스 연말정산 미리보기 →",
+    },
+  },
 ];
 
 function renderCalendar() {
@@ -906,11 +1182,10 @@ function renderCalendar() {
   const now = new Date();
   const thisMonth = now.getMonth() + 1;
 
-  // 이번 달 + 다음 달 + 상시 우선 정렬
-  const sorted = [...WELFARE_CALENDAR].sort((a, b) => {
-    const scoreA = a.month === 0 ? 99 : a.month >= thisMonth ? a.month - thisMonth : a.month + 12 - thisMonth;
-    const scoreB = b.month === 0 ? 99 : b.month >= thisMonth ? b.month - thisMonth : b.month + 12 - thisMonth;
-    return scoreA - scoreB;
+  // 이번 달 우선, 상시는 맨 뒤
+  const sorted = [...WELFARE_CALENDAR].map((ev, i) => ({ ev, i })).sort((a, b) => {
+    const s = (e) => e.month === 0 ? 99 : e.month >= thisMonth ? e.month - thisMonth : e.month + 12 - thisMonth;
+    return s(a.ev) - s(b.ev);
   });
 
   // 달력 배지 (이번 달 항목 수)
@@ -924,7 +1199,7 @@ function renderCalendar() {
   let html = "";
   let lastMonth = -1;
 
-  sorted.forEach(ev => {
+  sorted.forEach(({ ev, i }) => {
     const monthLabel = ev.month === 0 ? "🔄 상시 진행" : `${ev.month}월`;
     if (ev.month !== lastMonth) {
       const isNow = ev.month === thisMonth;
@@ -934,10 +1209,10 @@ function renderCalendar() {
       </div>`;
       lastMonth = ev.month;
     }
-    html += `<div class="cal-card">
+    html += `<div class="cal-card" onclick="openCalDetail(${i})" role="button" style="cursor:pointer">
       <div class="cal-card-top">
         <span class="cal-tag" style="background:${ev.color}20;color:${ev.color}">${ev.tag}</span>
-        <a class="cal-link-btn" href="${ev.url}" target="_blank" rel="noopener">자세히 →</a>
+        <span class="cal-link-btn" style="pointer-events:none">자세히 →</span>
       </div>
       <p class="cal-name">${ev.name}</p>
       <p class="cal-desc">${ev.desc}</p>
@@ -945,6 +1220,73 @@ function renderCalendar() {
   });
 
   body.innerHTML = html;
+}
+
+/* ── 복지달력 혜택 상세 시트 ── */
+function openCalDetail(idx) {
+  const ev = WELFARE_CALENDAR[idx];
+  if (!ev || !ev.detail) return;
+  const d = ev.detail;
+
+  let panel = document.getElementById("calDetailPanel");
+  if (!panel) {
+    panel = document.createElement("div");
+    panel.id = "calDetailPanel";
+    panel.className = "saved-detail-overlay";
+    panel.onclick = (e) => { if (e.target === panel) closeCalDetail(); };
+    panel.innerHTML = `
+      <div class="saved-detail-sheet" id="calDetailSheet">
+        <div class="saved-detail-handle"></div>
+        <div class="saved-detail-header">
+          <h3 class="saved-detail-title" id="calDetailTitle"></h3>
+          <button class="saved-detail-close" onclick="closeCalDetail()">✕</button>
+        </div>
+        <div class="saved-detail-body" id="calDetailBody"></div>
+      </div>`;
+    document.body.appendChild(panel);
+  }
+
+  document.getElementById("calDetailTitle").textContent = ev.name;
+
+  // 각 항목을 행으로 표시
+  const rows = [
+    { label:"📋 지원 대상", val: d.target },
+    { label:"💰 지원 내용", val: d.benefit },
+    { label:"📝 신청 방법", val: d.how },
+    { label:"📅 신청 기간", val: d.period },
+    { label:"☎ 문의처",    val: d.contact },
+  ];
+
+  let bodyHtml = `<div class="cal-detail-tag" style="background:${ev.color}20;color:${ev.color};display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;margin-bottom:12px">${ev.tag}</div>`;
+  bodyHtml += `<p class="cal-detail-desc">${ev.desc}</p>`;
+
+  rows.forEach(r => {
+    if (!r.val) return;
+    bodyHtml += `<div class="cal-detail-row">
+      <div class="cal-detail-label">${r.label}</div>
+      <div class="cal-detail-val">${r.val.replace(/\n/g,"<br>")}</div>
+    </div>`;
+  });
+
+  bodyHtml += `<a class="cal-detail-apply-btn" href="${d.applyUrl}" target="_blank" rel="noopener">
+    ${d.applyLabel || "신청하기 →"}
+  </a>`;
+
+  document.getElementById("calDetailBody").innerHTML = bodyHtml;
+
+  panel.classList.remove("hidden");
+  requestAnimationFrame(() => {
+    document.getElementById("calDetailSheet").classList.add("open");
+  });
+  document.body.style.overflow = "hidden";
+}
+
+function closeCalDetail() {
+  const sheet = document.getElementById("calDetailSheet");
+  const panel = document.getElementById("calDetailPanel");
+  if (!sheet || !panel) return;
+  sheet.classList.remove("open");
+  setTimeout(() => { panel.classList.add("hidden"); document.body.style.overflow = ""; }, 280);
 }
 
 /* ══════════════════════════════════════
@@ -1401,14 +1743,23 @@ function openSavedDetail(idx) {
         <a href="https://www.bokjiro.go.kr" target="_blank" class="sd-apply-btn">복지로에서 신청 →</a>
       </div>`).join("");
   } else {
-    bodyHtml = items.map(it => `
+    bodyHtml = items.map(it => {
+      // buildApplyUrl 로직을 저장된 아이템에도 동일하게 적용
+      const applyInfo = buildApplyUrl({
+        policy_id: it.policyId || "",
+        url:       it.url || "",
+        name:      it.name || "",
+        source:    it.source || "",
+      });
+      return `
       <div class="sd-card">
         <div class="sd-name">${it.name}</div>
         ${it.desc ? `<div class="sd-desc">${it.desc}</div>` : ""}
-        <a href="${it.url || 'https://www.bokjiro.go.kr'}" target="_blank" rel="noopener" class="sd-apply-btn">
-          ${it.url ? "바로 신청하기 →" : "복지로에서 신청 →"}
+        <a href="${applyInfo.url}" target="_blank" rel="noopener" class="sd-apply-btn">
+          ${applyInfo.label}
         </a>
-      </div>`).join("");
+      </div>`;
+    }).join("");
   }
 
   document.getElementById("savedDetailBody").innerHTML = bodyHtml || `<p style="color:#94a3b8;text-align:center;padding:20px 0">상세 정보가 없습니다.</p>`;
@@ -1519,8 +1870,8 @@ function deleteSavedResult(idx) {
 /* ── 현재 결과 내정보에 저장 ── */
 function saveResultToMyPage() {
   const ontCards  = document.querySelectorAll(".ont-card");
-  const supaCards = document.querySelectorAll(".supa-card");
-  const total = ontCards.length + supaCards.length;
+  const bkCards   = document.querySelectorAll(".bk-card");
+  const total = ontCards.length + bkCards.length;
 
   if (total === 0) {
     showToast(T("mypage_no_result") || "저장할 결과가 없습니다. 먼저 복지서비스를 조회해 주세요.");
@@ -1539,11 +1890,14 @@ function saveResultToMyPage() {
     const url  = c.querySelector("a.ont-apply-btn")?.href || "";
     if (name) items.push({ name, desc, url, type: "ont" });
   });
-  supaCards.forEach(c => {
-    const name = c.querySelector(".supa-name")?.textContent.trim() || "";
-    const desc = c.querySelector(".supa-desc")?.textContent.trim() || "";
-    const url  = c.querySelector("a.supa-apply-btn")?.href || "";
-    if (name) items.push({ name, desc, url, type: "supa" });
+  bkCards.forEach(c => {
+    const name     = c.dataset.name  || c.querySelector(".bk-name")?.textContent.trim() || "";
+    const policyId = c.dataset.policyId || "";
+    const rawUrl   = c.dataset.url   || "";
+    const applyBtn = c.querySelector("a.bk-detail-btn");
+    const url      = applyBtn?.href || rawUrl || "https://www.bokjiro.go.kr";
+    const desc     = c.querySelector(".bk-desc")?.textContent.trim() || "";
+    if (name) items.push({ name, desc, url, policyId, type: "bk" });
   });
 
   const names = items.map(it => it.name);
