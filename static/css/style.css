@@ -1247,6 +1247,70 @@ body { padding-bottom: 68px; }
   transition: background 0.15s;
 }
 .myinfo-edit-btn:hover { background: #dbeafe; }
+
+/* ── 프로필 편집 모달 ── */
+.profile-edit-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+  z-index: 1200; display: flex; align-items: flex-end; justify-content: center;
+}
+.profile-edit-overlay.hidden { display: none; }
+.profile-edit-sheet {
+  background: #fff; border-radius: 20px 20px 0 0;
+  width: 100%; max-width: 480px;
+  padding: 0 0 env(safe-area-inset-bottom,16px);
+  animation: slideUp 0.28s ease;
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.profile-edit-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 20px 14px; border-bottom: 1px solid #f1f5f9;
+}
+.profile-edit-title { font-size: 1rem; font-weight: 700; color: #1e293b; }
+.profile-edit-close {
+  background: none; border: none; font-size: 1.1rem;
+  color: #94a3b8; cursor: pointer; padding: 4px 8px;
+}
+.profile-edit-body { padding: 18px 20px 8px; display: flex; flex-direction: column; gap: 18px; }
+.pe-field { display: flex; flex-direction: column; gap: 8px; }
+.pe-label { font-size: 0.82rem; font-weight: 600; color: #64748b; }
+.pe-region-btns { display: flex; gap: 10px; }
+.pe-region-btn {
+  flex: 1; padding: 11px 0; border: 2px solid #e2e8f0; border-radius: 10px;
+  background: #f8fafc; color: #475569; font-size: 0.9rem; font-weight: 600;
+  cursor: pointer; transition: all 0.15s;
+}
+.pe-region-btn.active {
+  border-color: #3b82f6; background: #eff6ff; color: #2563eb;
+}
+.pe-select {
+  width: 100%; padding: 12px 14px; border: 2px solid #e2e8f0; border-radius: 10px;
+  background: #f8fafc; color: #1e293b; font-size: 0.9rem;
+  appearance: none; cursor: pointer;
+}
+.pe-select:focus { outline: none; border-color: #3b82f6; background: #fff; }
+.pe-age-row { display: flex; align-items: center; gap: 8px; }
+.pe-input {
+  flex: 1; padding: 12px 14px; border: 2px solid #e2e8f0; border-radius: 10px;
+  background: #f8fafc; color: #1e293b; font-size: 0.9rem;
+}
+.pe-input:focus { outline: none; border-color: #3b82f6; background: #fff; }
+.pe-unit { font-size: 0.9rem; color: #64748b; font-weight: 600; }
+.profile-edit-footer {
+  display: flex; gap: 10px; padding: 12px 20px 16px;
+  border-top: 1px solid #f1f5f9;
+}
+.pe-cancel-btn {
+  flex: 1; padding: 13px 0; border: 2px solid #e2e8f0; border-radius: 12px;
+  background: #f8fafc; color: #64748b; font-size: 0.9rem; font-weight: 600; cursor: pointer;
+}
+.pe-save-btn {
+  flex: 2; padding: 13px 0; border: none; border-radius: 12px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff;
+  font-size: 0.95rem; font-weight: 700; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.3);
+}
+.pe-save-btn:active { transform: scale(0.98); }
+
 .myinfo-clear-btn {
   width: 100%; margin-top: 12px; padding: 10px;
   background: #fff; border: 1.5px solid #fecaca;

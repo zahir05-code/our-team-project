@@ -491,10 +491,22 @@ async function submitProfile() {
         work_status:     null,
       }),
     });
-    if (!res.ok) { const e = await res.json(); throw new Error(e.detail); }
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      const detail  = errData.detail;
+      const msg = typeof detail === "string" ? detail
+                : Array.isArray(detail)      ? detail.map(d => d.msg || JSON.stringify(d)).join(", ")
+                : "서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.";
+      throw new Error(msg);
+    }
     renderResult(await res.json(), null);
   } catch(e) {
-    alert("오류: " + e.message);
+    showToast("⚠️ " + (e.message || "오류가 발생했습니다"));
+    // 오류 후 입력 화면 복원
+    const inputCard = document.getElementById("inputCard");
+    const nlpEntry  = document.getElementById("nlpEntry");
+    if (inputCard) inputCard.classList.remove("hidden");
+    if (nlpEntry)  nlpEntry.classList.remove("hidden");
   } finally {
     hideLoading();
   }
@@ -549,7 +561,14 @@ async function submitNlp() {
         district_override: nlpState.district_override || "",
       }),
     });
-    if (!res.ok) { const e = await res.json(); throw new Error(e.detail); }
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      const detail  = errData.detail;
+      const msg = typeof detail === "string" ? detail
+                : Array.isArray(detail)      ? detail.map(d => d.msg || JSON.stringify(d)).join(", ")
+                : "서버 오류가 발생했습니다.";
+      throw new Error(msg);
+    }
     const data = await res.json();
     if (data.needs_region && !nlpState.region_override) {
       hideLoading();
@@ -560,8 +579,10 @@ async function submitNlp() {
     }
     renderResult(data, data.analysis);
   } catch(e) {
-    alert("오류: " + e.message);
+    showToast("⚠️ " + (e.message || "오류가 발생했습니다"));
     document.getElementById("nlpPanel").classList.remove("hidden");
+    const nlpEntry = document.getElementById("nlpEntry");
+    if (nlpEntry) nlpEntry.classList.remove("hidden");
   } finally {
     hideLoading();
   }
@@ -1891,7 +1912,7 @@ function renderMyinfoProfile() {
 
   el.innerHTML = `
     <div class="myinfo-row"><span class="myinfo-label">📍 지역</span><span class="myinfo-val">${p.region||""} ${p.district||""}</span></div>
-    <div class="myinfo-row"><span class="myinfo-label">🎂 나이</span><span class="myinfo-val">${p.age||""}세</span></div>
+    <div class="myinfo-row"><span class="myinfo-label">🎂 나이</span><span class="myinfo-val">${p.age ? p.age+"세" : "미입력"}</span></div>
     <div class="myinfo-row"><span class="myinfo-label">👥 가구</span><span class="myinfo-val">${members.length ? members.join(", ") : "1인 가구"}</span></div>
     <div class="myinfo-row"><span class="myinfo-label">💰 소득</span><span class="myinfo-val">${p.income_range||"미입력"}</span></div>`;
 }
@@ -2121,10 +2142,87 @@ function closeSavedDetail() {
   setTimeout(() => { panel.classList.add("hidden"); document.body.style.overflow = ""; }, 280);
 }
 
+let _peRegion = "";
+
 function myinfoEditProfile() {
-  // 홈으로 이동해서 프로필 재입력
-  bnavGo("home");
-  showToast("정보를 수정하고 다시 조회해 주세요 ✏️");
+  const modal = document.getElementById("profileEditModal");
+  if (!modal) return;
+
+  // 현재 저장된 프로필로 폼 채우기
+  const raw = localStorage.getItem(PROFILE_KEY);
+  const p   = raw ? JSON.parse(raw) : {};
+
+  _peRegion = p.region || "";
+
+  // 지역 버튼 활성화
+  document.querySelectorAll(".pe-region-btn").forEach(b => b.classList.remove("active"));
+  if (_peRegion === "서울특별시") document.getElementById("peSeoul")?.classList.add("active");
+  else if (_peRegion === "경기도") document.getElementById("peGyeonggi")?.classList.add("active");
+
+  // 구 목록 채우기
+  peUpdateDistricts(_peRegion, p.district || "");
+
+  // 나이
+  const ageEl = document.getElementById("peAge");
+  if (ageEl) ageEl.value = p.age || "";
+
+  // 소득
+  const incEl = document.getElementById("peIncome");
+  if (incEl) incEl.value = p.income_range || "";
+
+  modal.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+
+function pePickRegion(region, btn) {
+  _peRegion = region;
+  document.querySelectorAll(".pe-region-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  peUpdateDistricts(region, "");
+}
+
+function peUpdateDistricts(region, selected) {
+  const sel = document.getElementById("peDistrict");
+  if (!sel) return;
+  const list = region === "서울특별시" ? (typeof SEOUL_DISTRICTS !== "undefined" ? SEOUL_DISTRICTS : [])
+                                      : (typeof GYEONGGI_DISTRICTS !== "undefined" ? GYEONGGI_DISTRICTS : []);
+  sel.innerHTML = '<option value="">시·군·구 선택</option>' +
+    list.map(d => `<option value="${d}" ${d === selected ? "selected" : ""}>${d}</option>`).join("");
+}
+
+function closeProfileEdit() {
+  const modal = document.getElementById("profileEditModal");
+  if (modal) modal.classList.add("hidden");
+  document.body.style.overflow = "";
+}
+
+function closeProfileEditOutside(e) {
+  if (e.target.id === "profileEditModal") closeProfileEdit();
+}
+
+function saveEditProfile() {
+  const age    = parseInt(document.getElementById("peAge")?.value);
+  const dist   = document.getElementById("peDistrict")?.value || "";
+  const income = document.getElementById("peIncome")?.value  || "";
+
+  if (!_peRegion) { showToast("지역을 선택해 주세요"); return; }
+  if (!age || age < 1 || age > 120) { showToast("올바른 나이를 입력해 주세요"); return; }
+
+  // 기존 프로필 불러와 덮어쓰기
+  const raw = localStorage.getItem(PROFILE_KEY);
+  const p   = raw ? JSON.parse(raw) : {};
+
+  p.region       = _peRegion;
+  p.district     = dist;
+  p.age          = age;
+  p.income_range = income;
+  p.saved_at     = new Date().toISOString();
+
+  try { localStorage.setItem(PROFILE_KEY, JSON.stringify(p)); } catch(e) {}
+
+  closeProfileEdit();
+  renderMyinfoProfile();   // 프로필 카드 즉시 갱신
+  showToast("프로필이 저장되었습니다 ✓");
 }
 
 /* ── 마이페이지 열기 (레거시 — 내정보 탭으로 대체) ── */
