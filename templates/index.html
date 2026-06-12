@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>아테나 복지서비스 | 내 혜택 찾기</title>
-  <link rel="stylesheet" href="/static/css/style.css?v=4.3">
+  <link rel="stylesheet" href="/static/css/style.css?v=4.4">
 </head>
 <body>
 
@@ -237,17 +237,6 @@
         <h2 id="resultTitle">🎯 맞춤 혜택을 찾았습니다</h2>
       </div>
 
-      <!-- 카테고리 필터 -->
-      <div class="result-filter-wrap" id="resultFilterWrap">
-        <div class="rfilter-tabs" id="rfilterTabs">
-          <button class="rfilter-tab active" onclick="rfilterTab(this,'all')">전체</button>
-          <button class="rfilter-tab" onclick="rfilterTab(this,'lifecycle')">생애주기</button>
-          <button class="rfilter-tab" onclick="rfilterTab(this,'household')">가구상황</button>
-          <button class="rfilter-tab" onclick="rfilterTab(this,'topic')">관심주제</button>
-        </div>
-        <div class="rfilter-chips hidden" id="rfilterChips"></div>
-      </div>
-
       <div id="resultBody" aria-live="polite"></div>
 
       <!-- 부정수급 신고 안내 -->
@@ -346,6 +335,61 @@
     </div>
 
     <div id="localBody"></div>
+
+    <!-- ── 복지 전문가 즉시 조회 ── -->
+    <div class="pro-search-wrap">
+      <div class="pro-search-header">
+        <span class="pro-search-icon">👥</span>
+        <div>
+          <p class="pro-search-title">복지 전문가 즉시 조회</p>
+          <p class="pro-search-sub">사회복지사·요양보호사·활동지원사 — 현장에서 바로 조회</p>
+        </div>
+      </div>
+
+      <!-- 직업군 선택 -->
+      <div class="pro-job-chips" id="proJobChips">
+        <button class="pro-job-chip active" onclick="proSelectJob(this,'social')">👩‍💼 사회복지사</button>
+        <button class="pro-job-chip" onclick="proSelectJob(this,'care')">🏥 요양보호사</button>
+        <button class="pro-job-chip" onclick="proSelectJob(this,'activity')">♿ 활동지원사</button>
+        <button class="pro-job-chip" onclick="proSelectJob(this,'nurse')">💊 방문간호사</button>
+        <button class="pro-job-chip" onclick="proSelectJob(this,'other')">🤝 기타 전문가</button>
+      </div>
+
+      <!-- 대상자 입력 폼 -->
+      <div class="pro-form">
+        <div class="pro-form-row">
+          <label class="pro-label">대상자 나이</label>
+          <input class="pro-input" type="number" id="proAge"
+                 placeholder="예) 72" min="0" max="120">
+        </div>
+        <div class="pro-form-row">
+          <label class="pro-label">거주 지역</label>
+          <div class="pro-region-btns">
+            <button class="pro-region-btn active" id="proRegSeoul"
+                    onclick="proSelectRegion('서울특별시',this)">🏙 서울</button>
+            <button class="pro-region-btn" id="proRegGyeonggi"
+                    onclick="proSelectRegion('경기도',this)">🌿 경기</button>
+          </div>
+        </div>
+        <div class="pro-form-row">
+          <label class="pro-label">주요 상황 <span class="pro-label-sub">(가장 급한 것 1개)</span></label>
+          <div class="pro-sit-grid" id="proSitGrid"></div>
+        </div>
+      </div>
+
+      <button class="pro-submit-btn" onclick="submitProSearch()">
+        🔍 대상자 맞춤 혜택 즉시 조회
+      </button>
+
+      <!-- 결과 영역 -->
+      <div class="pro-result-wrap hidden" id="proResultWrap">
+        <div class="pro-result-header">
+          <span id="proResultTitle">조회 결과</span>
+          <button class="pro-result-close" onclick="closeProResult()">✕</button>
+        </div>
+        <div id="proResultBody"></div>
+      </div>
+    </div>
   </div>
 
   <!-- ══════════ 내정보 패널 ══════════ -->
@@ -488,6 +532,6 @@
   <script src="/static/js/data.js?v=3.4"></script>
   <script src="/static/js/i18n.js?v=3.4"></script>
   <script src="/static/js/translations.js?v=3.4"></script>
-  <script src="/static/js/app.js?v=4.3"></script>
+  <script src="/static/js/app.js?v=4.4"></script>
 </body>
 </html>

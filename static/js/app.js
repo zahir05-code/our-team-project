@@ -1035,6 +1035,7 @@ function bnavGo(tab) {
     myinfoPanel && myinfoPanel.classList.add("hidden");
     nbrPanel && nbrPanel.classList.add("hidden");
     renderLocal("서울특별시");
+    initProSearch();
     window.scrollTo({ top: 0, behavior: "smooth" });
 
   } else if (tab === "myinfo") {
@@ -1524,6 +1525,143 @@ function renderLocal(region) {
     </div>`;
   });
   body.innerHTML = html;
+}
+
+/* ══════════════════════════════════════
+   👥 복지 전문가 즉시 조회
+══════════════════════════════════════ */
+let _proRegion = "서울특별시";
+let _proJob    = "social";
+let _proSit    = "";
+
+// 지역서비스 탭 진입 시 상황 선택지 렌더링
+function initProSearch() {
+  const grid = document.getElementById("proSitGrid");
+  if (!grid || grid.dataset.init) return;
+  grid.dataset.init = "1";
+
+  const sits = [
+    "생활비·식비가 부족해요", "병원비·건강이 걱정돼요",
+    "주거가 불안정해요",     "교육비·돌봄이 필요해요",
+    "취업·일자리가 필요해요","갑작스러운 위기 상황이에요",
+    "노인 돌봄이 필요해요",  "장애·만성질환이 있어요",
+  ];
+  grid.innerHTML = sits.map(s =>
+    `<button class="pro-sit-btn" onclick="proSelectSit(this,'${s}')">${s}</button>`
+  ).join("");
+}
+
+function proSelectJob(btn, job) {
+  document.querySelectorAll(".pro-job-chip").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  _proJob = job;
+}
+
+function proSelectRegion(region, btn) {
+  _proRegion = region;
+  document.querySelectorAll(".pro-region-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+}
+
+function proSelectSit(btn, sit) {
+  document.querySelectorAll(".pro-sit-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  _proSit = sit;
+}
+
+async function submitProSearch() {
+  const age = parseInt(document.getElementById("proAge").value);
+  if (!age || age < 1 || age > 120) {
+    showToast("대상자 나이를 입력해 주세요");
+    return;
+  }
+  if (!_proSit) {
+    showToast("주요 상황을 1개 선택해 주세요");
+    return;
+  }
+
+  const btn = document.querySelector(".pro-submit-btn");
+  btn.textContent = "🔍 조회 중...";
+  btn.disabled = true;
+
+  try {
+    const res = await fetch("/welfare/search", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        age,
+        region: _proRegion,
+        district: "",
+        life_situations: [_proSit],
+      }),
+    });
+    const data = await res.json();
+    renderProResult(data, age);
+  } catch (e) {
+    showToast("조회 중 오류가 발생했습니다");
+  } finally {
+    btn.textContent = "🔍 대상자 맞춤 혜택 즉시 조회";
+    btn.disabled = false;
+  }
+}
+
+function renderProResult(data, age) {
+  const wrap = document.getElementById("proResultWrap");
+  const body = document.getElementById("proResultBody");
+  const title = document.getElementById("proResultTitle");
+  if (!wrap || !body) return;
+
+  // 수집: 온톨로지 DEFINITE + POSSIBLE
+  const policies = [];
+  if (data.ontology) {
+    [...(data.ontology.definite||[]), ...(data.ontology.possible||[])].forEach(p => {
+      policies.push({ type: data.ontology.definite.find(x=>x.policy_id===p.policy_id) ? "def":"pos", p });
+    });
+  }
+  // Supabase 카드
+  (data.supabase_policies||[]).forEach(p => policies.push({ type:"bk", p }));
+
+  title.textContent = `${age}세 대상자 — 맞춤 혜택 ${policies.length}건`;
+
+  if (!policies.length) {
+    body.innerHTML = `<p class="pro-empty">조건에 맞는 혜택을 찾지 못했습니다.<br>나이·지역·상황을 바꿔 다시 조회해 보세요.</p>`;
+  } else {
+    const _BADGE = { def:"✅ 즉시 신청", pos:"🔍 조건 확인", bk:"📋 관련 혜택" };
+    const _CLS   = { def:"pro-badge--def", pos:"pro-badge--pos", bk:"pro-badge--bk" };
+    body.innerHTML = policies.map(({ type, p }) => {
+      const name  = type === "bk" ? p.name : (getPolicyTr(p.policy_id,"name")||p.name);
+      const desc  = type === "bk" ? (p.description||"") : (getPolicyTr(p.policy_id,"desc")||p.description);
+      const applyUrl  = type === "bk" ? buildApplyUrl(p).url : p.apply_url;
+      const applyLabel = type === "bk" ? buildApplyUrl(p).label : "복지로에서 신청 →";
+      const uid = `pro-${type}-${p.policy_id||p.name}`.replace(/\W/g,"_");
+      const howContent = type === "bk"
+        ? (p.how_to_apply && p.how_to_apply !== "Y" && p.how_to_apply !== "N" ? p.how_to_apply : "")
+        : `<a href="${p.apply_url}" target="_blank" rel="noopener" class="acc-apply-link">복지로 신청 페이지 바로가기 →</a>`;
+      const docsContent = type !== "bk" && p.required_docs?.length
+        ? p.required_docs.map(d=>`<span class="acc-doc-item">• ${getTr(d)}</span>`).join("") : "";
+      return `<div class="pro-card">
+        <div class="pro-card-top">
+          <span class="pro-badge ${_CLS[type]}">${_BADGE[type]}</span>
+        </div>
+        <div class="pro-card-name">${name}</div>
+        <p class="pro-card-desc">${desc}</p>
+        <div class="acc-group">
+          ${_accRow(`${uid}-how`, "📋", "신청방법", howContent)}
+          ${docsContent ? _accRow(`${uid}-doc`, "📄", "필요서류", docsContent) : ""}
+        </div>
+        <a class="pro-card-btn" href="${applyUrl}" target="_blank" rel="noopener">
+          ${applyLabel}
+        </a>
+      </div>`;
+    }).join("");
+  }
+
+  wrap.classList.remove("hidden");
+  wrap.scrollIntoView({ behavior:"smooth", block:"start" });
+}
+
+function closeProResult() {
+  document.getElementById("proResultWrap").classList.add("hidden");
 }
 
 /* ── 음성 입력 (Web Speech API) ── */
