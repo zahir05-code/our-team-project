@@ -298,6 +298,7 @@ item.status = "none"(미신청) | "pending"(신청예정) | "done"(완료)
 - `liveinkorea.kr` — 서비스 종료 (대체: danuri → mogef)
 - `bokjiro.go.kr` 홈(/)  — 서비스 첫 페이지, 직접 연결 불가
 - `www.foodbank.or.kr` — DNS_NXDOMAIN (대체: foodbank1377.org)
+- `www.gov24.kr` — ERR_CONNECTION_REFUSED (대체: www.gov24.go.kr)
 
 ---
 
