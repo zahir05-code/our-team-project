@@ -297,12 +297,13 @@ item.status = "none"(미신청) | "pending"(신청예정) | "done"(완료)
 - `blutouch.net` — 불안정 (대체: seoulmentalhealth.kr)
 - `liveinkorea.kr` — 서비스 종료 (대체: danuri → mogef)
 - `bokjiro.go.kr` 홈(/)  — 서비스 첫 페이지, 직접 연결 불가
+- `www.foodbank.or.kr` — DNS_NXDOMAIN (대체: foodbank1377.org)
 
 ---
 
 ## 수정 시 체크리스트
 
-- JS/CSS 수정 → `index.html`의 `?v=X.X` 버전 올리기 (app.js: v5.10, style.css: v5.7)
+- JS/CSS 수정 → `index.html`의 `?v=X.X` 버전 올리기 (app.js: v5.11, style.css: v5.7)
 - 새 복지 항목 추가 → `WELFARE_CALENDAR` detail 객체 필수 포함
 - 딥링크 추가/수정 → `static/js/welfareDeepLinks.json` 직접 편집 (검색 URL 금지)
 - 지역 추가 → `welfare_analyzer/models/user_profile.py` ALLOWED 목록 + `api/routers/welfare.py` 검증 동시 수정
