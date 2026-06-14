@@ -36,7 +36,7 @@ SITUATION_SERVICE_CODE = {
 
 # 중앙 부처별 복지 포털 링크 — 메인 또는 안정적인 1단계 하위 URL만 사용
 CENTRAL_GOV_LINKS = {
-    "복지로 맞춤서비스":    "https://www.bokjiro.go.kr",
+    "복지로 맞춤서비스":    "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAP01P00.do",
     "보조금24":             "https://www.gov24.kr",
     "정부24 복지서비스":    "https://www.gov.kr/portal/welfare/welfareInfo",
     "보건복지부":           "https://www.mohw.go.kr",
@@ -107,15 +107,21 @@ def get_lifecycle_code(age: int) -> str:
 
 
 def build_bokjiro_search_url(profile: UserProfile) -> str:
-    """복지로 맞춤서비스 검색 URL 생성."""
-    code = get_lifecycle_code(profile.age)
-    params = {}
-    if code:
-        params["lftmCycCd"] = code
-    if profile.region:
-        params["region"] = profile.region
-    base = f"{BOKJIRO_BASE}/ssis-tbu/twatsa/sccsInfo/retrieveTwatsa0600List.do"
-    return f"{base}?{urlencode(params)}" if params else base
+    """복지로 복지서비스 검색 URL 생성 (내게 맞는 서비스 직접 검색)."""
+    # 생애주기 코드 기반 검색 키워드 생성
+    age = profile.age or 0
+    if age < 13:
+        keyword = "영유아 아동"
+    elif age < 19:
+        keyword = "청소년"
+    elif age < 35:
+        keyword = "청년"
+    elif age < 60:
+        keyword = "중장년"
+    else:
+        keyword = "노인 어르신"
+    from urllib.parse import quote
+    return f"{BOKJIRO_BASE}/ssis-tbu/twataa/wlfareInfo/moveTWAP01P00.do?searchStr={quote(keyword)}"
 
 
 def build_result_links(profile: UserProfile) -> dict:
