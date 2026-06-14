@@ -1521,11 +1521,11 @@ const LOCAL_BENEFITS = {
   ],
   "경기도": [
     { name:"경기도 청년기본소득", desc:"경기도 거주 만 24세, 분기 25만원 (연 100만원)", contact:"031-120", url:"https://basicincome.gg.go.kr", tag:"청년" },
-    { name:"경기도 산후조리 지원금", desc:"출산 가정 산후조리비 최대 100만원 지원", contact:"031-8008-2114", url:"https://www.gg.go.kr", tag:"임신·출산" },
-    { name:"경기도 무한돌봄 긴급복지", desc:"위기 가구 생계·의료·주거비 신속 지원", contact:"031-120", url:"https://www.gg.go.kr", tag:"긴급" },
-    { name:"경기도 청년 노동자 통장", desc:"중소기업 재직 청년, 2년 저축 시 최대 1,080만원", contact:"031-120", url:"https://www.gg.go.kr", tag:"청년" },
-    { name:"경기도 어르신 교통비 지원", desc:"만 65세 이상, 연 12만원 교통카드 충전", contact:"주민센터", url:"https://www.gg.go.kr", tag:"노인" },
-    { name:"경기도 장애인 이동지원", desc:"장애인 콜택시·이동 차량 무료 이용", contact:"031-120", url:"https://www.gg.go.kr", tag:"장애인" },
+    { name:"경기도 산후조리 지원금", desc:"출산 가정 산후조리비 최대 100만원 지원", contact:"031-8008-2114", url:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004568", tag:"임신·출산" },
+    { name:"경기도 무한돌봄 긴급복지", desc:"위기 가구 생계·의료·주거비 신속 지원", contact:"031-120", url:"https://www.ggwf.or.kr", tag:"긴급" },
+    { name:"경기도 청년 노동자 통장", desc:"중소기업 재직 청년, 2년 저축 시 최대 1,080만원", contact:"031-120", url:"https://www.jobaba.net", tag:"청년" },
+    { name:"경기도 어르신 교통비 지원", desc:"만 65세 이상, 연 12만원 교통카드 충전", contact:"주민센터", url:"https://www.ggwf.or.kr", tag:"노인" },
+    { name:"경기도 장애인 이동지원", desc:"장애인 콜택시·이동 차량 무료 이용", contact:"031-120", url:"https://www.ggwf.or.kr", tag:"장애인" },
   ]
 };
 
@@ -1546,16 +1546,16 @@ const LOCAL_PUBLIC = {
     { type:"counsel",  name:"다산콜 (서울시 통합민원)",    addr:"전화·온라인",            tel:"120",          desc:"서울시 각종 복지·행정 서비스 안내 및 연결",         url:"https://120.seoul.go.kr", hours:"24시간" },
   ],
   "경기도": [
-    { type:"welfare",  name:"경기도 종합사회복지관",       addr:"31개 시·군 운영",        tel:"031-120",      desc:"생활상담, 재가복지, 직업지원 등 종합 복지서비스",   url:"https://www.gg.go.kr", hours:"평일 09:00~18:00" },
-    { type:"welfare",  name:"경기도 노인복지관",           addr:"각 시·군 운영",          tel:"031-120",      desc:"만 60세 이상 건강·교육·취업·여가 프로그램",        url:"https://www.gg.go.kr", hours:"평일 09:00~18:00" },
+    { type:"welfare",  name:"경기도 종합사회복지관",       addr:"31개 시·군 운영",        tel:"031-267-9500", desc:"생활상담, 재가복지, 직업지원 등 종합 복지서비스",   url:"https://www.ggwf.or.kr", hours:"평일 09:00~18:00" },
+    { type:"welfare",  name:"경기도 노인복지관",           addr:"각 시·군 운영",          tel:"031-267-9500", desc:"만 60세 이상 건강·교육·취업·여가 프로그램",        url:"https://www.ggwf.or.kr", hours:"평일 09:00~18:00" },
     { type:"center",   name:"주민센터 (행정복지센터)",     addr:"내 읍·면·동 주민센터",   tel:"031-120",      desc:"복지급여 신청, 주민등록, 통합사례관리, 위기상담",   url:"https://www.gov.kr", hours:"평일 09:00~18:00" },
-    { type:"center",   name:"경기도 희망복지지원단",       addr:"각 시·군청 내",          tel:"031-8008-2114",desc:"위기가정 통합사례관리, 자원 연계 지원",             url:"https://www.gg.go.kr", hours:"평일 09:00~18:00" },
-    { type:"meal",     name:"경기 무료급식소 (경로식당)",  addr:"각 시·군 운영",          tel:"031-120",      desc:"만 60세 이상 어르신 무료 또는 저렴한 식사 제공",    url:"https://www.gg.go.kr", hours:"월~금 점심" },
+    { type:"center",   name:"경기도 희망복지지원단",       addr:"각 시·군청 내",          tel:"031-8008-2114",desc:"위기가정 통합사례관리, 자원 연계 지원",             url:"https://www.ggwf.or.kr", hours:"평일 09:00~18:00" },
+    { type:"meal",     name:"경기 무료급식소 (경로식당)",  addr:"각 시·군 운영",          tel:"129",          desc:"만 60세 이상 어르신 무료 또는 저렴한 식사 제공",    url:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004572", hours:"월~금 점심" },
     { type:"meal",     name:"경기 푸드뱅크·마켓",         addr:"시·군별 운영",           tel:"1688-1122",    desc:"식품·생활용품 무료 제공 (저소득·취약계층)",         url:"https://www.foodbank1377.org", hours:"평일 09:00~17:00" },
-    { type:"health",   name:"경기도 보건소",              addr:"31개 시·군 운영",        tel:"031-120",      desc:"건강검진, 예방접종, 만성질환 관리, 정신건강 상담",  url:"https://www.gg.go.kr/gg_info/health_center_info.do", hours:"평일 09:00~18:00" },
+    { type:"health",   name:"경기도 보건소",              addr:"31개 시·군 운영",        tel:"129",          desc:"건강검진, 예방접종, 만성질환 관리, 정신건강 상담",  url:"https://health.gg.go.kr", hours:"평일 09:00~18:00" },
     { type:"health",   name:"경기 정신건강복지센터",       addr:"각 시·군 운영",          tel:"1577-0199",    desc:"정신건강 상담·치료 연계, 자살예방 24시간 운영",     url:"https://www.gmhc.or.kr", hours:"24시간" },
     { type:"counsel",  name:"경기복지재단 상담센터",       addr:"경기 전역",              tel:"031-267-9500", desc:"복지 서비스 안내, 위기 상담, 자원 연계 지원",       url:"https://www.ggwf.or.kr", hours:"평일 09:00~18:00" },
-    { type:"counsel",  name:"경기도 통합민원 콜센터",      addr:"전화·온라인",            tel:"031-120",      desc:"경기도 각종 복지·행정 서비스 안내 및 연결",         url:"https://www.gg.go.kr", hours:"24시간" },
+    { type:"counsel",  name:"경기도 통합민원 콜센터",      addr:"전화·온라인",            tel:"031-120",      desc:"경기도 각종 복지·행정 서비스 안내 및 연결",         url:"https://www.gg.go.kr/open_content/main/index.do", hours:"24시간" },
   ],
 };
 
