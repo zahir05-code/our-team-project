@@ -81,7 +81,7 @@ FastAPI (api/app.py)
 | 파일 | 버전 | 역할 |
 |------|------|------|
 | `templates/index.html` | v5.9 | 단일 HTML, 3탭 구조 (맞춤복지 탭 제거) |
-| `static/js/app.js` | v5.9 | 전체 앱 로직 |
+| `static/js/app.js` | v5.10 | 전체 앱 로직 |
 | `static/js/i18n.js` | v3.4 | 한국어/영어 다국어 |
 | `static/css/style.css` | v5.7 | 전체 스타일 |
 | `static/js/welfareDeepLinks.json` | — | 복지서비스 직접 URL 딥링크 테이블 (50개) |
@@ -302,7 +302,7 @@ item.status = "none"(미신청) | "pending"(신청예정) | "done"(완료)
 
 ## 수정 시 체크리스트
 
-- JS/CSS 수정 → `index.html`의 `?v=X.X` 버전 올리기 (app.js: v5.9, style.css: v5.7)
+- JS/CSS 수정 → `index.html`의 `?v=X.X` 버전 올리기 (app.js: v5.10, style.css: v5.7)
 - 새 복지 항목 추가 → `WELFARE_CALENDAR` detail 객체 필수 포함
 - 딥링크 추가/수정 → `static/js/welfareDeepLinks.json` 직접 편집 (검색 URL 금지)
 - 지역 추가 → `welfare_analyzer/models/user_profile.py` ALLOWED 목록 + `api/routers/welfare.py` 검증 동시 수정
@@ -325,3 +325,4 @@ item.status = "none"(미신청) | "pending"(신청예정) | "done"(완료)
 | v5.7 | API 오류 [object Object] 수정, 장바구니 프로필 인라인 편집 모달 |
 | v5.8 | danuri.go.kr 전체 교체, blutouch→seoulmentalhealth |
 | v5.9 | 검색 URL 전량 제거 → 서비스별 직접 상세 URL 완전 교체 |
+| v5.10 | welfareDeepLinks.json 추측 WLF ID 3건 교체, LOCAL_BENEFITS 직접 URL 적용, policies_db.py 전체 bokjiro 홈 URL 제거 (50개 정책 모두 직접 서비스 URL) |
