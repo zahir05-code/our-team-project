@@ -36,7 +36,6 @@ SITUATION_SERVICE_CODE = {
 
 # 중앙 부처별 복지 포털 링크 — 메인 또는 안정적인 1단계 하위 URL만 사용
 CENTRAL_GOV_LINKS = {
-    "복지로 복지서비스":    "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004558",
     "보조금24":             "https://www.gov24.kr",
     "정부24 복지서비스":    "https://www.gov.kr/portal/welfare/welfareInfo",
     "보건복지부":           "https://www.mohw.go.kr",
@@ -124,9 +123,8 @@ def build_result_links(profile: UserProfile) -> dict:
     """
     result = {}
 
-    # 중앙정부 링크 (정부24 복지서비스 첫 번째 + 부처 링크)
-    central = {"정부24 복지서비스 조회": build_bokjiro_search_url(profile)}
-    central.update(CENTRAL_GOV_LINKS)
+    # 중앙정부 링크 — CENTRAL_GOV_LINKS 그대로 사용 (중복 없음)
+    central = dict(CENTRAL_GOV_LINKS)
     result["중앙정부"] = central
 
     # 지자체 링크 — 사용자 지역 기준 (서울·경기만 허용)
