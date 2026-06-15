@@ -1,4 +1,4 @@
-/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.25 공고문 URL 전수정) */
+/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.26 mogef 정책자료실 차단 + 전 URL 정합성 수정) */
 
 /* ── 딥링크 테이블 (build_welfare_deeplinks.py 생성 JSON) ── */
 let _deepLinks = {};   // id → {detailUrl, applyUrl, matchType, ...}
@@ -16,21 +16,34 @@ let _cachedResultAnalysis = null;
 ─────────────────────────────────────────────────────── */
 function _noticeUrl(p) {
   const rawUrl = (p.apply_url || p.url || "").trim();
+
+  // ── 차단 패턴: 서비스 페이지가 아닌 목록/자료실/일반 메뉴 URL ──
+  const BLOCKED_PATTERNS = [
+    "mp/pcd/mp_pcd_s001d.do",   // mogef 정책자료실 문서목록
+    "mp/pcd/mp_pcd_s002d.do",
+    "/pcd/",                     // 정책 document 경로 일반
+    "search.do",                 // 검색 결과 페이지
+  ];
+  const isBlockedUrl = (url) => BLOCKED_PATTERNS.some(pat => url.includes(pat));
+
   // 1순위: 복지로 WLF 서비스 상세 직접 URL
   if (rawUrl.includes("wlfareInfoId=")) return rawUrl;
-  // 2순위: 기관 특정 서비스 직접 URL (홈페이지가 아닌 경우)
+
+  // 2순위: 기관 특정 서비스 직접 URL (홈페이지·차단패턴 아닌 경우)
   const genericHosts = ["bokjiro.go.kr", "lh.or.kr", "mnuri.kr", "kinfa.or.kr",
                         "semas.or.kr", "mohw.go.kr", "childcare.go.kr", "gmhc.or.kr",
                         "seoulmentalhealth.kr", "ggwf.or.kr"];
-  if (rawUrl && /^https?:\/\//.test(rawUrl)) {
+  if (rawUrl && /^https?:\/\//.test(rawUrl) && !isBlockedUrl(rawUrl)) {
     const isGenericHome = genericHosts.some(h =>
       rawUrl.replace(/^https?:\/\/(www\.)?/, "").replace(/\/?$/, "") === h
     );
     if (!isGenericHome) return rawUrl;
   }
-  // 3순위: deeplink detailUrl
+
+  // 3순위: deeplink detailUrl (차단패턴 제외)
   const dl = getDeepLink(p.policy_id);
-  if (dl && dl.detailUrl) return dl.detailUrl;
+  if (dl && dl.detailUrl && !isBlockedUrl(dl.detailUrl)) return dl.detailUrl;
+
   // 4순위: buildApplyUrl fallback
   return buildApplyUrl(p).url;
 }
@@ -43,7 +56,7 @@ function _noticeBtn(p) {
 
 async function loadDeepLinks() {
   try {
-    const res = await fetch("/static/js/welfareDeepLinks.json?v=5.25");
+    const res = await fetch("/static/js/welfareDeepLinks.json?v=5.26");
     if (!res.ok) return;
     const arr = await res.json();
     arr.forEach(item => { _deepLinks[item.id] = item; });
