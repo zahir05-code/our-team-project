@@ -1,4 +1,4 @@
-/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.22 다국어 전면) */
+/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.25 공고문 URL 전수정) */
 
 /* ── 딥링크 테이블 (build_welfare_deeplinks.py 생성 JSON) ── */
 let _deepLinks = {};   // id → {detailUrl, applyUrl, matchType, ...}
@@ -7,11 +7,31 @@ let _deepLinks = {};   // id → {detailUrl, applyUrl, matchType, ...}
 let _cachedResultData     = null;
 let _cachedResultAnalysis = null;
 
-/* ── 공식공고문 URL 결정 (deeplink 상세 → apply_url → buildApplyUrl) ── */
+/* ── 공식공고문 URL 결정 ──
+   우선순위:
+   1. apply_url에 wlfareInfoId= 포함 → 복지로 서비스 상세 직접 URL (가장 정확)
+   2. apply_url이 특정 기관 서비스 직접 페이지 (홈 제외)
+   3. welfareDeepLinks.json detailUrl
+   4. buildApplyUrl fallback
+─────────────────────────────────────────────────────── */
 function _noticeUrl(p) {
+  const rawUrl = (p.apply_url || p.url || "").trim();
+  // 1순위: 복지로 WLF 서비스 상세 직접 URL
+  if (rawUrl.includes("wlfareInfoId=")) return rawUrl;
+  // 2순위: 기관 특정 서비스 직접 URL (홈페이지가 아닌 경우)
+  const genericHosts = ["bokjiro.go.kr", "lh.or.kr", "mnuri.kr", "kinfa.or.kr",
+                        "semas.or.kr", "mohw.go.kr", "childcare.go.kr", "gmhc.or.kr",
+                        "seoulmentalhealth.kr", "ggwf.or.kr"];
+  if (rawUrl && /^https?:\/\//.test(rawUrl)) {
+    const isGenericHome = genericHosts.some(h =>
+      rawUrl.replace(/^https?:\/\/(www\.)?/, "").replace(/\/?$/, "") === h
+    );
+    if (!isGenericHome) return rawUrl;
+  }
+  // 3순위: deeplink detailUrl
   const dl = getDeepLink(p.policy_id);
   if (dl && dl.detailUrl) return dl.detailUrl;
-  if (p.apply_url && /^https?:\/\//.test(p.apply_url)) return p.apply_url;
+  // 4순위: buildApplyUrl fallback
   return buildApplyUrl(p).url;
 }
 
@@ -23,7 +43,7 @@ function _noticeBtn(p) {
 
 async function loadDeepLinks() {
   try {
-    const res = await fetch("/static/js/welfareDeepLinks.json?v=5.13");
+    const res = await fetch("/static/js/welfareDeepLinks.json?v=5.25");
     if (!res.ok) return;
     const arr = await res.json();
     arr.forEach(item => { _deepLinks[item.id] = item; });
