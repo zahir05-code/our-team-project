@@ -19,16 +19,19 @@ body {
   position: relative;
 }
 
-/* 태극기 전체화면 워터마크 — body 레벨 고정 */
+/* 태극기 워터마크 — 가운데 태극 원만 보이게 */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   background:
     url("https://flagcdn.com/w640/kr.png") center 45% / 85% auto no-repeat;
-  opacity: 0.11;
+  opacity: 0.14;
   z-index: 0;
   pointer-events: none;
+  /* 가운데만 보이고 주변은 투명하게 페이드 */
+  mask-image: radial-gradient(ellipse 28% 36% at center 45%, black 40%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 28% 36% at center 45%, black 40%, transparent 75%);
 }
 
 /* 모든 콘텐츠가 워터마크 위에 오도록 */
