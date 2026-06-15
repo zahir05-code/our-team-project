@@ -1031,6 +1031,9 @@ function applyLang(lang) {
   if (grid && grid.children.length > 0 && typeof refreshDynamicUI === "function") {
     refreshDynamicUI();
   }
+
+  // app.js의 동적 콘텐츠 재렌더 콜백 (selectLang에서 별도 호출)
+  // → applyLang은 정적 요소만 처리, 동적 재렌더는 selectLang이 담당
 }
 
 /* ── 초기화 시 언어 복원 ── */

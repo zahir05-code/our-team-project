@@ -1,7 +1,11 @@
-/* 아테나 복지서비스 — 3단계 미니멀 UX (v2.4 다국어) */
+/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.22 다국어 전면) */
 
 /* ── 딥링크 테이블 (build_welfare_deeplinks.py 생성 JSON) ── */
 let _deepLinks = {};   // id → {detailUrl, applyUrl, matchType, ...}
+
+/* ── 결과 캐시 — 언어 변경 시 재렌더링에 사용 ── */
+let _cachedResultData     = null;
+let _cachedResultAnalysis = null;
 
 async function loadDeepLinks() {
   try {
@@ -728,6 +732,10 @@ function hideLoading() {
 
 /* ── 결과 렌더링 ── */
 function renderResult(data, analysis) {
+  // 언어 변경 시 재렌더링을 위해 캐시 저장
+  _cachedResultData     = data;
+  _cachedResultAnalysis = analysis;
+
   setScene("result");  // 결과 화면 — 태극원만 은은하게
   document.getElementById("inputCard").classList.add("hidden");
   document.getElementById("nlpEntry").classList.add("hidden");
@@ -1203,56 +1211,103 @@ function toggleFuture(futId) {
 let _currentTab = "home";
 
 /* ── 언어 드롭다운 열기/닫기 ── */
-function toggleLangDropdown() {
-  const list = document.getElementById("langDropList");
-  const btn  = document.getElementById("langDropBtn");
-  if (!list) return;
-  const isOpen = !list.classList.contains("hidden");
-  if (isOpen) {
-    list.classList.add("hidden");
-    if (btn) btn.setAttribute("aria-expanded", "false");
-  } else {
-    list.classList.remove("hidden");
-    if (btn) btn.setAttribute("aria-expanded", "true");
-    // 드롭다운이 뷰포트를 벗어나면 위로 열기
-    const rect = list.getBoundingClientRect();
-    if (rect.bottom > window.innerHeight) {
-      list.style.top  = "auto";
-      list.style.bottom = "calc(100% + 6px)";
-    }
+/* ══════════════════════════════════════════════
+   언어 선택 Bottom Sheet
+   GLOBAL 탭 터치 → 슬라이드업 시트로 7개 언어 선택
+   선택 즉시 전 화면 언어 반영 (동적 콘텐츠 포함)
+══════════════════════════════════════════════ */
+const _LANG_OPTIONS = [
+  { code:"ko", flag:"kr", label:"한국어",      native:"한국어" },
+  { code:"en", flag:"us", label:"English",     native:"English" },
+  { code:"zh", flag:"cn", label:"中文",         native:"中文 (简体)" },
+  { code:"ja", flag:"jp", label:"日本語",       native:"日本語" },
+  { code:"vi", flag:"vn", label:"Tiếng Việt",  native:"Tiếng Việt" },
+  { code:"th", flag:"th", label:"ภาษาไทย",     native:"ภาษาไทย" },
+  { code:"km", flag:"kh", label:"ខ្មែរ",        native:"ភាសាខ្មែរ" },
+];
+
+function openLangSheet() {
+  let sheet = document.getElementById("langBottomSheet");
+  if (!sheet) {
+    sheet = document.createElement("div");
+    sheet.id = "langBottomSheet";
+    sheet.className = "lang-sheet";
+    sheet.innerHTML = `
+      <div class="lang-sheet-overlay" onclick="closeLangSheet()"></div>
+      <div class="lang-sheet-panel">
+        <div class="lang-sheet-handle"></div>
+        <div class="lang-sheet-title">🌐 Language · 언어 선택</div>
+        <div class="lang-sheet-list" id="langSheetList"></div>
+      </div>`;
+    document.body.appendChild(sheet);
+    // 배경 오버레이 터치 닫기
+    sheet.querySelector(".lang-sheet-overlay").addEventListener("touchstart", closeLangSheet);
   }
-}
-function closeLangDropdown() {
-  const list = document.getElementById("langDropList");
-  const btn  = document.getElementById("langDropBtn");
-  if (list) list.classList.add("hidden");
-  if (btn)  btn.setAttribute("aria-expanded", "false");
+  // 언어 목록 렌더
+  const list = sheet.querySelector("#langSheetList");
+  list.innerHTML = _LANG_OPTIONS.map(opt => `
+    <button class="lang-sheet-item ${opt.code === _currentLang ? "active" : ""}"
+            onclick="selectLang('${opt.code}')">
+      <img src="https://flagcdn.com/w40/${opt.flag}.png" width="32" height="24"
+           style="border-radius:4px;object-fit:cover;" alt="">
+      <span class="lsi-native">${opt.native}</span>
+      ${opt.code === _currentLang ? '<span class="lsi-check">✓</span>' : ""}
+    </button>`).join("");
+  sheet.classList.add("open");
+  document.body.style.overflow = "hidden";
 }
 
-// DOM 로드 후 이벤트 바인딩
+function closeLangSheet() {
+  const sheet = document.getElementById("langBottomSheet");
+  if (sheet) sheet.classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+function selectLang(code) {
+  closeLangSheet();
+  applyLang(code);          // i18n.js — data-i18n 정적 요소 갱신
+  _refreshCurrentView();    // 동적 콘텐츠(결과카드·탭 등) 재렌더
+}
+
+/* 현재 열린 화면 전체 재렌더 */
+function _refreshCurrentView() {
+  // 결과 화면이 열려 있으면 카드 재렌더
+  const resultEl = document.getElementById("result");
+  if (resultEl && !resultEl.classList.contains("hidden") && _cachedResultData) {
+    renderResult(_cachedResultData, _cachedResultAnalysis);
+    return;
+  }
+  // 복지달력 — 재렌더
+  const calPanel = document.getElementById("calendarPanel");
+  if (calPanel && !calPanel.classList.contains("hidden")) {
+    if (typeof renderCalendar === "function") renderCalendar();
+    return;
+  }
+  // 지역서비스 — 재렌더
+  const locPanel = document.getElementById("localPanel");
+  if (locPanel && !locPanel.classList.contains("hidden")) {
+    if (typeof renderLocalPanel === "function") renderLocalPanel();
+    return;
+  }
+  // 장바구니 — 재렌더
+  const myPanel = document.getElementById("myinfoPanel");
+  if (myPanel && !myPanel.classList.contains("hidden")) {
+    if (typeof renderMyinfoProfile === "function") renderMyinfoProfile();
+    return;
+  }
+  // 홈 화면 — 상황 그리드·칩 갱신
+  if (typeof renderSituationGrid === "function") renderSituationGrid();
+  if (typeof renderFamilyComposer === "function") renderFamilyComposer();
+}
+
+// DOM 로드 후 GLOBAL 탭 이벤트 바인딩
 document.addEventListener("DOMContentLoaded", function() {
-  // 헤더 드롭다운 버튼
-  const dropBtn = document.getElementById("langDropBtn");
-  if (dropBtn) dropBtn.addEventListener("click", function(e) {
-    e.stopPropagation();
-    toggleLangDropdown();
-  });
-
-  // 하단 GLOBAL 탭
   const bnavLang = document.getElementById("bnav-lang");
-  if (bnavLang) bnavLang.addEventListener("click", function(e) {
-    e.stopPropagation();
-    toggleLangDropdown();
-  });
-
-  // 드롭다운 외부 클릭 시 닫기
-  document.addEventListener("click", function(e) {
-    const wrap     = document.querySelector(".lang-dropdown-wrap");
-    const navLang  = document.getElementById("bnav-lang");
-    const isInsideWrap = wrap && wrap.contains(e.target);
-    const isNavBtn     = navLang && navLang.contains(e.target);
-    if (!isInsideWrap && !isNavBtn) closeLangDropdown();
-  });
+  if (bnavLang) {
+    bnavLang.addEventListener("click",       openLangSheet);
+    bnavLang.addEventListener("touchstart",  function(e) { e.preventDefault(); openLangSheet(); },
+      { passive: false });
+  }
 });
 
 function bnavGo(tab) {

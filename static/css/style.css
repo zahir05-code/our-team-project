@@ -2407,3 +2407,90 @@ a.uni-meta-item { color: #2563eb; text-decoration: none; }
   text-align: center; color: #94a3b8; font-size: 0.82rem;
   padding: 20px 0; line-height: 1.8;
 }
+
+/* ════════════════════════════════════════
+   언어 선택 Bottom Sheet (GLOBAL 탭)
+════════════════════════════════════════ */
+.lang-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  pointer-events: none;
+  visibility: hidden;
+}
+.lang-sheet.open {
+  pointer-events: all;
+  visibility: visible;
+}
+.lang-sheet-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0);
+  transition: background 0.3s ease;
+}
+.lang-sheet.open .lang-sheet-overlay {
+  background: rgba(0,0,0,0.45);
+}
+.lang-sheet-panel {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  padding: 12px 20px 40px;
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.18);
+  transform: translateY(100%);
+  transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+  max-height: 75vh;
+  overflow-y: auto;
+}
+.lang-sheet.open .lang-sheet-panel {
+  transform: translateY(0);
+}
+.lang-sheet-handle {
+  width: 40px; height: 4px;
+  background: #e2e8f0;
+  border-radius: 2px;
+  margin: 0 auto 16px;
+}
+.lang-sheet-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #1a1a2e;
+  text-align: center;
+  margin-bottom: 20px;
+  letter-spacing: -0.3px;
+}
+.lang-sheet-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.lang-sheet-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 14px;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  position: relative;
+  text-align: left;
+}
+.lang-sheet-item:hover,
+.lang-sheet-item:active  { background: #eff6ff; border-color: #93c5fd; }
+.lang-sheet-item.active  {
+  background: #eff6ff;
+  border-color: #2563eb;
+  color: #1d4ed8;
+}
+.lsi-native { flex: 1; }
+.lsi-check  {
+  font-size: 1rem;
+  color: #2563eb;
+  font-weight: 900;
+}
