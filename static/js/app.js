@@ -1,4 +1,4 @@
-/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.26 mogef 정책자료실 차단 + 전 URL 정합성 수정) */
+/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.27 mogef 내부경로 404 완전 차단 + 홈페이지 안전 fallback) */
 
 /* ── 딥링크 테이블 (build_welfare_deeplinks.py 생성 JSON) ── */
 let _deepLinks = {};   // id → {detailUrl, applyUrl, matchType, ...}
@@ -17,23 +17,31 @@ let _cachedResultAnalysis = null;
 function _noticeUrl(p) {
   const rawUrl = (p.apply_url || p.url || "").trim();
 
-  // ── 차단 패턴: 서비스 페이지가 아닌 목록/자료실/일반 메뉴 URL ──
+  // ── 차단 패턴: 서비스 신청/상세 페이지가 아닌 URL ──
+  // 여기 해당하면 deeplink/fallback으로 내려보냄
   const BLOCKED_PATTERNS = [
-    "mp/pcd/mp_pcd_s001d.do",   // mogef 정책자료실 문서목록
-    "mp/pcd/mp_pcd_s002d.do",
-    "/pcd/",                     // 정책 document 경로 일반
-    "search.do",                 // 검색 결과 페이지
+    "/pcd/",          // mogef·여타부처 정책자료실 문서목록
+    "search.do",      // 검색결과 페이지
+    "mogef.go.kr/wm/",  // 성평등가족부 개편으로 404 확인된 경로
+    "mogef.go.kr/sp/fam/", // 동일
+    "mogef.go.kr/mp/",    // 동일
   ];
   const isBlockedUrl = (url) => BLOCKED_PATTERNS.some(pat => url.includes(pat));
 
-  // 1순위: 복지로 WLF 서비스 상세 직접 URL
+  // mogef 홈페이지는 허용 (항상 접속 가능), 내부 경로는 차단
+  const isMogefHome = (url) =>
+    /^https?:\/\/(www\.)?mogef\.go\.kr\/?$/.test(url);
+
+  // 1순위: 복지로 WLF 서비스 상세 직접 URL (가장 신뢰)
   if (rawUrl.includes("wlfareInfoId=")) return rawUrl;
 
-  // 2순위: 기관 특정 서비스 직접 URL (홈페이지·차단패턴 아닌 경우)
+  // 2순위: 기관 특정 서비스 직접 URL (홈·차단패턴 아닌 경우)
+  // mogef 홈페이지도 유효한 목적지로 허용
   const genericHosts = ["bokjiro.go.kr", "lh.or.kr", "mnuri.kr", "kinfa.or.kr",
                         "semas.or.kr", "mohw.go.kr", "childcare.go.kr", "gmhc.or.kr",
                         "seoulmentalhealth.kr", "ggwf.or.kr"];
   if (rawUrl && /^https?:\/\//.test(rawUrl) && !isBlockedUrl(rawUrl)) {
+    if (isMogefHome(rawUrl)) return rawUrl;  // mogef 홈 → 허용
     const isGenericHome = genericHosts.some(h =>
       rawUrl.replace(/^https?:\/\/(www\.)?/, "").replace(/\/?$/, "") === h
     );
@@ -56,7 +64,7 @@ function _noticeBtn(p) {
 
 async function loadDeepLinks() {
   try {
-    const res = await fetch("/static/js/welfareDeepLinks.json?v=5.26");
+    const res = await fetch("/static/js/welfareDeepLinks.json?v=5.27");
     if (!res.ok) return;
     const arr = await res.json();
     arr.forEach(item => { _deepLinks[item.id] = item; });
