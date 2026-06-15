@@ -43,37 +43,38 @@ body::after {
     linear-gradient(145deg, #e4edff 0%, #eef2ff 45%, #ede8f8 100%);
 }
 
-/* ③ 태극 문양 — 첫 화면(scene-home): 태극원 + 4괘(건감이곤) 모두 표시 */
+/* ③ 태극 문양 — 더 크게, 상단으로 올림, 블러 강화 */
 body::before {
   content: "";
   position: fixed;
-  top: 50%; left: 50%;
+  top: 28%;             /* 중앙(50%)에서 상단(28%)으로 올림 */
+  left: 50%;
   transform: translate(-50%, -50%);
-  width: 600px; height: 420px;
-  z-index: -1;   /* 콘텐츠 아래, body::after 위 */
+  width: 820px;         /* 600px → 820px 크게 */
+  height: 580px;
+  z-index: -1;
   pointer-events: none;
   background: url("https://flagcdn.com/w640/kr.png") center center / contain no-repeat;
-  opacity: 0;           /* 기본 숨김 — JS가 scene 클래스 부여 */
-  filter: blur(0.4px) saturate(1.4);
-  transition: opacity 0.5s ease, mask-image 0.5s ease;
+  opacity: 0;
+  filter: blur(2.5px) saturate(1.5);   /* 블러 강화 0.4 → 2.5 */
+  transition: opacity 0.5s ease;
 }
 
-/* 홈 화면: 태극원 + 4괘(건감이곤) 전체 글래스 블러로 표시 */
+/* 홈 화면: 태극원 + 4괘(건감이곤) 상단 중심으로 크게 */
 body.scene-home::before {
-  opacity: 0.28;
-  /* 전체 기(旗) 영역 보이되 가장자리만 소거 */
+  opacity: 0.30;
   mask-image:
-    radial-gradient(ellipse 72% 72% at 50% 50%,
+    radial-gradient(ellipse 80% 80% at 50% 50%,
       rgba(0,0,0,1)   0%,
-      rgba(0,0,0,0.9) 45%,
-      rgba(0,0,0,0.5) 68%,
-      rgba(0,0,0,0)   85%);
+      rgba(0,0,0,0.9) 50%,
+      rgba(0,0,0,0.4) 72%,
+      rgba(0,0,0,0)   90%);
   -webkit-mask-image:
-    radial-gradient(ellipse 72% 72% at 50% 50%,
+    radial-gradient(ellipse 80% 80% at 50% 50%,
       rgba(0,0,0,1)   0%,
-      rgba(0,0,0,0.9) 45%,
-      rgba(0,0,0,0.5) 68%,
-      rgba(0,0,0,0)   85%);
+      rgba(0,0,0,0.9) 50%,
+      rgba(0,0,0,0.4) 72%,
+      rgba(0,0,0,0)   90%);
 }
 
 /* 결과/검색 화면: 태극 원만 은은하게 */
@@ -293,19 +294,19 @@ main {
 /* 카드 내부 태극기 블러 오버레이 — 글래스 뒤로 은은하게 드러남 */
 .card-flag-overlay {
   position: absolute;
-  inset: -20px;          /* 블러 엣지가 자연스럽도록 카드보다 크게 */
-  background: url("https://flagcdn.com/w640/kr.png") center center / 95% no-repeat;
+  top: -40px; left: -30px; right: -30px; bottom: -20px; /* 상단 더 크게 */
+  background: url("https://flagcdn.com/w640/kr.png") center 38% / 130% no-repeat;
   opacity: 0;
-  filter: blur(4px) saturate(1.5);
+  filter: blur(5px) saturate(1.6);
   pointer-events: none;
   z-index: 0;
   border-radius: 36px;
   transition: opacity 0.6s ease;
 }
 
-/* 홈 화면: 태극원 + 4괘(건감이곤) 모두 카드 위로 블러 표시 */
+/* 홈 화면: 태극원 + 4괘 카드 상단 중심으로 블러 표시 */
 body.scene-home .card-flag-overlay {
-  opacity: 0.17;
+  opacity: 0.20;
 }
 
 /* 결과 화면: 태극원만 중앙에 은은하게 */
