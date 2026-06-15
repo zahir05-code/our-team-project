@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>아테나 복지서비스 | 내 혜택 찾기</title>
-  <link rel="stylesheet" href="/static/css/style.css?v=5.8">
+  <link rel="stylesheet" href="/static/css/style.css?v=5.9">
 </head>
 <body>
 
@@ -19,11 +19,10 @@
       <h1 class="logo" data-i18n="logo" onclick="bnavGo('home')" style="cursor:pointer;" title="처음으로 돌아가기">🏛 아테나</h1>
       <p class="tagline" data-i18n="tagline">나에게 맞는 복지혜택, 3분 안에</p>
 
-      <!-- 우측 상단: 언어 드롭다운 -->
+      <!-- 우측 상단: 언어 드롭다운 (Booking.com 스타일 — 국기만) -->
       <div class="lang-dropdown-wrap" role="navigation" aria-label="언어 선택 / Language">
-        <button class="lang-dropdown-btn" id="langDropBtn" onclick="toggleLangDropdown()" aria-haspopup="listbox" aria-expanded="false">
-          <img id="langDropFlag" src="https://flagcdn.com/w40/kr.png" alt="" width="22" height="16">
-          <span id="langDropLabel">한국어</span>
+        <button class="lang-dropdown-btn" id="langDropBtn" aria-haspopup="listbox" aria-expanded="false">
+          <img id="langDropFlag" src="https://flagcdn.com/w40/kr.png" alt="language" width="24" height="18">
           <span class="lang-drop-arrow">▾</span>
         </button>
         <ul class="lang-dropdown-list hidden" id="langDropList" role="listbox">
@@ -529,10 +528,10 @@
       <span class="bnav-icon">🛒</span>
       <span class="bnav-label" data-i18n="bnav_cart">장바구니</span>
     </button>
-    <!-- 언어 토글 -->
-    <button class="bnav-tab bnav-lang" id="bnav-lang" onclick="toggleLangDropdown()" aria-label="언어 변경">
-      <span class="bnav-icon" id="bnavLangFlag">🌐</span>
-      <span class="bnav-label" data-i18n="bnav_lang">언어</span>
+    <!-- 언어 토글 — GLOBAL 탭 -->
+    <button class="bnav-tab bnav-lang" id="bnav-lang" onclick="toggleLangDropdown()" aria-label="Language / 언어 선택">
+      <span class="bnav-icon">🌐</span>
+      <span class="bnav-label">GLOBAL</span>
     </button>
   </nav>
 
@@ -595,6 +594,6 @@
   <script src="/static/js/data.js?v=3.4"></script>
   <script src="/static/js/i18n.js?v=3.4"></script>
   <script src="/static/js/translations.js?v=3.4"></script>
-  <script src="/static/js/app.js?v=5.17"></script>
+  <script src="/static/js/app.js?v=5.18"></script>
 </body>
 </html>

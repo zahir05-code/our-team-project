@@ -16,6 +16,25 @@ body {
   background: #f4f6fb;
   color: #1a1a2e;
   min-height: 100vh;
+  position: relative;
+}
+
+/* 태극기 전체화면 워터마크 — body 레벨 고정 */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    url("https://flagcdn.com/w640/kr.png") center center / cover no-repeat;
+  opacity: 0.07;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* 모든 콘텐츠가 워터마크 위에 오도록 */
+.header, main, .bottom-nav, .modal-overlay {
+  position: relative;
+  z-index: 1;
 }
 
 /* ── 헤더 ── */
@@ -28,21 +47,7 @@ body {
   overflow: hidden;
 }
 
-/* 태극기 워터마크 배경 */
-.header-flag-bg {
-  position: absolute;
-  top: 50%; right: -20px;
-  transform: translateY(-50%);
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.13;
-}
-.header-flag-bg img {
-  width: 220px;
-  height: auto;
-  filter: grayscale(10%) brightness(1.2);
-  border-radius: 4px;
-}
+.header-flag-bg { display: none; }  /* body::before 워터마크로 통합 */
 
 .header-inner {
   position: relative;
@@ -61,17 +66,20 @@ body {
 .lang-dropdown-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 7px 11px;
+  gap: 5px;
+  padding: 6px 10px;
   background: rgba(255,255,255,0.18);
-  border: 1.5px solid rgba(255,255,255,0.45);
+  border: 1.5px solid rgba(255,255,255,0.50);
   border-radius: 20px;
   color: #fff;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 700;
   cursor: pointer;
   transition: background 0.18s, border-color 0.18s;
   white-space: nowrap;
+  /* 토글 클릭 보장 */
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
 }
 .lang-dropdown-btn:hover {
   background: rgba(255,255,255,0.30);

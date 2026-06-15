@@ -1085,6 +1085,12 @@ function toggleLangDropdown() {
   } else {
     list.classList.remove("hidden");
     if (btn) btn.setAttribute("aria-expanded", "true");
+    // 드롭다운이 뷰포트를 벗어나면 위로 열기
+    const rect = list.getBoundingClientRect();
+    if (rect.bottom > window.innerHeight) {
+      list.style.top  = "auto";
+      list.style.bottom = "calc(100% + 6px)";
+    }
   }
 }
 function closeLangDropdown() {
@@ -1093,13 +1099,31 @@ function closeLangDropdown() {
   if (list) list.classList.add("hidden");
   if (btn)  btn.setAttribute("aria-expanded", "false");
 }
-// 드롭다운 외부 클릭 시 닫기
-document.addEventListener("click", function(e) {
-  const wrap = document.querySelector(".lang-dropdown-wrap");
+
+// DOM 로드 후 이벤트 바인딩
+document.addEventListener("DOMContentLoaded", function() {
+  // 헤더 드롭다운 버튼
+  const dropBtn = document.getElementById("langDropBtn");
+  if (dropBtn) dropBtn.addEventListener("click", function(e) {
+    e.stopPropagation();
+    toggleLangDropdown();
+  });
+
+  // 하단 GLOBAL 탭
   const bnavLang = document.getElementById("bnav-lang");
-  if (wrap && !wrap.contains(e.target) && e.target !== bnavLang && !bnavLang?.contains(e.target)) {
-    closeLangDropdown();
-  }
+  if (bnavLang) bnavLang.addEventListener("click", function(e) {
+    e.stopPropagation();
+    toggleLangDropdown();
+  });
+
+  // 드롭다운 외부 클릭 시 닫기
+  document.addEventListener("click", function(e) {
+    const wrap     = document.querySelector(".lang-dropdown-wrap");
+    const navLang  = document.getElementById("bnav-lang");
+    const isInsideWrap = wrap && wrap.contains(e.target);
+    const isNavBtn     = navLang && navLang.contains(e.target);
+    if (!isInsideWrap && !isNavBtn) closeLangDropdown();
+  });
 });
 
 function bnavGo(tab) {
