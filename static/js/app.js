@@ -7,6 +7,20 @@ let _deepLinks = {};   // id → {detailUrl, applyUrl, matchType, ...}
 let _cachedResultData     = null;
 let _cachedResultAnalysis = null;
 
+/* ── 공식공고문 URL 결정 (deeplink 상세 → apply_url → buildApplyUrl) ── */
+function _noticeUrl(p) {
+  const dl = getDeepLink(p.policy_id);
+  if (dl && dl.detailUrl) return dl.detailUrl;
+  if (p.apply_url && /^https?:\/\//.test(p.apply_url)) return p.apply_url;
+  return buildApplyUrl(p).url;
+}
+
+/* ── 공식공고문 버튼 HTML ── */
+function _noticeBtn(p) {
+  const url = _noticeUrl(p);
+  return `<a class="official-notice-btn" href="${url}" target="_blank" rel="noopener">${T("btn_notice")}</a>`;
+}
+
 async function loadDeepLinks() {
   try {
     const res = await fetch("/static/js/welfareDeepLinks.json?v=5.13");
@@ -1040,10 +1054,7 @@ function renderUnifiedCard(item, bucket, ci) {
         ${p.source  ? `<span class="uni-meta-item">🏢 ${p.source}</span>` : ""}
         ${p.contact ? `<span class="uni-meta-item">☎ ${p.contact}</span>` : ""}
       </div>
-      <div class="acc-group">
-        ${_accRow(`${uid}-ben`, "💰", "지원내용", p.benefit && p.benefit !== p.description ? p.benefit : "")}
-        ${_accRow(`${uid}-how`, "📋", T("acc_how"), howContent)}
-      </div>
+      ${_noticeBtn(p)}
     </div>`;
   }
 
@@ -1070,11 +1081,9 @@ function renderUnifiedCard(item, bucket, ci) {
       <span class="uni-meta-item">📞 ${auth}</span>
       <a class="uni-meta-item tel-link" href="tel:${p.phone.replace(/[^0-9]/g,'')}">${p.phone} ☎</a>
     </div>
-    <div class="acc-group">
-      ${trDocs.length ? _accRow(`${uid}-doc`, "📄", T("acc_docs"),
-          trDocs.map(d=>`<span class="acc-doc-item">• ${d}</span>`).join("")) : ""}
-      ${(()=>{ const ai=buildApplyUrl({url:p.apply_url,name:p.name,source:p.source||"",policy_id:p.policy_id||""}); return _accRow(`${uid}-how`,"📋",T("acc_how"),`<a class="acc-site-link" href="${ai.url}" target="_blank" rel="noopener">${ai.label}</a>`); })()}
-    </div>
+    ${trDocs.length ? `<div class="acc-group">${_accRow(`${uid}-doc`, "📄", T("acc_docs"),
+        trDocs.map(d=>`<span class="acc-doc-item">• ${d}</span>`).join(""))}</div>` : ""}
+    ${_noticeBtn(p)}
   </div>`;
 }
 
@@ -1098,10 +1107,7 @@ function renderSupaCards(policies) {
         ${p.benefit ? `<div class="bk-meta-row"><span class="bk-meta-label">제공유형</span><span class="bk-meta-val">${p.benefit}</span></div>` : ""}
         ${p.contact ? `<div class="bk-meta-row"><span class="bk-meta-label">문의처</span><span class="bk-meta-val">${p.contact}</span></div>` : ""}
       </div>
-      ${_accRow(howId, "📋", T("acc_how"), [
-          p.how_to_apply ? `<p class="acc-how-text">${p.how_to_apply}</p>` : "",
-          `<a class="acc-site-link" href="${applyInfo.url}" target="_blank" rel="noopener">🔗 ${applyInfo.label}</a>`
-        ].join(""))}
+      ${_noticeBtn(p)}
       ${tags ? `<div class="bk-tags">${tags}</div>` : ""}
     </div>`;
   });
@@ -1172,12 +1178,9 @@ function renderOntPolicy(p, type) {
 
   // 아코디언용 고유 ID
   const uid = p.policy_id.replace(/\W/g,"_") + "_" + type;
-  const howAcc  = p.apply_url
-    ? (()=>{ const ai=buildApplyUrl({url:p.apply_url,name:p.name,source:p.source||"",policy_id:p.policy_id||""}); return _accRow("ont-how-"+uid,"📋",T("acc_how"),`<a class="acc-site-link" href="${ai.url}" target="_blank" rel="noopener">${ai.label}</a>`); })()
-    : "";
   const docsAcc = trDocs.length
-    ? _accRow("ont-docs-" + uid, "📄", T("acc_docs"),
-        trDocs.map(d => `<span class="acc-doc-item">• ${d}</span>`).join("")) : "";
+    ? `<div class="acc-group">${_accRow("ont-docs-" + uid, "📄", T("acc_docs"),
+        trDocs.map(d => `<span class="acc-doc-item">• ${d}</span>`).join(""))}</div>` : "";
 
   return `<div class="ont-card ont-card-${type}" data-tags="${trTags.join(",")}">
     <div class="ont-card-top">
@@ -1188,9 +1191,8 @@ function renderOntPolicy(p, type) {
     <div class="ont-authority">📞 ${auth}${T("ont_authority_sep")}
       <a class="tel-link" href="tel:${p.phone.replace(/[^0-9]/g,'')}">${p.phone} ☎</a>
     </div>
-    <div class="acc-group">
-      ${howAcc}${docsAcc}
-    </div>
+    ${docsAcc}
+    ${_noticeBtn(p)}
   </div>`;
 }
 
@@ -2121,10 +2123,8 @@ function renderProResult(data, age) {
         </div>
         <div class="pro-card-name">${name}</div>
         <p class="pro-card-desc">${desc}</p>
-        <div class="acc-group">
-          ${_accRow(`${uid}-how`, "📋", T("acc_how"), howContent)}
-          ${docsContent ? _accRow(`${uid}-doc`, "📄", T("acc_docs"), docsContent) : ""}
-        </div>
+        ${docsContent ? `<div class="acc-group">${_accRow(`${uid}-doc`, "📄", T("acc_docs"), docsContent)}</div>` : ""}
+        ${_noticeBtn(p)}
       </div>`;
     }).join("");
   }
