@@ -234,25 +234,100 @@ main {
   text-shadow: 0 1px 4px rgba(37,99,235,0.8);
 }
 
-.main { max-width: 480px; margin: 0 auto; padding: 20px 16px 40px; }
+.main { max-width: 480px; margin: 0 auto; padding: 12px 16px 40px; }
+
+/* ════════════════════════════════════════
+   날씨 연계 복지 배너
+════════════════════════════════════════ */
+.weather-banner {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 16px;
+  margin-bottom: 12px;
+  background: rgba(255,255,255,0.70);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.85);
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(31,38,135,0.08);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #1a1a2e;
+  cursor: default;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  animation: fadeIn 0.4s ease;
+}
+.wb-icon    { font-size: 1.1rem; flex-shrink: 0; }
+.wb-weather { font-weight: 800; flex-shrink: 0; }
+.wb-sep     { color: #d1d5db; flex-shrink: 0; }
+.wb-msg     { flex: 1; overflow: hidden; text-overflow: ellipsis; color: #374151; }
+.wb-link {
+  flex-shrink: 0;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #2563eb;
+  text-decoration: none;
+  padding: 2px 8px;
+  background: rgba(37,99,235,0.10);
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+.wb-link:hover { background: rgba(37,99,235,0.20); }
 
 /* ════════════════════════════════════════
    입력 카드
 ════════════════════════════════════════ */
 /* ── 입력 카드 — 프리미엄 글래스 ── */
 .input-card {
-  background: rgba(255,255,255,0.60);
+  background: rgba(255,255,255,0.62);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid rgba(255,255,255,0.82);
   border-radius: 28px;
   padding: 28px 24px;
   box-shadow:
-    0 2px 0 rgba(255,255,255,0.9) inset,   /* 상단 하이라이트 */
-    0 12px 40px rgba(31,38,135,0.12),        /* 깊은 그림자 */
-    0 1px 3px rgba(31,38,135,0.06);          /* 섬세한 엣지 */
-  color: #1a1a2e;   /* 카드 내부 텍스트 색 명시 */
-  position: relative;  /* 내부 z-index 기준 */
+    0 2px 0 rgba(255,255,255,0.9) inset,
+    0 12px 40px rgba(31,38,135,0.12),
+    0 1px 3px rgba(31,38,135,0.06);
+  color: #1a1a2e;
+  position: relative;
+  overflow: hidden;   /* 태극기 블러가 카드 밖으로 삐져나오지 않도록 */
+}
+
+/* 카드 내부 태극기 블러 오버레이 — 글래스 뒤로 은은하게 드러남 */
+.card-flag-overlay {
+  position: absolute;
+  inset: -20px;          /* 블러 엣지가 자연스럽도록 카드보다 크게 */
+  background: url("https://flagcdn.com/w640/kr.png") center center / 95% no-repeat;
+  opacity: 0;
+  filter: blur(4px) saturate(1.5);
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 36px;
+  transition: opacity 0.6s ease;
+}
+
+/* 홈 화면: 태극원 + 4괘(건감이곤) 모두 카드 위로 블러 표시 */
+body.scene-home .card-flag-overlay {
+  opacity: 0.17;
+}
+
+/* 결과 화면: 태극원만 중앙에 은은하게 */
+body.scene-result .card-flag-overlay {
+  opacity: 0.10;
+  mask-image: radial-gradient(circle 45% at 50% 50%,
+    black 0%, rgba(0,0,0,0.6) 50%, transparent 75%);
+  -webkit-mask-image: radial-gradient(circle 45% at 50% 50%,
+    black 0%, rgba(0,0,0,0.6) 50%, transparent 75%);
+}
+
+/* 카드 내부 실제 콘텐츠 — 태극기 오버레이 위에 */
+.input-card > *:not(.card-flag-overlay) {
+  position: relative;
+  z-index: 1;
 }
 
 /* 도트 진행 */
