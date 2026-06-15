@@ -22,58 +22,103 @@ body {
 .header {
   background: linear-gradient(135deg, #1e3a8a, #2563eb);
   color: #fff;
-  padding: 24px 20px 20px;
+  padding: 20px 20px 16px;
   text-align: center;
   position: relative;
+  overflow: hidden;
 }
+
+/* 태극기 워터마크 배경 */
+.header-flag-bg {
+  position: absolute;
+  top: 50%; right: -20px;
+  transform: translateY(-50%);
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.13;
+}
+.header-flag-bg img {
+  width: 220px;
+  height: auto;
+  filter: grayscale(10%) brightness(1.2);
+  border-radius: 4px;
+}
+
+.header-inner {
+  position: relative;
+  z-index: 1;
+}
+
 .logo    { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.5px; }
 .tagline { font-size: 0.85rem; opacity: 0.85; margin-top: 4px; }
 
-/* ── 언어 선택 바 ── */
-.lang-bar {
-  display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  justify-content: center;
-  gap: 7px;
-  margin-top: 16px;
-  padding: 2px 6px 6px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+/* ── 언어 드롭다운 (우측 상단) ── */
+.lang-dropdown-wrap {
+  position: absolute;
+  top: 0; right: 0;
+  z-index: 10;
 }
-.lang-bar::-webkit-scrollbar { display: none; }
-
-/* 카드형 국기 버튼 */
-.lang-btn {
+.lang-dropdown-btn {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 4px;
-  width: 62px;
-  height: 64px;
-  border-radius: 12px;
-  border: 2px solid rgba(255,255,255,0.45);
+  gap: 6px;
+  padding: 7px 11px;
   background: rgba(255,255,255,0.18);
+  border: 1.5px solid rgba(255,255,255,0.45);
+  border-radius: 20px;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
   cursor: pointer;
-  flex-shrink: 0;
-  padding: 6px 4px 6px;
-  transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s, background 0.18s;
+  transition: background 0.18s, border-color 0.18s;
+  white-space: nowrap;
 }
-.lang-btn:hover {
-  transform: translateY(-3px) scale(1.05);
-  border-color: rgba(255,255,255,0.85);
+.lang-dropdown-btn:hover {
   background: rgba(255,255,255,0.30);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.22);
+  border-color: rgba(255,255,255,0.85);
 }
-.lang-btn.active {
-  border: 2.5px solid #fff;
-  background: rgba(255,255,255,0.32);
-  box-shadow: 0 0 0 3px rgba(255,255,255,0.35), 0 6px 18px rgba(0,0,0,0.25);
-  transform: translateY(-3px);
+.lang-drop-arrow {
+  font-size: 0.7rem;
+  opacity: 0.85;
+  transition: transform 0.2s;
 }
+.lang-dropdown-btn[aria-expanded="true"] .lang-drop-arrow {
+  transform: rotate(180deg);
+}
+.lang-dropdown-list {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  list-style: none;
+  padding: 6px 0;
+  min-width: 160px;
+  z-index: 999;
+  animation: dropFadeIn 0.18s ease;
+}
+@keyframes dropFadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.lang-dropdown-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  font-size: 0.9rem;
+  color: #1a1a2e;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.lang-dropdown-list li:hover  { background: #eff6ff; }
+.lang-dropdown-list li.active { background: #dbeafe; color: #1d4ed8; }
+.lang-dropdown-list li img    { border-radius: 2px; flex-shrink: 0; }
 
-/* 국기 이미지 */
+/* 기존 lang-bar/lang-btn — 숨김 처리 (하위 호환) */
+.lang-bar  { display: none !important; }
 .lang-flag {
   width: 36px;
   height: 27px;
@@ -1059,6 +1104,11 @@ body {
 .bnav-tab.active .bnav-icon { transform: scale(1.15); }
 .bnav-icon { font-size: 1.35rem; line-height: 1; transition: transform 0.15s; }
 .bnav-label { font-size: 0.72rem; font-weight: 600; }
+
+/* 하단 언어 토글 탭 */
+.bnav-lang { color: #6b7280; }
+.bnav-lang:hover { color: #2563eb; }
+.bnav-lang .bnav-icon { font-size: 1.2rem; }
 .bnav-badge {
   position: absolute;
   top: 6px; right: calc(50% - 18px);

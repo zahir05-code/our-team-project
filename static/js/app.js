@@ -1073,6 +1073,35 @@ function toggleFuture(futId) {
 // 현재 활성 탭
 let _currentTab = "home";
 
+/* ── 언어 드롭다운 열기/닫기 ── */
+function toggleLangDropdown() {
+  const list = document.getElementById("langDropList");
+  const btn  = document.getElementById("langDropBtn");
+  if (!list) return;
+  const isOpen = !list.classList.contains("hidden");
+  if (isOpen) {
+    list.classList.add("hidden");
+    if (btn) btn.setAttribute("aria-expanded", "false");
+  } else {
+    list.classList.remove("hidden");
+    if (btn) btn.setAttribute("aria-expanded", "true");
+  }
+}
+function closeLangDropdown() {
+  const list = document.getElementById("langDropList");
+  const btn  = document.getElementById("langDropBtn");
+  if (list) list.classList.add("hidden");
+  if (btn)  btn.setAttribute("aria-expanded", "false");
+}
+// 드롭다운 외부 클릭 시 닫기
+document.addEventListener("click", function(e) {
+  const wrap = document.querySelector(".lang-dropdown-wrap");
+  const bnavLang = document.getElementById("bnav-lang");
+  if (wrap && !wrap.contains(e.target) && e.target !== bnavLang && !bnavLang?.contains(e.target)) {
+    closeLangDropdown();
+  }
+});
+
 function bnavGo(tab) {
   _currentTab = tab;
 

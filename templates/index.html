@@ -4,50 +4,56 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>아테나 복지서비스 | 내 혜택 찾기</title>
-  <link rel="stylesheet" href="/static/css/style.css?v=5.7">
+  <link rel="stylesheet" href="/static/css/style.css?v=5.8">
 </head>
 <body>
 
   <!-- 헤더 -->
   <header class="header">
+    <!-- 태극기 워터마크 배경 -->
+    <div class="header-flag-bg" aria-hidden="true">
+      <img src="https://flagcdn.com/w320/kr.png" alt="" draggable="false">
+    </div>
+
     <div class="header-inner">
       <h1 class="logo" data-i18n="logo" onclick="bnavGo('home')" style="cursor:pointer;" title="처음으로 돌아가기">🏛 아테나</h1>
       <p class="tagline" data-i18n="tagline">나에게 맞는 복지혜택, 3분 안에</p>
+
+      <!-- 우측 상단: 언어 드롭다운 -->
+      <div class="lang-dropdown-wrap" role="navigation" aria-label="언어 선택 / Language">
+        <button class="lang-dropdown-btn" id="langDropBtn" onclick="toggleLangDropdown()" aria-haspopup="listbox" aria-expanded="false">
+          <img id="langDropFlag" src="https://flagcdn.com/w40/kr.png" alt="" width="22" height="16">
+          <span id="langDropLabel">한국어</span>
+          <span class="lang-drop-arrow">▾</span>
+        </button>
+        <ul class="lang-dropdown-list hidden" id="langDropList" role="listbox">
+          <li role="option" onclick="applyLang('ko');closeLangDropdown()" data-lang="ko">
+            <img src="https://flagcdn.com/w40/kr.png" width="22" height="16" alt=""> 한국어
+          </li>
+          <li role="option" onclick="applyLang('en');closeLangDropdown()" data-lang="en">
+            <img src="https://flagcdn.com/w40/us.png" width="22" height="16" alt=""> English
+          </li>
+          <li role="option" onclick="applyLang('zh');closeLangDropdown()" data-lang="zh">
+            <img src="https://flagcdn.com/w40/cn.png" width="22" height="16" alt=""> 中文
+          </li>
+          <li role="option" onclick="applyLang('ja');closeLangDropdown()" data-lang="ja">
+            <img src="https://flagcdn.com/w40/jp.png" width="22" height="16" alt=""> 日本語
+          </li>
+          <li role="option" onclick="applyLang('vi');closeLangDropdown()" data-lang="vi">
+            <img src="https://flagcdn.com/w40/vn.png" width="22" height="16" alt=""> Tiếng Việt
+          </li>
+          <li role="option" onclick="applyLang('th');closeLangDropdown()" data-lang="th">
+            <img src="https://flagcdn.com/w40/th.png" width="22" height="16" alt=""> ภาษาไทย
+          </li>
+          <li role="option" onclick="applyLang('km');closeLangDropdown()" data-lang="km">
+            <img src="https://flagcdn.com/w40/kh.png" width="22" height="16" alt=""> ខ្មែរ
+          </li>
+        </ul>
+      </div>
+
       <button class="mypage-shortcut" onclick="openMyPage()" aria-label="마이페이지">
         👤 <span data-i18n="mypage_btn">마이페이지</span>
       </button>
-
-      <!-- 언어 선택 -->
-      <div class="lang-bar" role="navigation" aria-label="언어 선택 / Language">
-        <button class="lang-btn active" data-lang="ko" onclick="applyLang('ko')" aria-label="한국어">
-          <img class="lang-flag" src="https://flagcdn.com/w40/kr.png" alt="한국" width="36" height="27">
-          <span class="lang-name">한국어</span>
-        </button>
-        <button class="lang-btn" data-lang="en" onclick="applyLang('en')" aria-label="English">
-          <img class="lang-flag" src="https://flagcdn.com/w40/us.png" alt="US" width="36" height="27">
-          <span class="lang-name">English</span>
-        </button>
-        <button class="lang-btn" data-lang="zh" onclick="applyLang('zh')" aria-label="中文">
-          <img class="lang-flag" src="https://flagcdn.com/w40/cn.png" alt="中国" width="36" height="27">
-          <span class="lang-name">中文</span>
-        </button>
-        <button class="lang-btn" data-lang="ja" onclick="applyLang('ja')" aria-label="日本語">
-          <img class="lang-flag" src="https://flagcdn.com/w40/jp.png" alt="日本" width="36" height="27">
-          <span class="lang-name">日本語</span>
-        </button>
-        <button class="lang-btn" data-lang="vi" onclick="applyLang('vi')" aria-label="Tiếng Việt">
-          <img class="lang-flag" src="https://flagcdn.com/w40/vn.png" alt="Việt Nam" width="36" height="27">
-          <span class="lang-name">Việt</span>
-        </button>
-        <button class="lang-btn" data-lang="th" onclick="applyLang('th')" aria-label="ภาษาไทย">
-          <img class="lang-flag" src="https://flagcdn.com/w40/th.png" alt="ไทย" width="36" height="27">
-          <span class="lang-name">ภาษาไทย</span>
-        </button>
-        <button class="lang-btn" data-lang="km" onclick="applyLang('km')" aria-label="ភាសាខ្មែរ">
-          <img class="lang-flag" src="https://flagcdn.com/w40/kh.png" alt="កម្ពុជា" width="36" height="27">
-          <span class="lang-name">ខ្មែរ</span>
-        </button>
-      </div>
     </div>
   </header>
 
@@ -508,20 +514,25 @@
     </div>
   </div>
 
-  <!-- ══════════ 하단 탭 네비게이션 (홈 탭 제거, 3탭) ══════════ -->
+  <!-- ══════════ 하단 탭 네비게이션 (3탭 + 언어토글) ══════════ -->
   <nav class="bottom-nav" role="navigation" aria-label="주요 메뉴">
     <button class="bnav-tab" id="bnav-calendar" onclick="bnavGo('calendar')" aria-label="복지달력">
       <span class="bnav-icon">📅</span>
-      <span class="bnav-label">복지달력</span>
+      <span class="bnav-label" data-i18n="bnav_calendar">복지달력</span>
       <span class="bnav-badge hidden" id="calBadge"></span>
     </button>
     <button class="bnav-tab" id="bnav-local" onclick="bnavGo('local')" aria-label="지역서비스">
       <span class="bnav-icon">🏛</span>
-      <span class="bnav-label">지역서비스</span>
+      <span class="bnav-label" data-i18n="bnav_local">지역서비스</span>
     </button>
     <button class="bnav-tab" id="bnav-mypage" onclick="bnavGo('myinfo')" aria-label="혜택장바구니">
       <span class="bnav-icon">🛒</span>
-      <span class="bnav-label">장바구니</span>
+      <span class="bnav-label" data-i18n="bnav_cart">장바구니</span>
+    </button>
+    <!-- 언어 토글 -->
+    <button class="bnav-tab bnav-lang" id="bnav-lang" onclick="toggleLangDropdown()" aria-label="언어 변경">
+      <span class="bnav-icon" id="bnavLangFlag">🌐</span>
+      <span class="bnav-label" data-i18n="bnav_lang">언어</span>
     </button>
   </nav>
 
@@ -584,6 +595,6 @@
   <script src="/static/js/data.js?v=3.4"></script>
   <script src="/static/js/i18n.js?v=3.4"></script>
   <script src="/static/js/translations.js?v=3.4"></script>
-  <script src="/static/js/app.js?v=5.16"></script>
+  <script src="/static/js/app.js?v=5.17"></script>
 </body>
 </html>

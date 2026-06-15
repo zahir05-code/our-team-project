@@ -897,10 +897,32 @@ function applyLang(lang) {
       el.options[0].textContent = dict[key] ?? I18N["ko"][key] ?? "";
   });
 
-  // 언어 선택 버튼 활성 상태
+  // 언어 선택 버튼 활성 상태 (기존 lang-bar 하위 호환)
   document.querySelectorAll(".lang-btn").forEach(btn => {
     btn.classList.toggle("active", btn.dataset.lang === lang);
   });
+
+  // 드롭다운 현재 언어 표시 업데이트
+  const FLAG_MAP = {
+    ko:"kr", en:"us", zh:"cn", ja:"jp", vi:"vn", th:"th", km:"kh"
+  };
+  const LABEL_MAP = {
+    ko:"한국어", en:"English", zh:"中文", ja:"日本語",
+    vi:"Tiếng Việt", th:"ภาษาไทย", km:"ខ្មែរ"
+  };
+  const dropFlag  = document.getElementById("langDropFlag");
+  const dropLabel = document.getElementById("langDropLabel");
+  if (dropFlag)  dropFlag.src = `https://flagcdn.com/w40/${FLAG_MAP[lang]||"kr"}.png`;
+  if (dropLabel) dropLabel.textContent = LABEL_MAP[lang] || lang;
+
+  // 드롭다운 리스트 활성 항목 표시
+  document.querySelectorAll(".lang-dropdown-list li").forEach(li => {
+    li.classList.toggle("active", li.dataset.lang === lang);
+  });
+
+  // 하단 탭 언어 아이콘 업데이트
+  const bnavFlag = document.getElementById("bnavLangFlag");
+  if (bnavFlag) bnavFlag.textContent = FLAG_MAP[lang] ? "🌐" : "🌐";
 
   // HTML lang 속성
   const langMap = { ko:"ko", en:"en", zh:"zh-Hans", ja:"ja", vi:"vi", th:"th", km:"km" };
