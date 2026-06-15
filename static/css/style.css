@@ -43,19 +43,42 @@ body::after {
     linear-gradient(145deg, #e4edff 0%, #eef2ff 45%, #ede8f8 100%);
 }
 
-/* ③ 태극 문양 — 중앙에 정밀 배치, 주변은 완전 페이드 */
+/* ③ 태극 문양 — 첫 화면(scene-home): 태극원 + 4괘(건감이곤) 모두 표시 */
 body::before {
   content: "";
   position: fixed;
-  /* 태극 원이 화면 중앙에 오도록 정밀 조정 */
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  width: 520px; height: 360px;
+  width: 600px; height: 420px;
   z-index: 0;
   pointer-events: none;
   background: url("https://flagcdn.com/w640/kr.png") center center / contain no-repeat;
-  opacity: 0.22;
-  /* 태극 원만 보이고 4괘·외곽 완전 소거 */
+  opacity: 0;           /* 기본 숨김 — JS가 scene 클래스 부여 */
+  filter: blur(0.4px) saturate(1.4);
+  transition: opacity 0.5s ease, mask-image 0.5s ease;
+}
+
+/* 홈 화면: 태극원 + 4괘(건감이곤) 전체 글래스 블러로 표시 */
+body.scene-home::before {
+  opacity: 0.28;
+  /* 전체 기(旗) 영역 보이되 가장자리만 소거 */
+  mask-image:
+    radial-gradient(ellipse 72% 72% at 50% 50%,
+      rgba(0,0,0,1)   0%,
+      rgba(0,0,0,0.9) 45%,
+      rgba(0,0,0,0.5) 68%,
+      rgba(0,0,0,0)   85%);
+  -webkit-mask-image:
+    radial-gradient(ellipse 72% 72% at 50% 50%,
+      rgba(0,0,0,1)   0%,
+      rgba(0,0,0,0.9) 45%,
+      rgba(0,0,0,0.5) 68%,
+      rgba(0,0,0,0)   85%);
+}
+
+/* 결과/검색 화면: 태극 원만 은은하게 */
+body.scene-result::before {
+  opacity: 0.14;
   mask-image:
     radial-gradient(circle 22% at 50% 50%,
       rgba(0,0,0,1)   0%,
@@ -66,8 +89,6 @@ body::before {
       rgba(0,0,0,1)   0%,
       rgba(0,0,0,0.7) 40%,
       rgba(0,0,0,0)   70%);
-  /* 약간의 블러로 환상적인 느낌 */
-  filter: blur(0.5px) saturate(1.3);
 }
 
 /* ── 글래스모피즘 공통 ── */
@@ -80,9 +101,15 @@ body::before {
 }
 
 /* 모든 콘텐츠가 워터마크 위에 오도록 */
-.header, main, .bottom-nav, .modal-overlay {
+.header, .bottom-nav, .modal-overlay {
   position: relative;
   z-index: 1;
+}
+/* main: z-index 없이 relative만 → backdrop-filter가 fixed 배경 정상 참조 */
+main {
+  position: relative;
+  z-index: 1;
+  color: #1a1a2e;  /* 텍스트 색상 명시 (상속 실패 방지) */
 }
 
 /* ── 헤더 — 딥 글래스 ── */
@@ -225,6 +252,8 @@ body::before {
     0 2px 0 rgba(255,255,255,0.9) inset,   /* 상단 하이라이트 */
     0 12px 40px rgba(31,38,135,0.12),        /* 깊은 그림자 */
     0 1px 3px rgba(31,38,135,0.06);          /* 섬세한 엣지 */
+  color: #1a1a2e;   /* 카드 내부 텍스트 색 명시 */
+  position: relative;  /* 내부 z-index 기준 */
 }
 
 /* 도트 진행 */

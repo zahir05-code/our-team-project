@@ -49,6 +49,8 @@ window.addEventListener("DOMContentLoaded", () => {
   renderChips("nlpGenderChips",GENDER_OPTIONS,  false, "nlpGender",T("gender_options"));
   renderChips("nlpIncomeChips",INCOME_OPTIONS,  false, "nlpIncome",T("income_options"));
   loadProfile();  // 저장된 프로필 자동 복원
+  // 첫 화면 씬 초기화 — 태극기 full 표시
+  setScene("home");
 });
 
 /* ══════════════════════════════════════════════
@@ -600,6 +602,7 @@ function hideLoading() {
 
 /* ── 결과 렌더링 ── */
 function renderResult(data, analysis) {
+  setScene("result");  // 결과 화면 — 태극원만 은은하게
   document.getElementById("inputCard").classList.add("hidden");
   document.getElementById("nlpEntry").classList.add("hidden");
 
@@ -2060,10 +2063,19 @@ function refreshDynamicUI() {
   });
 }
 
+/* ── 태극기 씬 전환 헬퍼 ── */
+function setScene(scene) {
+  // scene: "home" | "result"
+  document.body.classList.remove("scene-home", "scene-result");
+  if (scene === "home")   document.body.classList.add("scene-home");
+  if (scene === "result") document.body.classList.add("scene-result");
+}
+
 /* ── 재조회 / 홈 리셋 ── */
 function retry() { location.reload(); }
 
 function resetToHome() {
+  setScene("home");  // 홈 화면 — 태극기 full 표시
   // 결과·로딩 숨기고 입력 카드 복원
   const result   = document.getElementById("result");
   const loading  = document.getElementById("loading");
