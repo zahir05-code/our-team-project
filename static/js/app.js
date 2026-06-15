@@ -5,7 +5,7 @@ let _deepLinks = {};   // id → {detailUrl, applyUrl, matchType, ...}
 
 async function loadDeepLinks() {
   try {
-    const res = await fetch("/static/js/welfareDeepLinks.json?v=5.1");
+    const res = await fetch("/static/js/welfareDeepLinks.json?v=5.13");
     if (!res.ok) return;
     const arr = await res.json();
     arr.forEach(item => { _deepLinks[item.id] = item; });
@@ -1330,9 +1330,9 @@ const WELFARE_CALENDAR = [
   },
   /* ────── 10월 ────── */
   {
-    month:10, tag:"10월", color:"#2563eb",
+    month:9, tag:"9월", color:"#2563eb",
     name:"근로·자녀장려금 반기 신청",
-    desc:"상반기분(1~6월 소득) 10월 신청 → 12월 지급",
+    desc:"상반기분(1~6월 소득) 9월 신청 → 12월 지급",
     detail:{
       target:"2026년 1~6월 근로·사업·종교인 소득이 있는 가구\n(정기 신청과 동일 소득·재산 요건)",
       benefit:"상반기 소득분의 35% 선지급 (정산은 내년 5월 정기신청 시)\n최대 지급액 기준: 맞벌이 최대 330만 원 × 35% = 약 115만 원",
@@ -1550,7 +1550,7 @@ const LOCAL_PUBLIC = {
     { type:"welfare",  name:"경기도 노인복지관",           addr:"각 시·군 운영",          tel:"031-267-9500", desc:"만 60세 이상 건강·교육·취업·여가 프로그램",        url:"https://www.ggwf.or.kr", hours:"평일 09:00~18:00" },
     { type:"center",   name:"주민센터 (행정복지센터)",     addr:"내 읍·면·동 주민센터",   tel:"031-120",      desc:"복지급여 신청, 주민등록, 통합사례관리, 위기상담",   url:"https://www.gov.kr", hours:"평일 09:00~18:00" },
     { type:"center",   name:"경기도 희망복지지원단",       addr:"각 시·군청 내",          tel:"031-8008-2114",desc:"위기가정 통합사례관리, 자원 연계 지원",             url:"https://www.ggwf.or.kr", hours:"평일 09:00~18:00" },
-    { type:"meal",     name:"경기 무료급식소 (경로식당)",  addr:"각 시·군 운영",          tel:"129",          desc:"만 60세 이상 어르신 무료 또는 저렴한 식사 제공",    url:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004572", hours:"월~금 점심" },
+    { type:"meal",     name:"경기 무료급식소 (경로식당)",  addr:"각 시·군 운영",          tel:"129",          desc:"만 60세 이상 어르신 무료 또는 저렴한 식사 제공",    url:"https://www.mohw.go.kr/menu.es?mid=a10712020000", hours:"월~금 점심" },
     { type:"meal",     name:"경기 푸드뱅크·마켓",         addr:"시·군별 운영",           tel:"1688-1122",    desc:"식품·생활용품 무료 제공 (저소득·취약계층)",         url:"https://www.foodbank1377.org", hours:"평일 09:00~17:00" },
     { type:"health",   name:"경기도 보건소",              addr:"31개 시·군 운영",        tel:"129",          desc:"건강검진, 예방접종, 만성질환 관리, 정신건강 상담",  url:"https://health.gg.go.kr", hours:"평일 09:00~18:00" },
     { type:"health",   name:"경기 정신건강복지센터",       addr:"각 시·군 운영",          tel:"1577-0199",    desc:"정신건강 상담·치료 연계, 자살예방 24시간 운영",     url:"https://www.gmhc.or.kr", hours:"24시간" },
