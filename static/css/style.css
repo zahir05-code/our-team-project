@@ -13,10 +13,19 @@
 
 body {
   font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
-  background: #f4f6fb;
+  background: linear-gradient(145deg, #dce8ff 0%, #eef3ff 40%, #f0e8ff 100%);
   color: #1a1a2e;
   min-height: 100vh;
   position: relative;
+}
+
+/* ── 글래스모피즘 공통 믹스인 ── */
+.glass {
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.7);
+  box-shadow: 0 8px 32px rgba(31,38,135,0.10);
 }
 
 /* 태극기 워터마크 — 가운데 태극 원만 보이게 */
@@ -40,14 +49,18 @@ body::before {
   z-index: 1;
 }
 
-/* ── 헤더 ── */
+/* ── 헤더 — 글래스모피즘 ── */
 .header {
-  background: linear-gradient(135deg, #1e3a8a, #2563eb);
+  background: rgba(30, 58, 138, 0.82);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(255,255,255,0.18);
+  box-shadow: 0 4px 24px rgba(30,58,138,0.18);
   color: #fff;
   padding: 20px 20px 16px;
   text-align: center;
   position: relative;
-  overflow: visible; /* 드롭다운이 헤더 밖으로 나올 수 있게 */
+  overflow: visible;
 }
 
 .header-flag-bg { display: none; }  /* body::before 워터마크로 통합 */
@@ -160,13 +173,17 @@ body::before {
 /* ════════════════════════════════════════
    입력 카드
 ════════════════════════════════════════ */
+/* ── 입력 카드 — 글래스모피즘 ── */
 .input-card {
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
-  border-radius: 22px;
+  background: rgba(255,255,255,0.52);
+  backdrop-filter: blur(18px) saturate(200%);
+  -webkit-backdrop-filter: blur(18px) saturate(200%);
+  border: 1px solid rgba(255,255,255,0.75);
+  border-radius: 24px;
   padding: 28px 24px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  box-shadow:
+    0 8px 32px rgba(31,38,135,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.9);
 }
 
 /* 도트 진행 */
@@ -182,12 +199,18 @@ body::before {
 /* 지역 */
 .region-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
 .region-big-btn {
-  padding: 16px; border: 2px solid #e5e7eb; border-radius: 14px;
-  background: #fff; font-size: 1rem; font-weight: 700; color: #374151; cursor: pointer;
-  transition: all 0.15s;
+  padding: 16px;
+  border: 1.5px solid rgba(255,255,255,0.7);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-size: 1rem; font-weight: 700; color: #374151; cursor: pointer;
+  transition: all 0.18s;
+  box-shadow: 0 2px 8px rgba(31,38,135,0.07);
 }
-.region-big-btn:hover  { border-color: #2563eb; color: #2563eb; }
-.region-big-btn.active { border-color: #2563eb; background: #eff6ff; color: #2563eb; }
+.region-big-btn:hover  { border-color: #2563eb; color: #2563eb; background: rgba(239,246,255,0.7); }
+.region-big-btn.active { border-color: #2563eb; background: rgba(219,234,254,0.75); color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
 
 /* 나이 */
 .age-input {
@@ -272,10 +295,15 @@ body::before {
   text-decoration: underline; text-underline-offset: 3px;
 }
 
-/* NLP 패널 */
+/* NLP 패널 — 글래스 */
 .nlp-panel {
-  background: #fff; border-radius: 22px;
-  padding: 28px 24px; box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  background: rgba(255,255,255,0.52);
+  backdrop-filter: blur(18px) saturate(200%);
+  -webkit-backdrop-filter: blur(18px) saturate(200%);
+  border: 1px solid rgba(255,255,255,0.75);
+  border-radius: 24px;
+  padding: 28px 24px;
+  box-shadow: 0 8px 32px rgba(31,38,135,0.10);
 }
 .nlp-textarea {
   width: 100%; padding: 14px 16px;
@@ -391,7 +419,7 @@ body::before {
 }
 
 /* 로딩 */
-.loading { text-align: center; padding: 60px 20px; background: #fff; border-radius: 22px; }
+.loading { text-align: center; padding: 60px 20px; background: rgba(255,255,255,0.52); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.7); border-radius: 22px; }
 .spinner {
   width: 40px; height: 40px; border: 4px solid #e2e8f0;
   border-top-color: #2563eb; border-radius: 50%;
@@ -404,16 +432,24 @@ body::before {
    결과
 ════════════════════════════════════════ */
 .result-header {
-  background: #fff; border-radius: 22px;
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.72);
+  border-radius: 22px;
   padding: 22px; margin-bottom: 14px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  box-shadow: 0 4px 20px rgba(31,38,135,0.09);
 }
 .result-header h2 { font-size: 1.1rem; font-weight: 800; color: #111827; }
 
 .nlp-analysis {
-  background: #fff; border-radius: 16px;
+  background: rgba(255,255,255,0.50);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.70);
+  border-radius: 16px;
   padding: 14px 16px; margin-bottom: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 10px rgba(31,38,135,0.07);
 }
 .analysis-title { font-size: 0.78rem; font-weight: 700; color: #15803d; margin-bottom: 8px; }
 .analysis-tags  { display: flex; flex-wrap: wrap; gap: 5px; }
@@ -445,7 +481,7 @@ body::before {
 .ont-group-fut .ont-group-title { background: #eff6ff; color: #1e40af; }
 .ont-toggle-btn { margin-left: auto; background: none; border: 1px solid currentColor; border-radius: 6px; padding: 2px 8px; font-size: 0.7rem; cursor: pointer; color: inherit; }
 
-.ont-card { border: 1px solid #e5e7eb; border-top: none; padding: 14px 16px; background: #fff; }
+.ont-card { border: 1px solid rgba(229,231,235,0.6); border-top: none; padding: 14px 16px; background: rgba(255,255,255,0.60); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .ont-card + .ont-card { border-top: 1px solid #f3f4f6; }
 .ont-card:last-child  { border-radius: 0 0 12px 12px; }
 .ont-card:hover       { box-shadow: 0 2px 8px rgba(0,0,0,0.07); }
@@ -483,7 +519,7 @@ body::before {
 .supa-section { margin: 14px 0; }
 .supa-header { font-size: 0.95rem; font-weight: 800; color: #1e40af; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid #bfdbfe; display: flex; align-items: center; gap: 8px; }
 .supa-badge { background: #2563eb; color: #fff; border-radius: 20px; padding: 2px 10px; font-size: 0.78rem; font-weight: 700; }
-.supa-card { background: #fff; border: 1.5px solid #bfdbfe; border-radius: 16px; padding: 14px 16px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(37,99,235,0.07); }
+.supa-card { background: rgba(255,255,255,0.55); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1.5px solid rgba(191,219,254,0.7); border-radius: 16px; padding: 14px 16px; margin-bottom: 10px; box-shadow: 0 4px 16px rgba(37,99,235,0.09); }
 .supa-card-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
 .supa-name { font-size: 0.97rem; font-weight: 700; color: #1e3a8a; flex: 1; }
 .supa-apply-btn { background: #2563eb; color: #fff; border-radius: 20px; padding: 6px 14px; font-size: 0.82rem; font-weight: 700; text-decoration: none; white-space: nowrap; transition: background 0.15s; }
@@ -495,7 +531,7 @@ body::before {
 
 .link-section-wrap { margin-top: 14px; }
 .link-section-header { font-size: 0.88rem; font-weight: 700; color: #374151; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid #e5e7eb; }
-.result-section { background: #fff; border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; box-shadow: 0 1px 6px rgba(0,0,0,0.05); }
+.result-section { background: rgba(255,255,255,0.52); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.68); border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; box-shadow: 0 2px 10px rgba(31,38,135,0.07); }
 .section-title  { font-size: 0.85rem; font-weight: 700; color: #374151; margin-bottom: 10px; }
 .service-item   { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f3f4f6; }
 .service-item:last-child { border-bottom: none; }
@@ -559,7 +595,7 @@ body::before {
    모달
 ════════════════════════════════════════ */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-.modal-content { background: #fff; border-radius: 22px; padding: 28px 22px; max-width: 420px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.2); animation: modalIn 0.25s ease; }
+.modal-content { background: rgba(255,255,255,0.72); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); border: 1px solid rgba(255,255,255,0.80); border-radius: 22px; padding: 28px 22px; max-width: 420px; width: 100%; box-shadow: 0 20px 60px rgba(31,38,135,0.18); animation: modalIn 0.25s ease; }
 @keyframes modalIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
 .modal-content h3 { font-size: 1.15rem; font-weight: 800; color: #111827; text-align: center; margin-bottom: 8px; }
 .modal-desc   { font-size: 0.82rem; color: #4b5563; line-height: 1.7; text-align: center; margin-bottom: 18px; }
@@ -1092,8 +1128,10 @@ body::before {
   position: fixed;
   bottom: 0; left: 0; right: 0;
   height: 62px;
-  background: #fff;
-  border-top: 1.5px solid #e5e7eb;
+  background: rgba(255,255,255,0.72);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-top: 1px solid rgba(255,255,255,0.60);
   display: flex;
   align-items: stretch;
   z-index: 200;
@@ -1205,8 +1243,8 @@ body { padding-bottom: 68px; }
   border-color: #2563eb; background: #eff6ff; color: #2563eb;
 }
 
-/* 하단 탭 3개 */
-.bottom-nav { display: grid; grid-template-columns: repeat(3,1fr); }
+/* 하단 탭 4개 (GLOBAL 포함) */
+.bottom-nav { display: grid; grid-template-columns: repeat(4,1fr); }
 
 /* ══════════════════════════════════════
    가족 구성원 v2 — 그리드 카드형 (v3.4)
@@ -2055,7 +2093,7 @@ a.uni-meta-item { color: #2563eb; text-decoration: none; }
 ══════════════════════════════════════ */
 
 /* 3탭 네비게이션 */
-.bottom-nav { grid-template-columns: repeat(3, 1fr) !important; }
+.bottom-nav { grid-template-columns: repeat(4, 1fr) !important; }
 
 /* 서비스 유형 필터 바 */
 .loc-type-bar {
