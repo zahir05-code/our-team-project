@@ -1513,18 +1513,18 @@ function closeCalDetail() {
 const LOCAL_BENEFITS = {
   "서울특별시": [
     { name:"서울시 청년수당", desc:"만 19~34세 미취업 청년, 월 50만원 × 6개월", contact:"02-2133-5186", url:"https://youth.seoul.go.kr", tag:"청년" },
-    { name:"서울시 안심소득 시범사업", desc:"기준 중위소득 85% 이하 가구, 부족분의 절반 지원", contact:"02-120", url:"https://www.seoul.go.kr", tag:"저소득" },
-    { name:"서울형 긴급복지 지원", desc:"위기 가구 생계·의료·주거비 신속 지원", contact:"주민센터", url:"https://welfare.seoul.go.kr/site/main/content/emergency_welfare", tag:"긴급" },
+    { name:"서울시 안심소득 시범사업", desc:"기준 중위소득 85% 이하 가구, 부족분의 절반 지원", contact:"02-120", url:"https://wis.seoul.go.kr", tag:"저소득" },
+    { name:"서울형 긴급복지 지원", desc:"위기 가구 생계·의료·주거비 신속 지원", contact:"02-120", url:"https://welfare.seoul.go.kr/site/main/content/emergency_welfare", tag:"긴급" },
     { name:"서울 희망두배 청년통장", desc:"월 10~15만원 저축 시 서울시 동일 금액 매칭", contact:"02-2133-7395", url:"https://youth.seoul.go.kr/site/main/welfare/welfareDetail?welfare_id=13", tag:"청년" },
-    { name:"서울 임신출산 의료비 지원", desc:"임산부 1인당 100만원 국민행복카드 지원", contact:"02-120", url:"https://www.seoul.go.kr", tag:"임신·출산" },
-    { name:"어르신 교통비 지원 (65세↑)", desc:"서울 거주 만 65세 이상, 연 10만원 교통카드 충전", contact:"주민센터", url:"https://www.seoul.go.kr", tag:"노인" },
+    { name:"서울 임신출산 의료비 지원", desc:"임산부 1인당 100만원 국민행복카드 지원", contact:"1577-1000", url:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004577", tag:"임신·출산" },
+    { name:"어르신 교통비 지원 (65세↑)", desc:"서울 거주 만 65세 이상, 연 10만원 교통카드 충전", contact:"02-120", url:"https://wis.seoul.go.kr", tag:"노인" },
   ],
   "경기도": [
     { name:"경기도 청년기본소득", desc:"경기도 거주 만 24세, 분기 25만원 (연 100만원)", contact:"031-120", url:"https://basicincome.gg.go.kr", tag:"청년" },
     { name:"경기도 산후조리 지원금", desc:"출산 가정 산후조리비 최대 100만원 지원", contact:"031-8008-2114", url:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004568", tag:"임신·출산" },
     { name:"경기도 무한돌봄 긴급복지", desc:"위기 가구 생계·의료·주거비 신속 지원", contact:"031-120", url:"https://www.ggwf.or.kr", tag:"긴급" },
     { name:"경기도 청년 노동자 통장", desc:"중소기업 재직 청년, 2년 저축 시 최대 1,080만원", contact:"031-120", url:"https://www.jobaba.net", tag:"청년" },
-    { name:"경기도 어르신 교통비 지원", desc:"만 65세 이상, 연 12만원 교통카드 충전", contact:"주민센터", url:"https://www.ggwf.or.kr", tag:"노인" },
+    { name:"경기도 어르신 교통비 지원", desc:"만 65세 이상, 연 12만원 교통카드 충전", contact:"031-120", url:"https://www.ggwf.or.kr", tag:"노인" },
     { name:"경기도 장애인 이동지원", desc:"장애인 콜택시·이동 차량 무료 이용", contact:"031-120", url:"https://www.ggwf.or.kr", tag:"장애인" },
   ]
 };
