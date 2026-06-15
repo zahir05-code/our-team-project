@@ -1355,6 +1355,20 @@ const WELFARE_CALENDAR = [
       applyLabel:"홈택스 간편 신청하기 →",
     },
   },
+  {
+    month:5, tag:"5월", color:"#7c3aed",
+    name:"청년내일저축계좌 신청",
+    desc:"저소득 청년 월 10만 원 저축 시 정부 30만 원 매칭 — 3년 만기 최대 1,440만 원",
+    detail:{
+      target:"신청 당시 만 19~34세 (수급자·차상위는 만 15~39세)\n근로·사업소득 월 50만 원 초과 ~ 220만 원 이하\n기준 중위소득 100% 이하 가구",
+      benefit:"본인 월 10만 원 저축 시\n→ 정부 근로소득장려금 월 30만 원 추가 지원\n3년 만기 시 본인 360만 원 + 정부 1,080만 원 = 총 1,440만 원\n(이자 및 이자소득세 면제 포함)",
+      how:"① 복지로 (bokjiro.go.kr) 온라인 신청\n② 읍·면·동 주민센터(행정복지센터) 방문 신청\n※ 매년 5~6월 모집 공고 — 정확한 일정은 복지로 공지 확인",
+      period:"매년 5~6월 모집 (연 1회)\n3년 의무 가입 (중도 해지 시 정부 지원금 반환)",
+      contact:"보건복지부 ☎ 129\n복지로 콜센터 ☎ 129",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00017392",
+      applyLabel:"복지로 청년내일저축계좌 신청하기 →",
+    },
+  },
   /* ────── 6월 ────── */
   {
     month:6, tag:"6월", color:"#0891b2",
@@ -1368,6 +1382,20 @@ const WELFARE_CALENDAR = [
       contact:"서울청년포털 ☎ 02-2133-5497\n다산콜센터 ☎ 120",
       applyUrl:"https://youth.seoul.go.kr/site/main/welfare/welfareDetail?welfare_id=9",
       applyLabel:"서울청년포털 청년수당 신청하기 →",
+    },
+  },
+  {
+    month:6, tag:"6월", color:"#16a34a",
+    name:"주거급여 신청",
+    desc:"저소득 가구 월세 최대 33만 원 지원 — 임차가구·자가가구 모두 해당",
+    detail:{
+      target:"기준 중위소득 48% 이하 가구\n임차가구: 실제 임차료 지원 (지역·가구원수별 상한액)\n자가가구: 주택 수선·개보수 비용 지원\n※ 생계·의료급여 수급자도 별도 신청 필요",
+      benefit:"임차급여: 서울 기준 1인 가구 월 최대 33만 원 / 4인 가구 월 최대 52만 7,000원\n자가급여: 수선 유지비 (경보수 457만 원 / 중보수 849만 원 / 대보수 1,241만 원)\n(2026년 기준)",
+      how:"① 읍·면·동 주민센터(행정복지센터) 방문 신청\n② 복지로 온라인 신청 (bokjiro.go.kr)\n③ 국토부 마이홈포털 (myhome.go.kr) 정보 확인",
+      period:"상시 신청 가능 (연중 수시)\n여름 이사 전(6월) 신청 시 7월부터 지원 가능",
+      contact:"LH 주거급여 콜센터 ☎ 1600-0777\n주민센터 ☎ 120 (서울) / 031-120 (경기)",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004185",
+      applyLabel:"복지로 주거급여 신청하기 →",
     },
   },
   /* ────── 7월 ────── */
@@ -1473,6 +1501,20 @@ const WELFARE_CALENDAR = [
       applyLabel:"경기도 청년기본소득 신청하기 →",
     },
   },
+  {
+    month:11, tag:"11월", color:"#ea580c",
+    name:"독감 예방접종 무료 지원",
+    desc:"만 65세 이상·어린이(생후 6개월~13세) 독감 예방접종 무료 — 지역 보건소·병원",
+    detail:{
+      target:"• 만 65세 이상 어르신 (전원 무료)\n• 생후 6개월 ~ 만 13세 어린이 (전원 무료)\n• 임산부 (전원 무료)\n• 기초생활수급자·차상위계층 (전원 무료)",
+      benefit:"인플루엔자(독감) 예방접종 1회 무료\n※ 12세 이하 어린이 최초 접종자: 4주 간격 2회 접종\n전국 지정 의료기관 및 보건소에서 접종",
+      how:"① 지역 내 지정 의료기관 방문 (예약 없이 가능, 기관별 상이)\n② 보건소 방문 (예약 권장)\n③ 예방접종도우미 사이트 (nip.kdca.go.kr)에서 지정 기관 검색",
+      period:"매년 10월 초 ~ 12월 말 (물량 소진 전)\n어르신: 10월부터 / 어린이: 9월 말부터",
+      contact:"질병관리청 예방접종도우미 ☎ 1339\n보건소 ☎ 120 (서울) / 031-120 (경기)",
+      applyUrl:"https://nip.kdca.go.kr/irgd/introduce.do?MnLv1=3&MnLv2=2",
+      applyLabel:"예방접종도우미 지정기관 검색 →",
+    },
+  },
   /* ────── 12월 ────── */
   {
     month:12, tag:"12월", color:"#dc2626",
@@ -1486,6 +1528,20 @@ const WELFARE_CALENDAR = [
       contact:"국세청 세미래 콜센터 ☎ 126",
       applyUrl:"https://www.hometax.go.kr/websquare/websquare.html?w2xPath=/ui/pp/index.xml&tmIdx=0&tm2lIdx=&tm3lIdx=",
       applyLabel:"홈택스 연말정산 미리보기 →",
+    },
+  },
+  {
+    month:12, tag:"12월", color:"#2563eb",
+    name:"동절기 긴급복지지원 신청",
+    desc:"갑작스러운 위기 가구 — 한파 기간 생계·의료·주거 긴급 지원",
+    detail:{
+      target:"소득·재산 기준 미달하지 않더라도 갑작스러운 위기 상황(실직·질병·사망·이혼 등)으로 생계 유지 곤란한 가구\n기준 중위소득 75% 이하 / 재산 2억 4,100만 원 이하 (대도시 기준)\n금융재산 600만 원 이하",
+      benefit:"생계지원: 4인 가구 기준 월 최대 162만 원\n의료지원: 최대 300만 원\n주거지원: 서울·경기 월 최대 64만 2,000원\n연료비: 동절기 가구당 월 최대 15만 원\n※ 일회성 지원, 최대 6개월 연장 가능",
+      how:"① 읍·면·동 주민센터(행정복지센터) 방문 또는 전화\n② 복지로 온라인 신청 (bokjiro.go.kr)\n③ 위기상담 전화 ☎ 129 (24시간 운영)\n※ 한파 등 재난 상황 시 현장 조사 없이 즉시 지원 가능",
+      period:"상시 신청 가능 (연중)\n12월~2월 동절기 집중 지원 기간 (한파주의보 발령 시 우선 처리)",
+      contact:"보건복지상담센터 ☎ 129 (24시간)\n읍·면·동 주민센터 ☎ 120 (서울) / 031-120 (경기)",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004186",
+      applyLabel:"복지로 긴급복지지원 신청하기 →",
     },
   },
 ];

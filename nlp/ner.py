@@ -86,17 +86,27 @@ def extract_region(text: str) -> tuple[str, str]:
     region   = ""
     district = ""
 
-    # 지역 감지 (순서: 길고 구체적인 표현 먼저)
-    region_patterns = {
-        "서울특별시": ["서울특별시", "서울시", "서울"],
-        "경기도":     ["경기도", "경기"],
+    # ── 구어체·약칭 정규화 ─────────────────────────────────────
+    # "서울 살아요", "경기 살아", "서울에 살", "경기에 있어" 등 처리
+    REGION_ALIAS: dict[str, list[str]] = {
+        "서울특별시": [
+            "서울특별시", "서울시", "서울에", "서울에서", "서울 살",
+            "서울로", "서울이에요", "서울이야", "서울 거주",
+            "서울인데", "서울에 있", "서울 사는", "서울",
+        ],
+        "경기도": [
+            "경기도", "경기에", "경기에서", "경기 살",
+            "경기로", "경기이에요", "경기인데", "경기에 있",
+            "경기 사는", "경기 거주", "경기",
+        ],
     }
-    for reg, patterns in region_patterns.items():
+    # 길고 구체적인 패턴 먼저 (이중 매칭 방지)
+    for reg, patterns in REGION_ALIAS.items():
         if any(p in text for p in patterns):
             region = reg
             break
 
-    # 구·시·군 감지 (긴 지명 우선)
+    # ── 구·시·군 감지 (긴 지명 우선) ───────────────────────────
     for d in ALL_DISTRICTS:
         if d in text:
             district = d
@@ -106,6 +116,21 @@ def extract_region(text: str) -> tuple[str, str]:
                 else:
                     region = "경기도"
             break
+
+    # ── 경기도 시·군 직접 언급 → 자동 매핑 ─────────────────────
+    # "수원에 살아요", "고양시에 있어요" 처럼 도 이름 없이 시군만 말할 때
+    if not district:
+        for d in ALL_DISTRICTS:
+            # 시/군/구 뒤에 조사가 붙은 형태도 감지 (수원에, 안양에서, 강남구에)
+            pattern = re.compile(re.escape(d) + r"(?:에|에서|에서는|으로|는|이|가|을|를)?")
+            if pattern.search(text):
+                district = d
+                if not region:
+                    if d in ALLOWED_SEOUL_DISTRICTS:
+                        region = "서울특별시"
+                    else:
+                        region = "경기도"
+                break
 
     return region, district
 
