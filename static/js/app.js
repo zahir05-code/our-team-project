@@ -959,16 +959,16 @@ function _ontMatchLabel(p, ont) {
 }
 
 const _MATCH_META = {
-  def: { label:"✅ 즉시 신청 가능",  cls:"badge-def" },
-  pos: { label:"🔍 조건 확인 필요",  cls:"badge-pos" },
-  fut: { label:"📌 향후 해당 가능",  cls:"badge-fut" },
+  def: { label: () => T("badge_def"), cls:"badge-def" },
+  pos: { label: () => T("badge_pos"), cls:"badge-pos" },
+  fut: { label: () => T("badge_fut"), cls:"badge-fut" },
 };
 
 function renderSourceTabs(buckets) {
   const tabs = [
-    { key:"central", label:"중앙부처", desc:"정부 부처가 제공하는 전국민 복지서비스" },
-    { key:"local",   label:"지자체",   desc:"서울·경기 지역 전용 복지서비스" },
-    { key:"private", label:"민간",     desc:"민간·재단·협회 복지서비스" },
+    { key:"central", label: T("tab_central"), desc: T("tab_desc_central") },
+    { key:"local",   label: T("tab_local"),   desc: T("tab_desc_local")   },
+    { key:"private", label: T("tab_private"), desc: T("tab_desc_private") },
   ].filter(t => buckets[t.key].length > 0);
 
   if (!tabs.length) return "";
@@ -1008,7 +1008,7 @@ function renderUnifiedCard(item, bucket, ci) {
       <div class="uni-name">${p.name}</div>
       <p class="uni-desc">${p.description || ""}</p>
       <a class="uni-apply-btn" href="${p.url}" target="_blank" rel="noopener">
-        신청 페이지로 →
+        ${T("acc_apply_label")}
       </a>
     </div>`;
   }
@@ -1034,7 +1034,7 @@ function renderUnifiedCard(item, bucket, ci) {
       </div>
       <div class="acc-group">
         ${_accRow(`${uid}-ben`, "💰", "지원내용", p.benefit && p.benefit !== p.description ? p.benefit : "")}
-        ${_accRow(`${uid}-how`, "📋", "신청방법", howContent)}
+        ${_accRow(`${uid}-how`, "📋", T("acc_how"), howContent)}
       </div>
     </div>`;
   }
@@ -1053,7 +1053,7 @@ function renderUnifiedCard(item, bucket, ci) {
 
   return `<div class="uni-card uni-card--${match}" data-tags="${trTags.join(",")}">
     <div class="uni-tags">
-      <span class="uni-match-badge ${meta.cls}">${meta.label}</span>
+      <span class="uni-match-badge ${meta.cls}">${meta.label()}</span>
       ${trTags.map(t=>`<span class="uni-tag">${t}</span>`).join("")}
     </div>
     <div class="uni-name">${name}</div>
@@ -1063,9 +1063,9 @@ function renderUnifiedCard(item, bucket, ci) {
       <a class="uni-meta-item tel-link" href="tel:${p.phone.replace(/[^0-9]/g,'')}">${p.phone} ☎</a>
     </div>
     <div class="acc-group">
-      ${trDocs.length ? _accRow(`${uid}-doc`, "📄", "필요서류",
+      ${trDocs.length ? _accRow(`${uid}-doc`, "📄", T("acc_docs"),
           trDocs.map(d=>`<span class="acc-doc-item">• ${d}</span>`).join("")) : ""}
-      ${(()=>{ const ai=buildApplyUrl({url:p.apply_url,name:p.name,source:p.source||"",policy_id:p.policy_id||""}); return _accRow(`${uid}-how`,"📋","신청방법",`<a class="acc-site-link" href="${ai.url}" target="_blank" rel="noopener">${ai.label}</a>`); })()}
+      ${(()=>{ const ai=buildApplyUrl({url:p.apply_url,name:p.name,source:p.source||"",policy_id:p.policy_id||""}); return _accRow(`${uid}-how`,"📋",T("acc_how"),`<a class="acc-site-link" href="${ai.url}" target="_blank" rel="noopener">${ai.label}</a>`); })()}
     </div>
   </div>`;
 }
@@ -1090,7 +1090,7 @@ function renderSupaCards(policies) {
         ${p.benefit ? `<div class="bk-meta-row"><span class="bk-meta-label">제공유형</span><span class="bk-meta-val">${p.benefit}</span></div>` : ""}
         ${p.contact ? `<div class="bk-meta-row"><span class="bk-meta-label">문의처</span><span class="bk-meta-val">${p.contact}</span></div>` : ""}
       </div>
-      ${_accRow(howId, "📋", "신청방법", [
+      ${_accRow(howId, "📋", T("acc_how"), [
           p.how_to_apply ? `<p class="acc-how-text">${p.how_to_apply}</p>` : "",
           `<a class="acc-site-link" href="${applyInfo.url}" target="_blank" rel="noopener">🔗 ${applyInfo.label}</a>`
         ].join(""))}
@@ -1165,10 +1165,10 @@ function renderOntPolicy(p, type) {
   // 아코디언용 고유 ID
   const uid = p.policy_id.replace(/\W/g,"_") + "_" + type;
   const howAcc  = p.apply_url
-    ? (()=>{ const ai=buildApplyUrl({url:p.apply_url,name:p.name,source:p.source||"",policy_id:p.policy_id||""}); return _accRow("ont-how-"+uid,"📋","신청방법",`<a class="acc-site-link" href="${ai.url}" target="_blank" rel="noopener">${ai.label}</a>`); })()
+    ? (()=>{ const ai=buildApplyUrl({url:p.apply_url,name:p.name,source:p.source||"",policy_id:p.policy_id||""}); return _accRow("ont-how-"+uid,"📋",T("acc_how"),`<a class="acc-site-link" href="${ai.url}" target="_blank" rel="noopener">${ai.label}</a>`); })()
     : "";
   const docsAcc = trDocs.length
-    ? _accRow("ont-docs-" + uid, "📄", "필요서류",
+    ? _accRow("ont-docs-" + uid, "📄", T("acc_docs"),
         trDocs.map(d => `<span class="acc-doc-item">• ${d}</span>`).join("")) : "";
 
   return `<div class="ont-card ont-card-${type}" data-tags="${trTags.join(",")}">
@@ -1823,7 +1823,7 @@ function openCalDetail(idx) {
 
   if (d.applyUrl) {
     bodyHtml += `<div class="acc-group cal-detail-acc">
-      ${_accRow("cal-how-" + idx, "📋", "신청방법",
+      ${_accRow("cal-how-" + idx, "📋", T("acc_how"),
         `<a class="acc-site-link" href="${d.applyUrl}" target="_blank" rel="noopener">🔗 ${d.applyLabel || "해당 서비스 바로가기 →"}</a>`)}
     </div>`;
   }
@@ -2067,8 +2067,8 @@ function renderProResult(data, age) {
         <div class="pro-card-name">${name}</div>
         <p class="pro-card-desc">${desc}</p>
         <div class="acc-group">
-          ${_accRow(`${uid}-how`, "📋", "신청방법", howContent)}
-          ${docsContent ? _accRow(`${uid}-doc`, "📄", "필요서류", docsContent) : ""}
+          ${_accRow(`${uid}-how`, "📋", T("acc_how"), howContent)}
+          ${docsContent ? _accRow(`${uid}-doc`, "📄", T("acc_docs"), docsContent) : ""}
         </div>
       </div>`;
     }).join("");
@@ -2450,7 +2450,7 @@ function openSavedDetail(idx) {
       <div class="sd-card">
         <div class="sd-name">${n}</div>
         <div class="acc-group">
-          ${_accRow(_sdHowId(n,i), "📋", "신청방법",
+          ${_accRow(_sdHowId(n,i), "📋", T("acc_how"),
             `<a class="acc-site-link" href="${searchUrl}" target="_blank" rel="noopener">🔗 복지로 해당 서비스 바로가기 →</a>`)}
         </div>
       </div>`;
@@ -2470,7 +2470,7 @@ function openSavedDetail(idx) {
         <div class="sd-name">${it.name}</div>
         ${it.desc ? `<div class="sd-desc">${it.desc}</div>` : ""}
         <div class="acc-group">
-          ${_accRow(sdUid+"-how", "📋", "신청방법",
+          ${_accRow(sdUid+"-how", "📋", T("acc_how"),
             `<a class="acc-site-link" href="${applyInfo.url}" target="_blank" rel="noopener">🔗 ${applyInfo.label}</a>`)}
         </div>
       </div>`;
