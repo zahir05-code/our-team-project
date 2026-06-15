@@ -920,9 +920,9 @@ function applyLang(lang) {
     li.classList.toggle("active", li.dataset.lang === lang);
   });
 
-  // 하단 탭 언어 아이콘 업데이트
-  const bnavFlag = document.getElementById("bnavLangFlag");
-  if (bnavFlag) bnavFlag.textContent = FLAG_MAP[lang] ? "🌐" : "🌐";
+  // 하단 GLOBAL 탭 국기 이미지 업데이트
+  const bnavImg = document.getElementById("bnavLangImg");
+  if (bnavImg) bnavImg.src = `https://flagcdn.com/w40/${FLAG_MAP[lang]||"kr"}.png`;
 
   // HTML lang 속성
   const langMap = { ko:"ko", en:"en", zh:"zh-Hans", ja:"ja", vi:"vi", th:"th", km:"km" };

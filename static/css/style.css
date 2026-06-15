@@ -44,7 +44,7 @@ body::before {
   padding: 20px 20px 16px;
   text-align: center;
   position: relative;
-  overflow: hidden;
+  overflow: visible; /* 드롭다운이 헤더 밖으로 나올 수 있게 */
 }
 
 .header-flag-bg { display: none; }  /* body::before 워터마크로 통합 */
@@ -60,8 +60,8 @@ body::before {
 /* ── 언어 드롭다운 (우측 상단) ── */
 .lang-dropdown-wrap {
   position: absolute;
-  top: 0; right: 0;
-  z-index: 10;
+  top: 12px; right: 12px;
+  z-index: 9999;
 }
 .lang-dropdown-btn {
   display: flex;
@@ -95,16 +95,17 @@ body::before {
 }
 .lang-dropdown-list {
   position: absolute;
-  top: calc(100% + 6px);
+  top: calc(100% + 8px);
   right: 0;
   background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.22);
   list-style: none;
-  padding: 6px 0;
-  min-width: 160px;
-  z-index: 999;
+  padding: 8px 0;
+  min-width: 180px;
+  z-index: 9999;
   animation: dropFadeIn 0.18s ease;
+  overflow: visible;
 }
 @keyframes dropFadeIn {
   from { opacity: 0; transform: translateY(-6px); }
