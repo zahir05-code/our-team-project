@@ -81,8 +81,8 @@ FastAPI (api/app.py)
 
 | 파일 | 버전 | 역할 |
 |------|------|------|
-| `templates/index.html` | v5.14 | 단일 HTML, 3탭 구조 (맞춤복지 탭 제거) |
-| `static/js/app.js` | v5.14 | 전체 앱 로직 |
+| `templates/index.html` | v5.15 | 단일 HTML, 3탭 구조 (맞춤복지 탭 제거) |
+| `static/js/app.js` | v5.15 | 전체 앱 로직 |
 | `static/js/i18n.js` | v3.4 | 한국어/영어 다국어 |
 | `static/css/style.css` | v5.7 | 전체 스타일 |
 | `static/js/welfareDeepLinks.json` | — | 복지서비스 직접 URL 딥링크 테이블 (50개) |
@@ -312,7 +312,7 @@ item.status = "none"(미신청) | "pending"(신청예정) | "done"(완료)
 
 ## 수정 시 체크리스트
 
-- JS/CSS 수정 → `index.html`의 `?v=X.X` 버전 올리기 (app.js: v5.14, style.css: v5.7)
+- JS/CSS 수정 → `index.html`의 `?v=X.X` 버전 올리기 (app.js: v5.15, style.css: v5.7)
 - 새 복지 항목 추가 → `WELFARE_CALENDAR` detail 객체 필수 포함
 - 딥링크 추가/수정 → `static/js/welfareDeepLinks.json` 직접 편집 (검색 URL 금지)
 - 지역 추가 → `welfare_analyzer/models/user_profile.py` ALLOWED 목록 + `api/routers/welfare.py` 검증 동시 수정
@@ -340,3 +340,4 @@ item.status = "none"(미신청) | "pending"(신청예정) | "done"(완료)
 | v5.12 | 경기도 LOCAL_PUBLIC/LOCAL_BENEFITS 전체 기관별 직접 URL·전화번호 분리, 복지로 맞춤서비스 중복카드 제거(link_connector.py 동적 카드 제거), 빈화면 수정(moveTWAP01P00.do POST전용 → gov.kr 포털로 교체), gov24.go.kr 교체(gov24.kr ERR_CONNECTION_REFUSED), 가사간병·발달재활 socialservice.or.kr 직접 페이지 교체, WLF ID 혼용 오류 전수정(CSV 대조) |
 | v5.13 | 경기 무료급식소 URL 수정(WLF00004572 발달장애 혼용 → mohw.go.kr 노인급식), 복지달력 근로장려금 반기신청 month 오류 수정(10월→9월), 딥링크 캐시 버전 갱신(?v=5.13) |
 | v5.14 | LOCAL_BENEFITS 제네릭 URL 교체 — 서울 임신출산(WLF00004577 CSV확인), 서울 안심소득·어르신교통비(wis.seoul.go.kr), 경기 어르신교통비 연락처 031-120 통일 |
+| v5.15 | 복지달력 7개 항목 추가 — 부모급여·아동수당·한부모가족(상시), 문화누리카드·연말정산신청(2월), 경기청년기본소득2분기(4월), 청년도약계좌(8월) — 빈 달(2·4·8월) 완전 채움 |

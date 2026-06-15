@@ -1210,6 +1210,48 @@ const WELFARE_CALENDAR = [
       applyLabel:"복지로 기초연금 신청하기 →",
     },
   },
+  {
+    month:0, tag:"상시", color:"#db2777",
+    name:"부모급여",
+    desc:"만 0~1세 영아 가정 매월 25일 지급 (0세 월 100만원 / 1세 월 50만원)",
+    detail:{
+      target:"만 2세 미만 영아를 가정에서 양육하는 부모 (어린이집·종일제 아이돌봄 미이용 가구)\n• 0세 (출생~11개월): 월 100만 원\n• 1세 (12~23개월): 월 50만 원\n※ 어린이집 이용 시 보육료 바우처로 대체 지원",
+      benefit:"• 0세아: 월 100만 원 현금 지급\n• 1세아: 월 50만 원 현금 지급\n매월 25일 신청 계좌로 직접 입금\n※ 아동수당(월 10만 원)과 중복 수급 가능",
+      how:"① 출생일로부터 60일 이내 신청 (초과 시 신청월부터 지급)\n② 읍·면·동 주민센터 방문 신청\n③ 복지로 온라인 신청 (www.bokjiro.go.kr)\n④ 정부24 (www.gov.kr) 온라인 신청\n⑤ 행복출산 원스톱 서비스로 출생신고 시 동시 신청 가능",
+      period:"연중 상시 신청 가능 (출생 후 60일 이내 신청 권장)",
+      contact:"보건복지부 복지로 콜센터 ☎ 129",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00018613",
+      applyLabel:"복지로 부모급여 신청하기 →",
+    },
+  },
+  {
+    month:0, tag:"상시", color:"#db2777",
+    name:"아동수당",
+    desc:"만 8세 미만 모든 아동 매월 25일 월 10만원 지급",
+    detail:{
+      target:"만 8세 미만 (0세~95개월) 모든 아동\n※ 소득·재산 기준 없음 (보편 지급)\n※ 외국 국적 아동은 지급 제외",
+      benefit:"월 10만 원 현금 지급 (매월 25일)\n※ 부모급여·영유아보육료와 중복 수급 가능\n※ 입양아동 포함",
+      how:"① 읍·면·동 주민센터 방문 신청\n② 복지로 온라인 신청 (www.bokjiro.go.kr)\n③ 정부24 온라인 신청\n④ 행복출산 원스톱 서비스 (출생신고 시 동시 신청)",
+      period:"연중 상시 신청 가능 (출생일로부터 60일 이내 신청 시 출생월부터 소급 지급)",
+      contact:"보건복지부 복지로 콜센터 ☎ 129",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00013233",
+      applyLabel:"복지로 아동수당 신청하기 →",
+    },
+  },
+  {
+    month:0, tag:"상시", color:"#7c3aed",
+    name:"한부모가족 아동양육비 지원",
+    desc:"한부모가구 자녀 1인당 월 20만원 + 청소년 한부모 추가 지원",
+    detail:{
+      target:"• 한부모가족: 만 18세 미만 자녀를 양육하는 모자·부자가족\n  소득인정액 기준 중위소득 60% 이하\n• 청소년 한부모: 만 24세 이하 한부모\n  소득인정액 기준 중위소득 65% 이하\n※ 취학 중인 경우 만 22세 미만까지 연장",
+      benefit:"• 아동양육비: 자녀 1인당 월 20만 원\n• 청소년 한부모 추가 아동양육비: 자녀 1인당 월 10만 원\n• 학용품비: 중·고교생 자녀 1인당 연 9만 3,000원\n• 생활보조금(아동복지시설 퇴소 청소년 한부모): 월 40만 원\n※ 복지 급여와 중복 수급 제한 있음",
+      how:"① 가까운 읍·면·동 주민센터 방문 신청\n② 복지로 온라인 신청 (www.bokjiro.go.kr)\n③ 필요 서류: 신분증, 가족관계증명서, 소득·재산 확인 서류",
+      period:"연중 상시 신청 가능",
+      contact:"여성가족부 한부모 상담전화 ☎ 1644-6621\n복지로 ☎ 129",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004569",
+      applyLabel:"복지로 한부모가족 지원 신청하기 →",
+    },
+  },
   /* ────── 1월 ────── */
   {
     month:1, tag:"1월", color:"#2563eb",
@@ -1223,6 +1265,35 @@ const WELFARE_CALENDAR = [
       contact:"국세청 세미래 콜센터 ☎ 126",
       applyUrl:"https://www.hometax.go.kr/websquare/websquare.html?w2xPath=/ui/pp/index.xml&tmIdx=0&tm2lIdx=&tm3lIdx=",
       applyLabel:"홈택스 간편 신청하기 →",
+    },
+  },
+  /* ────── 2월 ────── */
+  {
+    month:2, tag:"2월", color:"#16a34a",
+    name:"문화누리카드 신규 신청",
+    desc:"저소득층 문화·여행·체육 바우처 연 13만원 — 매년 2월 신규 신청 시작",
+    detail:{
+      target:"기초생활수급자(생계·의료·주거·교육급여) 및 차상위계층\n※ 6세 이상 (6세 미만 영유아 제외)\n※ 국내 거주 외국인 중 수급자 포함",
+      benefit:"연 13만 원 바우처 (2026년 기준)\n사용처: 공연·전시·영화·도서·음반·체육·관광 등\n※ 카드 미사용 잔액은 다음 해로 이월 가능\n※ 주민센터 또는 우체국에서 카드 수령",
+      how:"① 문화누리카드 누리집 (www.mnuri.kr) 온라인 신청\n② 읍·면·동 주민센터 방문 신청\n③ 우체국 방문 신청\n④ 전화 신청: ☎ 1544-3412",
+      period:"매년 2월 초 신규 신청 시작 (기존 수급자는 자동 재충전)\n카드 사용 기간: 2월 ~ 다음 해 1월 31일",
+      contact:"문화누리카드 고객센터 ☎ 1544-3412",
+      applyUrl:"https://www.mnuri.kr",
+      applyLabel:"문화누리카드 신청하기 →",
+    },
+  },
+  {
+    month:2, tag:"2월", color:"#2563eb",
+    name:"연말정산 신청 및 환급",
+    desc:"직장인 연말정산 2월 말까지 신청 → 3월 급여일 환급",
+    detail:{
+      target:"근로소득이 있는 모든 직장인 (중도 퇴직자 포함)\n※ 일용근로자·프리랜서(사업소득)는 5월 종합소득세 신고",
+      benefit:"• 공제 항목에 따라 납부 세금 환급 (평균 40~80만 원)\n• 인적공제, 의료비, 교육비, 보험료, 기부금, 월세 공제 등\n• 연금저축·IRP 세액공제: 최대 900만 원 납입 시 최대 148만 5,000원 환급",
+      how:"① 회사 담당자에게 소득·세액공제 신고서 제출 (1월 15일~2월 말)\n② 홈택스 간소화 서비스에서 공제 자료 조회 후 제출\n   (hometax.go.kr → 연말정산 간소화)\n③ 중도퇴직자: 5월 종합소득세 신고로 환급 가능",
+      period:"간소화 서비스 오픈: 1월 15일\n신고서 제출: 1월 15일 ~ 2월 28일 (회사별 상이)\n환급: 2월 또는 3월 급여일",
+      contact:"국세청 세미래 콜센터 ☎ 126",
+      applyUrl:"https://www.hometax.go.kr/websquare/websquare.html?w2xPath=/ui/pp/index.xml&tmIdx=0&tm2lIdx=&tm3lIdx=",
+      applyLabel:"홈택스 연말정산 간소화 →",
     },
   },
   /* ────── 3월 ────── */
@@ -1252,6 +1323,21 @@ const WELFARE_CALENDAR = [
       contact:"에너지바우처 콜센터 ☎ 1600-3190\n한국에너지공단 ☎ 1600-3101",
       applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00010086",
       applyLabel:"복지로 에너지바우처 안내 보기 →",
+    },
+  },
+  /* ────── 4월 ────── */
+  {
+    month:4, tag:"4월", color:"#0891b2",
+    name:"경기도 청년기본소득 2분기 신청",
+    desc:"경기도 만 24세 청년 — 4월 초 2분기(4~6월) 신청, 25만원 지역화폐 지급",
+    detail:{
+      target:"신청일 기준 경기도 거주 만 24세 청년\n3년 이상 경기도 거주 또는 합산 10년 이상 거주\n소득·재산 기준 없음 (보편 지급)\n※ 주민등록상 경기도 주소 기준",
+      benefit:"분기별 25만 원 × 4회 = 연 100만 원\n지역화폐(지역사랑상품권)로 지급\n대형마트·백화점·유흥업소 사용 제한, 해당 시·군 내 사용",
+      how:"① 경기도 청년기본소득 포털 (basicincome.gg.go.kr) 신청\n② 카카오톡 '청년기본소득' 채널 신청\n③ 해당 시·군 주민센터 방문 신청\n※ 분기별 신청: 1월(1분기)·4월(2분기)·7월(3분기)·10월(4분기)",
+      period:"4월 초 ~ 4월 30일 (2분기 신청)\n지급: 신청 후 약 1~2주 내 지역화폐 충전",
+      contact:"경기도 청년기본소득 ☎ 031-120",
+      applyUrl:"https://basicincome.gg.go.kr",
+      applyLabel:"경기도 청년기본소득 신청하기 →",
     },
   },
   /* ────── 5월 ────── */
@@ -1311,6 +1397,21 @@ const WELFARE_CALENDAR = [
       contact:"보건복지부 ☎ 129 / 국민연금공단 ☎ 1355",
       applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004555",
       applyLabel:"복지로 기초연금 신청하기 →",
+    },
+  },
+  /* ────── 8월 ────── */
+  {
+    month:8, tag:"8월", color:"#7c3aed",
+    name:"청년도약계좌 8월 신청",
+    desc:"만 19~34세 청년, 월 최대 70만원 저축 + 정부 기여금 (5년 만기 비과세)",
+    detail:{
+      target:"만 19~34세 (병역 이행 시 최대 6년 연장)\n개인소득: 총급여 7,500만 원 이하 (사업소득 6,300만 원 이하)\n가구소득: 기준 중위소득 250% 이하\n직전 3년 중 1회 이상 금융소득종합과세 대상자 제외",
+      benefit:"본인 월 최대 70만 원 저축\n정부 기여금: 소득구간별 월 최대 2만 4,000원 매칭\n5년 만기 시 비과세 이자 혜택\n총 약 5,000만 원 형성 가능",
+      how:"① 취급 은행 앱에서 신청\n   (KB·신한·우리·하나·NH·IBK·SC·부산·광주·전북·경남·iM뱅크)\n② 매월 약 2주간 신청 창구 운영 (은행별 일정 상이)\n③ 서민금융진흥원 안내: www.kinfa.or.kr",
+      period:"매월 약 2주간 신청 창구 운영\n8월 신청: 은행별 공지 확인 (보통 8월 초~중순 2주)",
+      contact:"서민금융진흥원 ☎ 1397\n각 취급 은행 고객센터",
+      applyUrl:"https://www.kinfa.or.kr/product/youthJumpAccount.do",
+      applyLabel:"서민금융진흥원 청년도약계좌 안내 →",
     },
   },
   /* ────── 9월 ────── */
