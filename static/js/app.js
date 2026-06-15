@@ -50,17 +50,69 @@ window.addEventListener("DOMContentLoaded", () => {
   renderChips("nlpIncomeChips",INCOME_OPTIONS,  false, "nlpIncome",T("income_options"));
   loadProfile();  // 저장된 프로필 자동 복원
   setScene("home");         // 첫 화면 씬 — 태극기 full 표시
-  loadWeatherBanner();      // 날씨 연계 복지 배너
+  loadHeaderWeather();      // 헤더 날씨 위젯 로드
 });
 
 /* ══════════════════════════════════════════════
-   날씨 연계 복지 배너
-   Open-Meteo API (무료·API키 불필요) 사용
-   서울 기준 실시간 기상 → 관련 복지서비스 안내
+   헤더 날씨 위젯
+   Open-Meteo API (무료·API키 불필요)
+   서울 실시간 기상 → 헤더 우측 날씨 버튼 + 팝오버
 ══════════════════════════════════════════════ */
-async function loadWeatherBanner() {
-  const banner = document.getElementById("weatherBanner");
-  if (!banner) return;
+
+// 날씨 데이터 캐시
+let _weatherData = null;
+
+function wxIcon(code) {
+  if (code === 0)         return "☀️";
+  if (code <= 2)          return "🌤️";
+  if (code <= 3)          return "☁️";
+  if (code <= 48)         return "🌫️";
+  if (code <= 67)         return "🌧️";
+  if (code <= 77)         return "❄️";
+  if (code <= 82)         return "🌦️";
+  if (code <= 86)         return "🌨️";
+  return "⛈️";
+}
+
+function wxAlert(t, at, wc) {
+  if (t >= 33 || at >= 35) return {
+    label:"폭염 주의", color:"#dc2626",
+    msg: `체감온도 ${at}°C — 에너지바우처·무더위쉼터 신청하세요`,
+    url: "https://www.energyvoucher.or.kr", btn:"에너지바우처 신청"
+  };
+  if (t >= 28) return {
+    label:"더위 주의", color:"#ea580c",
+    msg: "어르신·영유아 폭염 취약계층 지원 확인하세요",
+    url: "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004518", btn:"취약계층 지원 확인"
+  };
+  if (t <= -10 || at <= -15) return {
+    label:"한파 경보", color:"#1d4ed8",
+    msg: `체감온도 ${at}°C — 한파 긴급복지·에너지바우처 즉시 신청`,
+    url: "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004186", btn:"한파 긴급복지 신청"
+  };
+  if (t <= 0) return {
+    label:"영하 날씨", color:"#2563eb",
+    msg: "한파 에너지바우처 신청 대상 확인하세요",
+    url: "https://www.energyvoucher.or.kr", btn:"에너지바우처 확인"
+  };
+  if (wc >= 95) return {
+    label:"기상특보", color:"#7c3aed",
+    msg: "재난긴급생활비 지원 대상 확인하세요",
+    url: "https://www.gov.kr/portal/welfare/welfareInfo", btn:"재난지원 확인"
+  };
+  if (wc >= 51 && wc <= 86) return {
+    label:"우천·강설", color:"#0891b2",
+    msg: "어르신·장애인 외출 주의 — 재가돌봄서비스 확인",
+    url: "https://www.socialservice.or.kr/user/serviceInfo/bokji/selectWelfareServiceList.do", btn:"돌봄서비스 확인"
+  };
+  return {
+    label:"오늘의 복지", color:"#059669",
+    msg: "나에게 맞는 복지혜택을 3분 안에 찾아보세요",
+    url: null, btn: null
+  };
+}
+
+async function loadHeaderWeather() {
   try {
     const res = await fetch(
       "https://api.open-meteo.com/v1/forecast" +
@@ -70,89 +122,62 @@ async function loadWeatherBanner() {
     );
     if (!res.ok) return;
     const d   = await res.json();
-    const cur = d.current;
-    const t   = Math.round(cur.temperature_2m);
-    const at  = Math.round(cur.apparent_temperature);
-    const wc  = cur.weathercode;
+    _weatherData = d.current;
+    const t   = Math.round(_weatherData.temperature_2m);
+    const at  = Math.round(_weatherData.apparent_temperature);
+    const wc  = _weatherData.weathercode;
 
-    // 날씨 코드 → 이모지
-    function wxIcon(code) {
-      if (code === 0)              return "☀️";
-      if (code <= 2)              return "🌤️";
-      if (code <= 3)              return "☁️";
-      if (code <= 48)             return "🌫️";
-      if (code <= 67)             return "🌧️";
-      if (code <= 77)             return "❄️";
-      if (code <= 82)             return "🌦️";
-      if (code <= 86)             return "🌨️";
-      return "⛈️";
+    // 헤더 버튼 업데이트
+    const iconEl = document.getElementById("hwIcon");
+    const tempEl = document.getElementById("hwTemp");
+    if (iconEl) iconEl.textContent = wxIcon(wc);
+    if (tempEl) tempEl.textContent = `${t}°C`;
+
+    // 팝오버 내용 미리 생성
+    const alert = wxAlert(t, at, wc);
+    const pop = document.getElementById("hwPopContent");
+    if (pop) {
+      pop.innerHTML =
+        `<div class="hw-pop-row">` +
+          `<span class="hw-pop-icon">${wxIcon(wc)}</span>` +
+          `<div>` +
+            `<div class="hw-pop-temp">${t}°C <span style="font-size:0.9rem;color:${alert.color};font-weight:700">${alert.label}</span></div>` +
+            `<div class="hw-pop-feel">체감 ${at}°C · 서울</div>` +
+          `</div>` +
+        `</div>` +
+        `<hr class="hw-pop-divider">` +
+        `<div class="hw-pop-alert">💡 ${alert.msg}</div>` +
+        (alert.url
+          ? `<a class="hw-pop-link" href="${alert.url}" target="_blank" rel="noopener">${alert.btn} →</a>`
+          : `<button class="hw-pop-link" onclick="bnavGo('home');closeHeaderWeather()">복지 찾기 시작 →</button>`
+        );
     }
-
-    let icon, weather, msg, url, color;
-
-    if (t >= 33 || at >= 35) {
-      // 폭염
-      icon    = "🌡️";
-      weather = `폭염 ${t}°C (체감 ${at}°C)`;
-      msg     = "에너지바우처·무더위쉼터 신청하세요";
-      url     = "https://www.energyvoucher.or.kr";
-      color   = "#dc2626";
-    } else if (t >= 28) {
-      // 더위 주의
-      icon    = "☀️";
-      weather = `더위 ${t}°C`;
-      msg     = "어르신·영유아 폭염 취약계층 지원 확인";
-      url     = "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004518";
-      color   = "#ea580c";
-    } else if (t <= -10 || at <= -15) {
-      // 한파 경보
-      icon    = "🥶";
-      weather = `한파 ${t}°C (체감 ${at}°C)`;
-      msg     = "한파긴급복지·에너지바우처 즉시 신청";
-      url     = "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004186";
-      color   = "#1d4ed8";
-    } else if (t <= 0) {
-      // 영하
-      icon    = "❄️";
-      weather = `영하 ${t}°C`;
-      msg     = "한파 대비 에너지바우처 신청 확인하세요";
-      url     = "https://www.energyvoucher.or.kr";
-      color   = "#2563eb";
-    } else if (wc >= 95) {
-      // 뇌우·폭풍
-      icon    = "⛈️";
-      weather = "기상특보 발효 중";
-      msg     = "재난긴급생활비 지원 대상 확인하세요";
-      url     = "https://www.gov.kr/portal/welfare/welfareInfo";
-      color   = "#7c3aed";
-    } else if (wc >= 51 && wc <= 86) {
-      // 비·눈
-      icon    = wxIcon(wc);
-      weather = `${t}°C`;
-      msg     = "어르신·장애인 외출 주의 — 돌봄서비스 확인";
-      url     = "https://www.socialservice.or.kr/user/serviceInfo/bokji/selectWelfareServiceList.do";
-      color   = "#0891b2";
-    } else {
-      // 맑음·평온 — 오늘의 복지 한마디
-      icon    = wxIcon(wc);
-      weather = `서울 ${t}°C`;
-      msg     = "나에게 맞는 복지혜택을 찾아보세요 →";
-      url     = null;
-      color   = "#059669";
-    }
-
-    banner.innerHTML =
-      `<span class="wb-icon">${icon}</span>` +
-      `<span class="wb-weather" style="color:${color}">${weather}</span>` +
-      `<span class="wb-sep">·</span>` +
-      `<span class="wb-msg">${msg}</span>` +
-      (url ? `<a class="wb-link" href="${url}" target="_blank" rel="noopener">바로가기</a>` : "");
-    banner.classList.remove("hidden");
-
-  } catch (_) {
-    /* 네트워크 오류 시 배너 조용히 숨김 유지 */
-  }
+  } catch (_) { /* 날씨 오류 시 버튼 기본값 유지 */ }
 }
+
+function toggleHeaderWeather() {
+  const pop = document.getElementById("headerWeatherPop");
+  if (!pop) return;
+  const isOpen = !pop.classList.contains("hidden");
+  if (isOpen) { pop.classList.add("hidden"); }
+  else        { pop.classList.remove("hidden"); }
+}
+
+function closeHeaderWeather() {
+  const pop = document.getElementById("headerWeatherPop");
+  if (pop) pop.classList.add("hidden");
+}
+
+// 팝오버 외부 클릭 시 닫기
+document.addEventListener("click", function(e) {
+  const wrap = document.getElementById("headerWeatherBtn");
+  const pop  = document.getElementById("headerWeatherPop");
+  if (pop && !pop.classList.contains("hidden")) {
+    if (!pop.contains(e.target) && e.target !== wrap && !wrap?.contains(e.target)) {
+      pop.classList.add("hidden");
+    }
+  }
+});
 
 /* ══════════════════════════════════════════════
    중위소득 자동 변환 엔진 (2025년 기준)

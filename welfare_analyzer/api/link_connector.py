@@ -36,7 +36,7 @@ SITUATION_SERVICE_CODE = {
 
 # 중앙 부처별 복지 포털 링크 — 메인 또는 안정적인 1단계 하위 URL만 사용
 CENTRAL_GOV_LINKS = {
-    "보조금24":             "https://www.gov24.go.kr",
+    "보조금24":             "https://www.gov.kr/portal/rcvfvrInfo",
     "정부24 복지서비스":    "https://www.gov.kr/portal/welfare/welfareInfo",
     "보건복지부":           "https://www.mohw.go.kr",
     "고용노동부 고용서비스":"https://www.moel.go.kr",

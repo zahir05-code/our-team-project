@@ -139,42 +139,77 @@ main {
 .logo    { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.5px; }
 .tagline { font-size: 0.85rem; opacity: 0.85; margin-top: 4px; }
 
-/* ── 언어 드롭다운 (우측 상단) ── */
-.lang-dropdown-wrap {
+/* ── 헤더 날씨 위젯 (우측 상단) ── */
+.header-weather-wrap {
   position: absolute;
   top: 12px; right: 12px;
   z-index: 9999;
 }
-.lang-dropdown-btn {
+.header-weather-btn {
   display: flex;
   align-items: center;
   gap: 5px;
-  padding: 6px 10px;
+  padding: 6px 12px;
   background: rgba(255,255,255,0.18);
   border: 1.5px solid rgba(255,255,255,0.50);
   border-radius: 20px;
   color: #fff;
-  font-size: 0.78rem;
-  font-weight: 700;
+  font-size: 0.82rem;
+  font-weight: 800;
   cursor: pointer;
   transition: background 0.18s, border-color 0.18s;
   white-space: nowrap;
-  /* 토글 클릭 보장 */
   -webkit-tap-highlight-color: transparent;
   user-select: none;
+  letter-spacing: -0.3px;
 }
-.lang-dropdown-btn:hover {
+.header-weather-btn:hover {
   background: rgba(255,255,255,0.30);
   border-color: rgba(255,255,255,0.85);
 }
-.lang-drop-arrow {
-  font-size: 0.7rem;
-  opacity: 0.85;
-  transition: transform 0.2s;
+/* 날씨 팝오버 */
+.header-weather-pop {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 260px;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.9);
+  border-radius: 18px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+  padding: 14px 16px;
+  z-index: 9999;
+  animation: dropFadeIn 0.18s ease;
+  color: #1a1a2e;
 }
-.lang-dropdown-btn[aria-expanded="true"] .lang-drop-arrow {
-  transform: rotate(180deg);
+.hw-pop-row {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 8px;
 }
+.hw-pop-icon  { font-size: 1.6rem; }
+.hw-pop-temp  { font-size: 1.5rem; font-weight: 900; color: #111; }
+.hw-pop-feel  { font-size: 0.75rem; color: #6b7280; margin-top: 2px; }
+.hw-pop-divider { border: none; border-top: 1px solid #e5e7eb; margin: 10px 0; }
+.hw-pop-alert { font-size: 0.82rem; font-weight: 700; color: #374151; line-height: 1.5; margin-bottom: 10px; }
+.hw-pop-link {
+  display: block; width: 100%;
+  padding: 9px; background: #2563eb;
+  color: #fff; border: none; border-radius: 10px;
+  font-size: 0.82rem; font-weight: 800; text-align: center;
+  text-decoration: none; cursor: pointer;
+  transition: background 0.15s;
+}
+.hw-pop-link:hover { background: #1d4ed8; }
+
+@keyframes dropFadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 기존 lang-dropdown — GLOBAL 탭에서만 사용 (헤더 드롭다운 비활성) */
+.lang-dropdown-wrap { display: none; }   /* 헤더 언어 드롭다운 숨김 */
 .lang-dropdown-list {
   position: absolute;
   top: calc(100% + 8px);
@@ -188,10 +223,6 @@ main {
   z-index: 9999;
   animation: dropFadeIn 0.18s ease;
   overflow: visible;
-}
-@keyframes dropFadeIn {
-  from { opacity: 0; transform: translateY(-6px); }
-  to   { opacity: 1; transform: translateY(0); }
 }
 .lang-dropdown-list li {
   display: flex;
@@ -236,46 +267,8 @@ main {
 
 .main { max-width: 480px; margin: 0 auto; padding: 12px 16px 40px; }
 
-/* ════════════════════════════════════════
-   날씨 연계 복지 배너
-════════════════════════════════════════ */
-.weather-banner {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 10px 16px;
-  margin-bottom: 12px;
-  background: rgba(255,255,255,0.70);
-  backdrop-filter: blur(14px) saturate(160%);
-  -webkit-backdrop-filter: blur(14px) saturate(160%);
-  border: 1px solid rgba(255,255,255,0.85);
-  border-radius: 14px;
-  box-shadow: 0 2px 12px rgba(31,38,135,0.08);
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: #1a1a2e;
-  cursor: default;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  animation: fadeIn 0.4s ease;
-}
-.wb-icon    { font-size: 1.1rem; flex-shrink: 0; }
-.wb-weather { font-weight: 800; flex-shrink: 0; }
-.wb-sep     { color: #d1d5db; flex-shrink: 0; }
-.wb-msg     { flex: 1; overflow: hidden; text-overflow: ellipsis; color: #374151; }
-.wb-link {
-  flex-shrink: 0;
-  font-size: 0.85rem;
-  font-weight: 800;
-  color: #2563eb;
-  text-decoration: none;
-  padding: 2px 8px;
-  background: rgba(37,99,235,0.10);
-  border-radius: 8px;
-  transition: background 0.15s;
-}
-.wb-link:hover { background: rgba(37,99,235,0.20); }
+/* 날씨 배너 — main 내 배너는 제거 (헤더 위젯으로 통합) */
+.weather-banner { display: none !important; }
 
 /* ════════════════════════════════════════
    입력 카드
