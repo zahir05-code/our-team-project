@@ -27,7 +27,7 @@ body::after {
   content: "";
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: -1;   /* 콘텐츠 아래로 완전히 후퇴 */
   pointer-events: none;
   background:
     /* 좌상단 — 태극 파랑 오브 */
@@ -50,7 +50,7 @@ body::before {
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   width: 600px; height: 420px;
-  z-index: 0;
+  z-index: -1;   /* 콘텐츠 아래, body::after 위 */
   pointer-events: none;
   background: url("https://flagcdn.com/w640/kr.png") center center / contain no-repeat;
   opacity: 0;           /* 기본 숨김 — JS가 scene 클래스 부여 */
@@ -105,11 +105,10 @@ body.scene-result::before {
   position: relative;
   z-index: 1;
 }
-/* main: z-index 없이 relative만 → backdrop-filter가 fixed 배경 정상 참조 */
+/* main: z-index 제거 → 새로운 stacking context 생성 안 함, 배경 pseudo-element가 -1이므로 main이 자동 위 */
 main {
   position: relative;
-  z-index: 1;
-  color: #1a1a2e;  /* 텍스트 색상 명시 (상속 실패 방지) */
+  color: #1a1a2e;
 }
 
 /* ── 헤더 — 딥 글래스 ── */
