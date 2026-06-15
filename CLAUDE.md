@@ -81,11 +81,11 @@ FastAPI (api/app.py)
 
 | 파일 | 버전 | 역할 |
 |------|------|------|
-| `templates/index.html` | v5.15 | 단일 HTML, 3탭 구조 (맞춤복지 탭 제거) |
-| `static/js/app.js` | v5.15 | 전체 앱 로직 |
-| `static/js/i18n.js` | v3.4 | 한국어/영어 다국어 |
-| `static/css/style.css` | v5.7 | 전체 스타일 |
-| `static/js/welfareDeepLinks.json` | — | 복지서비스 직접 URL 딥링크 테이블 (50개) |
+| `templates/index.html` | v5.27 | 단일 HTML, 3탭 구조 + 헤더 날씨 위젯 |
+| `static/js/app.js` | v5.27 | 전체 앱 로직 |
+| `static/js/i18n.js` | v3.4+ | 7개 언어 다국어 (ko/en/zh/ja/vi/th/km) |
+| `static/css/style.css` | v5.22 | 전체 스타일 |
+| `static/js/welfareDeepLinks.json` | v5.27 | 복지서비스 직접 URL 딥링크 테이블 (50개, 전수검증 완료) |
 
 **버전 캐시 무효화**: HTML에서 `?v=X.X` 쿼리스트링으로 관리. 파일 수정 시 반드시 버전 올릴 것.
 
@@ -115,8 +115,22 @@ SAVED_KEY   = "athena_saved_results" // 저장된 혜택 장바구니
 ### 카드 UI 원칙 (전 탭 통일)
 - **선정이유 아코디언 없음** — 제거 완료
 - **하단 단독 신청 버튼 없음** — 제거 완료
-- **신청 링크 위치**: "신청하기" 아코디언 내부 `.acc-site-link` 파란 버튼
+- **신청방법 아코디언 없음** — v5.24에서 제거 완료
+- **공식공고문 보기 버튼** (`.official-notice-btn`): 카드 하단 파란 그라데이션 버튼 → `_noticeUrl(p)` 경유 공식 서비스 페이지 직접 이동
 - 적용 탭: 맞춤복지 결과, 복지전문가 조회, 장바구니 상세, 복지달력 상세
+
+### 공식공고문 URL 라우팅 (`_noticeUrl(p)`) — 4순위
+```
+1순위: apply_url에 wlfareInfoId= 포함 → 복지로 서비스 상세 직접 URL (가장 신뢰)
+2순위: apply_url이 기관 특정 서비스 직접 URL (홈·차단패턴 제외)
+3순위: welfareDeepLinks.json detailUrl (차단패턴 제외)
+4순위: buildApplyUrl(p).url fallback
+```
+
+**차단 패턴** (코드 레벨 필터 — 절대 노출 불가):
+- `/pcd/` — 정책자료실 문서목록 (서비스 상세 아님)
+- `search.do` — 검색결과 페이지
+- `mogef.go.kr/wm/`, `mogef.go.kr/sp/fam/`, `mogef.go.kr/mp/` — 성평등가족부 개편으로 404 확인
 
 ### 신청 URL 라우팅 (`buildApplyUrl(p)`) — 4순위
 ```
@@ -272,49 +286,57 @@ item.status = "none"(미신청) | "pending"(신청예정) | "done"(완료)
 ### 확인된 작동 기관 URL
 | 기관 | URL |
 |------|-----|
-| 복지로 | bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/... |
-| 국민건강보험 | nhis.or.kr/nhis/policy/... |
-| 워크넷 | work.go.kr/empInfo/... |
-| 고용보험 | ei.go.kr/ei/eih/... |
+| 복지로 | bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF... |
+| 국민건강보험 | nhis.or.kr/nhis/policy/wbhace01900m01.do (틀니·임플란트) |
+| 국민건강보험 | nhis.or.kr/nhis/policy/wbhace02100m01.do (장애인 보조기기) |
+| 워크넷 | work.go.kr/empInfo/neisWorkerService/neisWorkerServiceView.do |
+| 워크넷 중장년 | work.go.kr/senior/info/seniorJobRecommInfo.do |
+| 고용보험 | ei.go.kr/ei/eih/eg/b/ehFrontEIApply.do |
 | 새일센터 | saeil.mogef.go.kr |
-| 여성가족부 | mogef.go.kr/mp/pcd/... |
-| 서민금융진흥원 | kinfa.or.kr/product/... |
-| 소상공인진흥공단 | semas.or.kr/web/... |
-| 문화누리카드 | mnuri.kr |
-| 에너지바우처 | energyvoucher.or.kr |
-| LH공사 | lh.or.kr |
-| 중앙치매센터 | nid.or.kr |
-| 서울청년포털 | youth.seoul.go.kr |
-| 서울복지포털 | welfare.seoul.go.kr |
+| 성평등가족부 홈 | mogef.go.kr (홈페이지만 안전 — 내부 경로 사용 금지) |
+| 서민금융진흥원 | kinfa.or.kr/product/youthJumpAccount.do |
+| 소상공인진흥공단 | semas.or.kr/web/SUB01/030101.kmdc |
+| 문화누리카드 | bokjiro WLF00004574 |
+| 에너지바우처 | bokjiro WLF00010086 |
+| 아이돌봄 | idolbom.go.kr |
+| 중앙치매센터 | nid.or.kr/info/diction_online1.aspx |
+| 서울청년포털 | youth.seoul.go.kr/site/main/content/monthlyrent |
+| 서울복지포털 | welfare.seoul.go.kr/site/main/content/emergency_welfare |
 | 경기도기본소득 | basicincome.gg.go.kr |
-| 경기일자리재단 | jobaba.net |
+| 경기일자리재단 | jobaba.net/fntn/dtl.do?trnsprtNo=33 |
 | 서울정신건강 | seoulmentalhealth.kr |
 | 경기정신건강 | gmhc.or.kr |
-| 아이돌봄 | idolbom.go.kr |
-| 사회서비스 전자바우처 | socialservice.or.kr/user/serviceInfo/... (가사간병·발달재활) |
+| 사회서비스 전자바우처 | socialservice.or.kr/user/serviceInfo/W0000005/view.do (발달재활) |
+| 사회서비스 전자바우처 | socialservice.or.kr/user/serviceInfo/W0000009/view.do (가사간병) |
 | 푸드뱅크·마켓 | foodbank1377.org |
-| 보조금24 | www.gov24.go.kr |
-| 경기도 보건소 | health.gg.go.kr |
 | 경기도 복지재단 | www.ggwf.or.kr |
-| 보건복지부 정책 | mohw.go.kr/menu.es?mid=... |
+| 보건복지부 정책 | mohw.go.kr/menu.es?mid=a10712020000 (노인복지) |
 | 정부24 복지서비스 | gov.kr/portal/welfare/welfareInfo |
+| 보조금24 | gov.kr/portal/rcvfvrInfo |
+| 고용노동부 | moel.go.kr (홈페이지) |
 
 ### 사용 금지 URL (연결 불가 확인)
 - `www.danuri.go.kr` — ERR_CONNECTION_REFUSED (다누리 포털 접속 불가)
 - `www.ggmhc.or.kr` — DNS_NXDOMAIN (오타, 실제: gmhc.or.kr)
 - `blutouch.net` — 불안정 (대체: seoulmentalhealth.kr)
-- `liveinkorea.kr` — 서비스 종료 (대체: danuri → mogef)
-- `bokjiro.go.kr` 홈(/)  — 서비스 첫 페이지, 직접 연결 불가
+- `liveinkorea.kr` — 서비스 종료
+- `bokjiro.go.kr` 홈(/) — 직접 연결 불가
 - `www.foodbank.or.kr` — DNS_NXDOMAIN (대체: foodbank1377.org)
-- `www.gov24.kr` — ERR_CONNECTION_REFUSED (대체: www.gov24.go.kr)
+- `www.gov24.kr` — ERR_CONNECTION_REFUSED (대체: gov.kr/portal/rcvfvrInfo)
+- `mogef.go.kr/wm/...` — 성평등가족부 개편으로 404 (내부 경로 전체 사용 금지)
+- `mogef.go.kr/mp/pcd/...` — 정책자료실 문서목록 (서비스 페이지 아님)
+- `mafra.go.kr/sites/...` — 미검증 (대체: bokjiro WLF00004566)
 
 ---
 
 ## 수정 시 체크리스트
 
-- JS/CSS 수정 → `index.html`의 `?v=X.X` 버전 올리기 (app.js: v5.15, style.css: v5.7)
+- JS/CSS 수정 → `index.html`의 `?v=X.X` 버전 올리기 (app.js: v5.27, style.css: v5.22)
 - 새 복지 항목 추가 → `WELFARE_CALENDAR` detail 객체 필수 포함
 - 딥링크 추가/수정 → `static/js/welfareDeepLinks.json` 직접 편집 (검색 URL 금지)
+- **URL 수정 원칙**: CLAUDE.md "확인된 작동 URL" 목록에 있는 것만 사용. 추측 금지.
+- **mogef 내부 경로 절대 금지**: `/wm/`, `/mp/pcd/`, `/sp/fam/` — 성평등가족부 개편 후 404
+- 다국어 키 추가 → `static/js/i18n.js` 7개 언어 동시 추가 필수
 - 지역 추가 → `welfare_analyzer/models/user_profile.py` ALLOWED 목록 + `api/routers/welfare.py` 검증 동시 수정
 - Supabase 정책 구조 변경 → `api/schemas.py:SupabasePolicy` + `ontology/welfare_collector.py` 동시 수정
 - 배포: `git push origin main` → Railway 자동 빌드 (1~2분 소요)
@@ -341,3 +363,10 @@ item.status = "none"(미신청) | "pending"(신청예정) | "done"(완료)
 | v5.13 | 경기 무료급식소 URL 수정(WLF00004572 발달장애 혼용 → mohw.go.kr 노인급식), 복지달력 근로장려금 반기신청 month 오류 수정(10월→9월), 딥링크 캐시 버전 갱신(?v=5.13) |
 | v5.14 | LOCAL_BENEFITS 제네릭 URL 교체 — 서울 임신출산(WLF00004577 CSV확인), 서울 안심소득·어르신교통비(wis.seoul.go.kr), 경기 어르신교통비 연락처 031-120 통일 |
 | v5.15 | 복지달력 7개 항목 추가 — 부모급여·아동수당·한부모가족(상시), 문화누리카드·연말정산신청(2월), 경기청년기본소득2분기(4월), 청년도약계좌(8월) — 빈 달(2·4·8월) 완전 채움 |
+| v5.16~v5.21 | 태극기 워터마크 배경 도입, 글래스모피즘 카드 스타일, body::after z-index -1 수정(카드 가림 버그 해결), scene-home/scene-result 분리 |
+| v5.22 | 7개 언어 다국어 전면 적용 (ko/en/zh/ja/vi/th/km), i18n.js 전체 키 확장 |
+| v5.23 | GLOBAL 탭 언어 bottom sheet 구현, 실시간 언어 전환 + 전 화면 재렌더링 (_refreshCurrentView) |
+| v5.24 | 신청방법 아코디언 완전 제거, 공식공고문 보기 버튼 전 카드 타입 적용 (_noticeBtn/_noticeUrl 신설), 헤더 날씨 위젯(Open-Meteo API), 태극기 배경 820×580px 확대·blur 2.5px |
+| v5.25 | deeplink WLF ID 오매핑 4건 수정 (FOOD_001→WLF00004566, SENIOR_001 재교체, YOUTH_003→WLF00018636, GYEONGGI_002→ggwf.or.kr), _noticeUrl 우선순위 개선 |
+| v5.26 | mogef 정책자료실(/pcd/) URL 차단패턴 추가, MULTI_001·004·005 mogef 내부경로 제거 |
+| v5.27 | mogef 내부경로 전체 404 확인 → 성평등가족부 홈페이지로 교체, _noticeUrl 방어코드 강화, deeplink 50건 전수검증 완료 (미검증 0건) |
