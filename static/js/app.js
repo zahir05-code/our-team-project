@@ -1,4 +1,4 @@
-/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.27 mogef 내부경로 404 완전 차단 + 홈페이지 안전 fallback) */
+/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.29 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
 
 /* ── 딥링크 테이블 (build_welfare_deeplinks.py 생성 JSON) ── */
 let _deepLinks = {};   // id → {detailUrl, applyUrl, matchType, ...}
@@ -56,10 +56,93 @@ function _noticeUrl(p) {
   return buildApplyUrl(p).url;
 }
 
+/* ── 신청 준비 가이드 모달 ──
+   열기: openApplyGuide(p, url)
+   닫기: closeApplyGuide()
+────────────────────────────────── */
+function openApplyGuide(pData, officialUrl) {
+  // pData: { name, required_docs, authority, phone, description, policy_id }
+  const name    = pData.name        || pData.policy_name || "";
+  const docs    = pData.required_docs || [];
+  const auth    = pData.authority   || "";
+  const phone   = pData.phone       || "";
+  const desc    = pData.description || pData.desc || "";
+
+  const docsHtml = docs.length
+    ? `<ul class="apply-guide-docs-list">${docs.map(d=>`<li>${d}</li>`).join("")}</ul>`
+    : `<ul class="apply-guide-docs-list"><li>${T("guide_docs_none")}</li></ul>`;
+
+  const telHtml = phone
+    ? `<a class="apply-guide-tel-link" href="tel:${phone.replace(/[^0-9]/g,"")}">${phone}</a>`
+    : "-";
+
+  const el = document.createElement("div");
+  el.className = "apply-guide-overlay";
+  el.id = "applyGuideOverlay";
+  el.innerHTML = `
+    <div class="apply-guide-sheet" role="dialog" aria-modal="true">
+      <div class="apply-guide-header">
+        <span class="apply-guide-title">${T("guide_title")}</span>
+        <button class="apply-guide-close" onclick="closeApplyGuide()" aria-label="닫기">✕</button>
+      </div>
+      ${name ? `<div class="apply-guide-service-name">📌 ${name}</div>` : ""}
+
+      <div class="apply-guide-section">
+        <div class="apply-guide-section-title">📋 ${T("guide_docs")}</div>
+        ${docsHtml}
+      </div>
+
+      ${desc ? `<div class="apply-guide-section">
+        <div class="apply-guide-section-title">✅ ${T("guide_qualify")}</div>
+        <div class="apply-guide-info-box">${desc}</div>
+      </div>` : ""}
+
+      <div class="apply-guide-section">
+        <div class="apply-guide-section-title">📞 ${T("guide_contact")}</div>
+        <div class="apply-guide-info-box">
+          ${auth ? `<div class="apply-guide-info-row">
+            <span class="apply-guide-info-label">${T("guide_agency")}</span>
+            <span>${auth}</span>
+          </div>` : ""}
+          ${phone ? `<div class="apply-guide-info-row">
+            <span class="apply-guide-info-label">${T("guide_phone")}</span>
+            ${telHtml}
+          </div>` : ""}
+          ${!auth && !phone ? "<span>-</span>" : ""}
+        </div>
+      </div>
+
+      <button class="apply-guide-confirm-btn" onclick="closeApplyGuide();window.open('${officialUrl}','_blank','noopener')">
+        ${T("guide_confirm")}
+      </button>
+    </div>`;
+
+  // 오버레이 클릭 시 닫기
+  el.addEventListener("click", function(e){ if(e.target===el) closeApplyGuide(); });
+  document.body.appendChild(el);
+  // 스크롤 방지
+  document.body.style.overflow = "hidden";
+}
+
+function closeApplyGuide() {
+  const el = document.getElementById("applyGuideOverlay");
+  if (el) el.remove();
+  document.body.style.overflow = "";
+}
+
 /* ── 공식공고문 버튼 HTML ── */
 function _noticeBtn(p) {
   const url = _noticeUrl(p);
-  return `<a class="official-notice-btn" href="${url}" target="_blank" rel="noopener">${T("btn_notice")}</a>`;
+  // 정책 데이터를 JSON으로 직렬화해 모달에 전달
+  const pJson = encodeURIComponent(JSON.stringify({
+    name:          p.policy_name || p.name || "",
+    required_docs: p.required_docs || [],
+    authority:     p.authority    || "",
+    phone:         p.phone        || "",
+    description:   p.description  || p.desc || "",
+    policy_id:     p.policy_id    || "",
+  }));
+  return `<button class="official-notice-btn" onclick="openApplyGuide(JSON.parse(decodeURIComponent('${pJson}')), '${url}')">${T("btn_notice")}</button>`;
 }
 
 async function loadDeepLinks() {
@@ -1223,7 +1306,11 @@ function renderOntPolicy(p, type) {
     ? `<div class="acc-group">${_accRow("ont-docs-" + uid, "📄", T("acc_docs"),
         trDocs.map(d => `<span class="acc-doc-item">• ${d}</span>`).join(""))}</div>` : "";
 
-  return `<div class="ont-card ont-card-${type}" data-tags="${trTags.join(",")}">
+  return `<div class="ont-card ont-card-${type}" data-tags="${trTags.join(",")}"
+    data-policy-id="${p.policy_id}"
+    data-authority="${(p.authority||"").replace(/"/g,"&quot;")}"
+    data-phone="${(p.phone||"").replace(/"/g,"&quot;")}"
+    data-docs="${encodeURIComponent(JSON.stringify(p.required_docs||[]))}">
     <div class="ont-card-top">
       <span class="ont-policy-name">${name}</span>
     </div>
@@ -2448,7 +2535,7 @@ function renderMyinfoSaved() {
               <button class="wst-btn ${st==="pending"?"wst-active wst-pending":""}" onclick="setItemStatus(${i},${j},'pending')">예정</button>
               <button class="wst-btn ${st==="done"?"wst-active wst-done":""}" onclick="setItemStatus(${i},${j},'done')">완료✓</button>
             </div>
-            <a href="${buildApplyUrl({ policy_id: it.policyId||"", url: it.url||"", name: it.name||"" }).url}" target="_blank" rel="noopener" class="wallet-apply-btn">신청 →</a>
+            <button class="wallet-apply-btn" onclick="(function(){const p={policy_id:${JSON.stringify(it.policyId||"")},url:${JSON.stringify(it.url||"")},name:${JSON.stringify(it.name||"")}};const pData={name:${JSON.stringify(it.name||"")},required_docs:${JSON.stringify(it.required_docs||[])},authority:${JSON.stringify(it.authority||"")},phone:${JSON.stringify(it.phone||"")},description:''};openApplyGuide(pData,buildApplyUrl(p).url)})()">신청 →</button>
           </div>
         </div>`;
       });
@@ -2458,7 +2545,7 @@ function renderMyinfoSaved() {
         html += `<div class="wallet-item wallet-item--none">
           <div class="wallet-item-left"><div class="wallet-item-name">${name}</div></div>
           <div class="wallet-item-right">
-            <a href="https://www.bokjiro.go.kr" target="_blank" class="wallet-apply-btn">신청 →</a>
+            <button class="wallet-apply-btn" onclick="openApplyGuide({name:${JSON.stringify(name||"")},required_docs:[],authority:'',phone:'',description:''},'https://www.bokjiro.go.kr/ssis-tbu/search/search.do')">신청 →</button>
           </div>
         </div>`;
       });
@@ -2561,14 +2648,13 @@ function openSavedDetail(idx) {
         source:    it.source || "",
       });
       const sdUid = `sd-${(it.policyId||it.name).replace(/\W/g,"_")}-${Math.random().toString(36).slice(2,6)}`;
+      const sdPEnc = encodeURIComponent(JSON.stringify({name:it.name||"",required_docs:it.required_docs||[],authority:it.authority||"",phone:it.phone||"",description:it.desc||""}));
+      const sdUrlEnc = encodeURIComponent(applyInfo.url);
       return `
       <div class="sd-card">
         <div class="sd-name">${it.name}</div>
         ${it.desc ? `<div class="sd-desc">${it.desc}</div>` : ""}
-        <div class="acc-group">
-          ${_accRow(sdUid+"-how", "📋", T("acc_how"),
-            `<a class="acc-site-link" href="${applyInfo.url}" target="_blank" rel="noopener">🔗 ${applyInfo.label}</a>`)}
-        </div>
+        <button class="official-notice-btn" onclick="openApplyGuide(JSON.parse(decodeURIComponent('${sdPEnc}')),decodeURIComponent('${sdUrlEnc}'))">${T("btn_notice")}</button>
       </div>`;
     }).join("");
   }
@@ -2773,11 +2859,14 @@ function saveResultToMyPage() {
   // 카드별 상세 데이터 수집
   const items = [];
   ontCards.forEach(c => {
-    const name     = c.querySelector(".ont-policy-name")?.textContent.trim() || "";
-    const desc     = c.querySelector(".ont-desc")?.textContent.trim() || "";
-    const policyId = c.dataset.policyId || "";   // ← 딥링크 조회에 필수
-    const url      = c.querySelector("a.ont-apply-btn")?.href || c.dataset.url || "";
-    if (name) items.push({ name, desc, url, policyId, type: "ont" });
+    const name      = c.querySelector(".ont-policy-name")?.textContent.trim() || "";
+    const desc      = c.querySelector(".ont-desc")?.textContent.trim() || "";
+    const policyId  = c.dataset.policyId || "";
+    const authority = c.dataset.authority || "";
+    const phone     = c.dataset.phone     || "";
+    const reqDocs   = c.dataset.docs ? JSON.parse(decodeURIComponent(c.dataset.docs)) : [];
+    const url       = c.querySelector("a.ont-apply-btn")?.href || c.dataset.url || "";
+    if (name) items.push({ name, desc, url, policyId, authority, phone, required_docs: reqDocs, type: "ont" });
   });
   bkCards.forEach(c => {
     const name     = c.dataset.name  || c.querySelector(".bk-name")?.textContent.trim() || "";
