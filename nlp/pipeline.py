@@ -98,8 +98,8 @@ def run_pipeline(
     work_raw    = intent["work_status"]
     family_raw  = intent["family_status"]
 
-    work_status   = work_raw   if isinstance(work_raw,   WorkStatus)   else None
-    family_status = family_raw if isinstance(family_raw, FamilyStatus) else None
+    work_status   = work_raw   if isinstance(work_raw,   WorkStatus)   else WorkStatus.OTHER
+    family_status = family_raw if isinstance(family_raw, FamilyStatus) else FamilyStatus.OTHER
 
     # gender 처리: UI 직접 선택 > NLP 감지
     gender_raw = intent.get("gender", GenderStatus.NONE)
@@ -127,9 +127,11 @@ def run_pipeline(
         life_situations = situations,
         work_status     = work_status,
         family_status   = family_status,
-        income_range    = inc,
+        income_range    = inc if inc is not None else IncomeRange.UNKNOWN,
         gender          = gender_status,
     )
+    # 연령 그룹 자동 파생 (age_group 필드 초기화)
+    profile.age_group = profile.derive_age_group()
 
     return {
         "profile":      profile,
