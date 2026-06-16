@@ -1,4 +1,4 @@
-/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.29 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
+/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.30 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
 
 /* ── 딥링크 테이블 (build_welfare_deeplinks.py 생성 JSON) ── */
 let _deepLinks = {};   // id → {detailUrl, applyUrl, matchType, ...}
@@ -1306,6 +1306,12 @@ function renderOntPolicy(p, type) {
     ? `<div class="acc-group">${_accRow("ont-docs-" + uid, "📄", T("acc_docs"),
         trDocs.map(d => `<span class="acc-doc-item">• ${d}</span>`).join(""))}</div>` : "";
 
+  // '왜 나에게 맞는지' 배지
+  const matchReason = p.match_reason || "";
+  const matchBadge  = matchReason
+    ? `<div class="ont-match-reason">${matchReason}</div>`
+    : "";
+
   return `<div class="ont-card ont-card-${type}" data-tags="${trTags.join(",")}"
     data-policy-id="${p.policy_id}"
     data-authority="${(p.authority||"").replace(/"/g,"&quot;")}"
@@ -1314,6 +1320,7 @@ function renderOntPolicy(p, type) {
     <div class="ont-card-top">
       <span class="ont-policy-name">${name}</span>
     </div>
+    ${matchBadge}
     <p class="ont-desc">${desc}</p>
     ${deadline}${tags}
     <div class="ont-authority">📞 ${auth}${T("ont_authority_sep")}

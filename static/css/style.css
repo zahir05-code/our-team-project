@@ -650,6 +650,29 @@ body.scene-result .card-flag-overlay {
 .ont-reason  { font-size: 0.74rem; color: #b45309; background: #fef3c7; border-radius: 6px; padding: 5px 9px; margin-bottom: 5px; }
 .ont-authority { font-size: 0.74rem; color: #9ca3af; margin-top: 4px; }
 
+/* ── '왜 나에게 맞는지' 매칭 이유 배지 ── */
+.ont-match-reason {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 0.73rem; font-weight: 700; line-height: 1.4;
+  padding: 5px 10px; margin-bottom: 7px; border-radius: 8px;
+  word-break: keep-all;
+}
+/* DEFINITE — 초록 계열 */
+.ont-card-definite .ont-match-reason {
+  background: #f0fdf4; color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+/* POSSIBLE — 파란 계열 */
+.ont-card-possible .ont-match-reason {
+  background: #eff6ff; color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+/* FUTURE — 노란 계열 */
+.ont-card-future .ont-match-reason {
+  background: #fefce8; color: #92400e;
+  border: 1px solid #fde68a;
+}
+
 .tel-link { color: #2563eb; font-weight: 700; text-decoration: none; border: 1.5px solid #2563eb; border-radius: 20px; padding: 2px 8px; font-size: 0.73rem; margin-left: 3px; }
 .tel-link:hover { background: #2563eb; color: #fff; }
 

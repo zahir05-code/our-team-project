@@ -79,6 +79,7 @@ class OntologyPolicy(BaseModel):
     phone:         str
     required_docs: list[str]
     reasons:       list[str]
+    match_reason:  str = ""   # '왜 나에게 맞는지' 한 줄 설명
     tags:          list[str]
 
 

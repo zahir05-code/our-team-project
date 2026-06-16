@@ -93,6 +93,77 @@ def _age_ok(profile: UserProfile, policy: PolicyNode,
     return True
 
 
+def build_match_reason(profile: UserProfile, policy: PolicyNode, level: MatchLevel) -> str:
+    """매칭된 이유를 유저 언어로 생성 — '왜 나에게 맞는지' 한 줄 설명.
+
+    DEFINITE: "✅ 나이(45세) · 소득(중위50%이하) · 생활비 부족 → 지금 신청 가능"
+    POSSIBLE: "🔍 나이(67세) · 건강 걱정 해당 → 추가 확인 후 신청"
+    FUTURE:   "📌 현재 나이(25세) 조건 미충족 → 향후 해당 가능"
+    """
+    exc_result = _apply_exceptions(profile, policy)
+    parts: list[str] = []
+
+    # 나이 조건 충족 여부
+    if policy.age_min is not None or policy.age_max is not None:
+        if _age_ok(profile, policy, exc_result):
+            lo = policy.age_min or 0
+            hi = policy.age_max or 120
+            parts.append(f"나이({profile.age}세 / 기준 {lo}~{hi}세)")
+
+    # 소득 조건 충족 여부
+    if policy.income_max is not None:
+        user_income = getattr(profile, "income_range", None)
+        if _income_within(user_income, policy.income_max):
+            if user_income and hasattr(user_income, "value"):
+                label = user_income.value.replace("중위소득 ", "중위").replace("% 이하", "%이하")
+                parts.append(f"소득({label})")
+
+    # 상황 조건 충족 여부
+    if policy.required_situations:
+        matched = [s for s in policy.required_situations if s in profile.life_situations]
+        if matched:
+            # 첫 번째 매칭 상황을 짧게 표시
+            short = matched[0].value.replace("이 부족해요", "부족").replace("이 걱정돼요", "걱정") \
+                                    .replace("이 필요해요", "필요").replace("이 어려워요", "어려움") \
+                                    .replace("이 불안정해요", "불안정").replace("이 있어요", "있음") \
+                                    .replace("을 돌봐야 해요", "돌봄").replace("상황이에요", "")
+            parts.append(f"상황({short.strip()})")
+
+    # 가족 조건 충족 여부
+    if policy.required_family and profile.family_status in policy.required_family:
+        short = profile.family_status.value.replace("살고 있어요", "").replace("이 있어요", "") \
+                                           .replace("를 돌보고 있어요", "돌봄").strip()
+        parts.append(f"가족({short})")
+
+    # 직업 조건 충족 여부
+    if policy.required_work and profile.work_status in policy.required_work:
+        short = profile.work_status.value.replace("에 다니고 있어요", "").replace("을 하고 있어요", "") \
+                                         .replace("이에요", "").strip()
+        parts.append(f"직업({short})")
+
+    # 우선 지원 대상
+    if exc_result == "PRIORITY":
+        parts.append("우선지원대상")
+
+    joined = " · ".join(parts) if parts else "기본 자격"
+
+    if level == MatchLevel.DEFINITE:
+        return f"✅ {joined} 조건 충족 → 지금 신청 가능"
+    elif level == MatchLevel.POSSIBLE:
+        return f"🔍 {joined} 해당 → 추가 확인 후 신청"
+    elif level == MatchLevel.FUTURE:
+        unmet = []
+        if policy.age_min is not None or policy.age_max is not None:
+            if not _age_ok(profile, policy, exc_result):
+                lo = policy.age_min or 0
+                hi = policy.age_max or 120
+                unmet.append(f"나이({profile.age}세→기준{lo}~{hi}세)")
+        if unmet:
+            return f"📌 현재 {', '.join(unmet)} 미충족 → 향후 해당 가능"
+        return "📌 일부 조건 미충족 → 향후 해당 가능"
+    return ""
+
+
 def match(profile: UserProfile, policy: PolicyNode) -> tuple[MatchLevel, list[str]]:
     """단일 정책에 대한 매칭 등급 계산.
 
