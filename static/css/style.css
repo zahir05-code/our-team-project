@@ -1411,6 +1411,34 @@ body { padding-bottom: 68px; }
 .cal-name    { font-size: 0.97rem; font-weight: 700; color: #111827; margin-bottom: 4px; }
 .cal-desc    { font-size: 0.82rem; color: #6b7280; line-height: 1.5; }
 
+/* ── 다음 달 예정 알림 배너 ── */
+.cal-alert-banner {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border: 1.5px solid #93c5fd; border-radius: 14px;
+  padding: 14px 12px; margin-bottom: 14px;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.10);
+  position: relative;
+}
+.cal-alert-icon { font-size: 1.5rem; line-height: 1; flex-shrink: 0; }
+.cal-alert-body { flex: 1; min-width: 0; }
+.cal-alert-title {
+  font-size: 0.88rem; font-weight: 700; color: #1d4ed8; margin-bottom: 6px;
+}
+.cal-alert-items { display: flex; flex-wrap: wrap; gap: 5px; }
+.cal-alert-item {
+  background: #fff; color: #2563eb;
+  border: 1px solid #bfdbfe; border-radius: 20px;
+  padding: 2px 9px; font-size: 0.75rem; font-weight: 600;
+  white-space: nowrap;
+}
+.cal-alert-close {
+  background: none; border: none; cursor: pointer;
+  color: #93c5fd; font-size: 0.9rem; padding: 0 2px;
+  line-height: 1; flex-shrink: 0; align-self: flex-start;
+}
+.cal-alert-close:hover { color: #2563eb; }
+
 /* ── 달력 만료 상태 배지 ── */
 .cal-status {
   border-radius: 20px; padding: 1px 8px;

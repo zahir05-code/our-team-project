@@ -1,4 +1,4 @@
-/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.35 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
+/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.36 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
 
 /* ── 딥링크 테이블 (build_welfare_deeplinks.py 생성 JSON) ── */
 let _deepLinks = {};   // id → {detailUrl, applyUrl, matchType, ...}
@@ -1971,7 +1971,25 @@ function renderCalendar() {
     calBadge.classList.remove("hidden");
   }
 
+  // ── 다음 달 예정 알림 배너 ───────────────────────────────
+  const nextMonth = thisMonth === 12 ? 1 : thisMonth + 1;
+  const nextMonthItems = WELFARE_CALENDAR.filter(e => e.month === nextMonth);
+  const MONTH_KR = ["","1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"];
+
   let html = "";
+
+  if (nextMonthItems.length > 0) {
+    const names = nextMonthItems.map(e => `<span class="cal-alert-item">${e.name}</span>`).join("");
+    html += `<div class="cal-alert-banner" id="calAlertBanner">
+      <div class="cal-alert-icon">⏰</div>
+      <div class="cal-alert-body">
+        <p class="cal-alert-title">${MONTH_KR[nextMonth]} 신청 시작 예정 — ${nextMonthItems.length}건</p>
+        <div class="cal-alert-items">${names}</div>
+      </div>
+      <button class="cal-alert-close" onclick="document.getElementById('calAlertBanner').style.display='none'" aria-label="닫기">✕</button>
+    </div>`;
+  }
+
   let lastMonth = -1;
 
   sorted.forEach(({ ev, i }) => {
