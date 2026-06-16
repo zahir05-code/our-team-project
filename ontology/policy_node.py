@@ -86,6 +86,10 @@ class PolicyNode:
     # 지역 — 빈 리스트 = 전국
     regions:      list[str] = field(default_factory=list)
 
+    # 구·시·군 — 빈 리스트 = 지역 전체 해당 / 값 있으면 해당 구·시·군만
+    # 예) ["강남구","서초구"] → 강남·서초 주민만 DEFINITE, 나머지 서울시민 → POSSIBLE
+    target_districts: list[str] = field(default_factory=list)
+
     # 필수 상황 — 하나 이상 일치해야 함 (빈 리스트 = 상황 무관)
     required_situations: list[LifeSituation] = field(default_factory=list)
 

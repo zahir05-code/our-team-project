@@ -151,6 +151,11 @@ def relevance_score(profile: UserProfile, policy: PolicyNode) -> int:
     if getattr(policy, "online_apply", True):
         score += 5
 
+    # ⑧ 구·시·군 일치 보너스 — 해당 구 전용 정책이고 사용자 구가 일치하면 추가 점수
+    if policy.target_districts and profile.district:
+        if profile.district in policy.target_districts:
+            score += 20   # 구 완전 일치 → 맞춤도 높음
+
     return score
 
 
@@ -291,6 +296,14 @@ def match(profile: UserProfile, policy: PolicyNode) -> tuple[MatchLevel, list[st
     if policy.regions and profile.region not in policy.regions:
         return MatchLevel.EXCLUDED, [f"지역 조건 불일치 ({policy.regions})"]
 
+    # ── 2-1. 구·시·군 조건 ─────────────────────────────────
+    # target_districts 가 있고 사용자 district가 명시된 경우에만 검사
+    # 구 불일치 → EXCLUDED가 아닌 POSSIBLE 강등 (같은 시·도 내 유사 정책)
+    district_unverified = False
+    if policy.target_districts and profile.district:
+        if profile.district not in policy.target_districts:
+            district_unverified = True   # 구 불일치 → 아래에서 POSSIBLE 강등
+
     # ── 3. 성별 조건 ───────────────────────────────────────
     # 정책이 성별 특화인데 사용자 성별 불일치 → 제외
     # 사용자가 성별 미선택(NONE)이면 제외하지 않고 POSSIBLE로 강등 (아래 처리)
@@ -362,8 +375,13 @@ def match(profile: UserProfile, policy: PolicyNode) -> tuple[MatchLevel, list[st
     ratio = met_conditions / total_conditions
 
     if ratio == 1.0:
+        # 구·시·군 불일치 → POSSIBLE 강등 (지역 내 다른 구에서 신청 가능 여부 확인 필요)
+        if district_unverified:
+            level   = MatchLevel.POSSIBLE
+            needed  = "·".join(policy.target_districts[:3])
+            reasons = [f"현재 거주 구·시군({profile.district})은 해당 없음 — {needed} 대상 정책"]
         # 성별 미확인 정책은 DEFINITE → POSSIBLE 강등
-        if gender_unverified:
+        elif gender_unverified:
             level   = MatchLevel.POSSIBLE
             reasons = ["성별을 선택하시면 정확한 해당 여부를 확인할 수 있습니다"]
         else:
