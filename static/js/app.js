@@ -1,4 +1,4 @@
-/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.30 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
+/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.31 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
 
 /* ── 딥링크 테이블 (build_welfare_deeplinks.py 생성 JSON) ── */
 let _deepLinks = {};   // id → {detailUrl, applyUrl, matchType, ...}
@@ -61,12 +61,13 @@ function _noticeUrl(p) {
    닫기: closeApplyGuide()
 ────────────────────────────────── */
 function openApplyGuide(pData, officialUrl) {
-  // pData: { name, required_docs, authority, phone, description, policy_id }
+  // pData: { name, required_docs, authority, phone, description, policy_id, apply_steps }
   const name    = pData.name        || pData.policy_name || "";
   const docs    = pData.required_docs || [];
   const auth    = pData.authority   || "";
   const phone   = pData.phone       || "";
   const desc    = pData.description || pData.desc || "";
+  const steps   = pData.apply_steps || [];
 
   const docsHtml = docs.length
     ? `<ul class="apply-guide-docs-list">${docs.map(d=>`<li>${d}</li>`).join("")}</ul>`
@@ -112,6 +113,11 @@ function openApplyGuide(pData, officialUrl) {
         </div>
       </div>
 
+      ${steps.length ? `<div class="apply-guide-section">
+        <div class="apply-guide-section-title">🪜 신청 단계</div>
+        <ol class="apply-guide-steps-list">${steps.map(s=>`<li>${s}</li>`).join("")}</ol>
+      </div>` : ""}
+
       <button class="apply-guide-confirm-btn" onclick="closeApplyGuide();window.open('${officialUrl}','_blank','noopener')">
         ${T("guide_confirm")}
       </button>
@@ -141,6 +147,7 @@ function _noticeBtn(p) {
     phone:         p.phone        || "",
     description:   p.description  || p.desc || "",
     policy_id:     p.policy_id    || "",
+    apply_steps:   p.apply_steps  || [],
   }));
   return `<button class="official-notice-btn" onclick="openApplyGuide(JSON.parse(decodeURIComponent('${pJson}')), '${url}')">${T("btn_notice")}</button>`;
 }
@@ -1128,11 +1135,23 @@ function renderSourceTabs(buckets) {
     </button>`);
   html += `</div>`;
 
+  // 전체 버킷에서 첫 번째 DEFINITE ont-카드를 최우선 추천으로 표시
+  let topPickId = null;
+  for (const t of tabs) {
+    for (const item of buckets[t.key]) {
+      if (item.src === "ont" && item.match === "def") {
+        topPickId = item.policy.policy_id;
+        break;
+      }
+    }
+    if (topPickId) break;
+  }
+
   tabs.forEach((t, i) => {
     html += `<div class="src-panel${i===0?"":" hidden"}" id="srcPanel-${t.key}">
       <p class="src-desc">${t.desc}</p>
       <div class="src-cards">`;
-    buckets[t.key].forEach((item, ci) => html += renderUnifiedCard(item, t.key, ci));
+    buckets[t.key].forEach((item, ci) => html += renderUnifiedCard(item, t.key, ci, topPickId));
     html += `</div></div>`;
   });
   html += `</div>`;
@@ -1147,7 +1166,7 @@ function switchSrcTab(key, btn) {
   if (panel) panel.classList.remove("hidden");
 }
 
-function renderUnifiedCard(item, bucket, ci) {
+function renderUnifiedCard(item, bucket, ci, topPickId) {
   if (item.src === "link") {
     const p = item.policy;
     return `<div class="uni-card">
@@ -1182,33 +1201,12 @@ function renderUnifiedCard(item, bucket, ci) {
     </div>`;
   }
 
-  // ont 카드
-  const p    = item.policy;
+  // ont 카드 — renderOntPolicy 에 위임
+  const p     = item.policy;
   const match = item.match || "pos";
-  const meta  = _MATCH_META[match] || _MATCH_META.pos;
-  const name  = getPolicyTr(p.policy_id, "name") || p.name;
-  const desc  = getPolicyTr(p.policy_id, "desc") || p.description;
-  const auth  = getTr(p.authority) || p.authority;
-  const trDocs    = (p.required_docs||[]).map(d => getTr(d));
-  const trTags    = (p.tags||[]).map(t => getTr(t));
-  const trReasons = (p.reasons||[]).map(r => getTr(r));
-  const uid = `ont-${bucket}-${ci}`;
-
-  return `<div class="uni-card uni-card--${match}" data-tags="${trTags.join(",")}">
-    <div class="uni-tags">
-      <span class="uni-match-badge ${meta.cls}">${meta.label()}</span>
-      ${trTags.map(t=>`<span class="uni-tag">${t}</span>`).join("")}
-    </div>
-    <div class="uni-name">${name}</div>
-    <p class="uni-desc">${desc}</p>
-    <div class="uni-meta">
-      <span class="uni-meta-item">📞 ${auth}</span>
-      <a class="uni-meta-item tel-link" href="tel:${p.phone.replace(/[^0-9]/g,'')}">${p.phone} ☎</a>
-    </div>
-    ${trDocs.length ? `<div class="acc-group">${_accRow(`${uid}-doc`, "📄", T("acc_docs"),
-        trDocs.map(d=>`<span class="acc-doc-item">• ${d}</span>`).join(""))}</div>` : ""}
-    ${_noticeBtn(p)}
-  </div>`;
+  const typeStr = match === "def" ? "definite" : match === "pos" ? "possible" : "future";
+  const isTopPick = (topPickId && p.policy_id === topPickId);
+  return renderOntPolicy(p, typeStr, isTopPick);
 }
 
 function renderSupaCards(policies) {
@@ -1286,13 +1284,12 @@ function _applyFilter(tag) {
 }
 
 /* ── 온톨로지 카드 ── */
-function renderOntPolicy(p, type) {
+function renderOntPolicy(p, type, isTopPick) {
   const name  = getPolicyTr(p.policy_id, "name") || p.name;
   const desc  = getPolicyTr(p.policy_id, "desc") || p.description;
   const auth  = getTr(p.authority) || p.authority;
-  const trDocs    = p.required_docs.map(d => getTr(d));
-  const trTags    = p.tags.map(t => getTr(t));
-  const trReasons = p.reasons.map(r => getTr(r));
+  const trDocs = p.required_docs.map(d => getTr(d));
+  const trTags = p.tags.map(t => getTr(t));
 
   const tags = trTags.length
     ? `<div class="ont-tags">${trTags.map(t=>`<span class="ont-tag">${t}</span>`).join("")}</div>` : "";
@@ -1300,25 +1297,36 @@ function renderOntPolicy(p, type) {
     ? `<div class="ont-deadline">⚠️ ${T("ont_deadline", p.deadline)}</div>`
     : `<div class="ont-deadline calm">${T("ont_open")}</div>`;
 
-  // 아코디언용 고유 ID
   const uid = p.policy_id.replace(/\W/g,"_") + "_" + type;
   const docsAcc = trDocs.length
     ? `<div class="acc-group">${_accRow("ont-docs-" + uid, "📄", T("acc_docs"),
         trDocs.map(d => `<span class="acc-doc-item">• ${d}</span>`).join(""))}</div>` : "";
 
-  // '왜 나에게 맞는지' 배지
-  const matchReason = p.match_reason || "";
-  const matchBadge  = matchReason
-    ? `<div class="ont-match-reason">${matchReason}</div>`
-    : "";
+  // ③ '왜 나에게 맞는지' 배지
+  const matchBadge = p.match_reason
+    ? `<div class="ont-match-reason">${p.match_reason}</div>` : "";
 
-  return `<div class="ont-card ont-card-${type}" data-tags="${trTags.join(",")}"
+  // ③ 최우선 추천 리본 (DEFINITE 중 relevance_score 1위)
+  const topRibbon = (isTopPick && type === "definite")
+    ? `<div class="ont-top-pick">⭐ 가장 중요한 혜택</div>` : "";
+
+  // ④ 온라인/방문 배지
+  const methodBadge = p.online_apply
+    ? `<span class="ont-apply-method online">🌐 온라인</span>`
+    : `<span class="ont-apply-method visit">🏢 방문</span>`;
+
+  return `<div class="ont-card ont-card-${type}${isTopPick && type==="definite" ? " ont-card-top-pick" : ""}"
+    data-tags="${trTags.join(",")}"
     data-policy-id="${p.policy_id}"
     data-authority="${(p.authority||"").replace(/"/g,"&quot;")}"
     data-phone="${(p.phone||"").replace(/"/g,"&quot;")}"
-    data-docs="${encodeURIComponent(JSON.stringify(p.required_docs||[]))}">
+    data-docs="${encodeURIComponent(JSON.stringify(p.required_docs||[]))}"
+    data-steps="${encodeURIComponent(JSON.stringify(p.apply_steps||[]))}"
+    data-online="${p.online_apply ? "1" : "0"}">
+    ${topRibbon}
     <div class="ont-card-top">
       <span class="ont-policy-name">${name}</span>
+      ${methodBadge}
     </div>
     ${matchBadge}
     <p class="ont-desc">${desc}</p>

@@ -673,6 +673,30 @@ body.scene-result .card-flag-overlay {
   border: 1px solid #fde68a;
 }
 
+/* ── 최우선 추천 리본 ── */
+.ont-top-pick {
+  display: inline-block;
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+  color: #78350f;
+  font-size: 0.72rem; font-weight: 800;
+  padding: 4px 10px; border-radius: 20px;
+  margin-bottom: 8px; letter-spacing: 0.02em;
+}
+.ont-card-top-pick {
+  border: 2px solid #fbbf24 !important;
+  box-shadow: 0 0 0 4px rgba(251,191,36,0.15);
+}
+
+/* ── 온라인/방문 신청 배지 ── */
+.ont-apply-method {
+  display: inline-block;
+  font-size: 0.68rem; font-weight: 700;
+  padding: 2px 8px; border-radius: 20px;
+  margin-left: 6px; white-space: nowrap;
+}
+.ont-apply-method.online { background: #e0f2fe; color: #0369a1; }
+.ont-apply-method.visit  { background: #f3e8ff; color: #7e22ce; }
+
 .tel-link { color: #2563eb; font-weight: 700; text-decoration: none; border: 1.5px solid #2563eb; border-radius: 20px; padding: 2px 8px; font-size: 0.73rem; margin-left: 3px; }
 .tel-link:hover { background: #2563eb; color: #fff; }
 
@@ -2572,6 +2596,23 @@ a.uni-meta-item { color: #2563eb; text-decoration: none; }
 .apply-guide-docs-list li:last-child { border-bottom: none; }
 .apply-guide-docs-list li::before {
   content: "☐"; font-size: 1rem; color: #2563eb; flex-shrink: 0; margin-top: 1px;
+}
+.apply-guide-steps-list {
+  list-style: none; padding: 12px 14px; margin: 0; counter-reset: step-counter;
+  background: #f8fafc; border-radius: 12px;
+}
+.apply-guide-steps-list li {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 0.87rem; color: #334155; padding: 6px 0;
+  border-bottom: 1px solid #e2e8f0; counter-increment: step-counter;
+}
+.apply-guide-steps-list li:last-child { border-bottom: none; }
+.apply-guide-steps-list li::before {
+  content: counter(step-counter);
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 20px; height: 20px; border-radius: 50%;
+  background: #2563eb; color: #fff; font-size: 0.72rem; font-weight: 800;
+  flex-shrink: 0; margin-top: 1px;
 }
 .apply-guide-info-box {
   background: #f8fafc; border-radius: 12px; padding: 12px 14px;

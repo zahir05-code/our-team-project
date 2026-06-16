@@ -77,10 +77,13 @@ class OntologyPolicy(BaseModel):
     apply_url:     str
     authority:     str
     phone:         str
-    required_docs: list[str]
-    reasons:       list[str]
-    match_reason:  str = ""   # '왜 나에게 맞는지' 한 줄 설명
-    tags:          list[str]
+    required_docs:   list[str]
+    reasons:         list[str]
+    match_reason:    str = ""    # '왜 나에게 맞는지' 한 줄 설명
+    relevance_score: int = 0     # 관련도 점수
+    apply_steps:     list[str] = []   # 신청 단계
+    online_apply:    bool = True      # 온라인 신청 가능 여부
+    tags:            list[str]
 
 
 class OntologyMatchResult(BaseModel):

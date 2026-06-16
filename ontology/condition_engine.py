@@ -93,6 +93,116 @@ def _age_ok(profile: UserProfile, policy: PolicyNode,
     return True
 
 
+def relevance_score(profile: UserProfile, policy: PolicyNode) -> int:
+    """유저 프로파일과 정책의 관련도 점수 (0~100+).
+
+    높을수록 이 유저에게 더 구체적으로 맞는 정책.
+    같은 DEFINITE 안에서 정렬 기준으로 사용.
+    """
+    score = 0
+    exc_result = _apply_exceptions(profile, policy)
+
+    # ① 상황 일치 (가장 중요 — 유저가 직접 선택한 항목)
+    if policy.required_situations:
+        matched = [s for s in policy.required_situations if s in profile.life_situations]
+        score += len(matched) * 25
+        # 첫 번째로 선택한 상황이 정책 요구 상황과 일치 → 추가 가중
+        if profile.life_situations and profile.life_situations[0] in policy.required_situations:
+            score += 15
+
+    # ② 소득 — UNKNOWN이 아닌 실제 입력값이 정확히 매칭될수록 신뢰
+    if policy.income_max is not None:
+        user_income = getattr(profile, "income_range", None)
+        if user_income and user_income != IncomeRange.UNKNOWN:
+            if _income_within(user_income, policy.income_max):
+                score += 20
+    else:
+        score += 3   # 소득 무관 정책 — 약간의 기본 점수
+
+    # ③ 가족 상황 일치
+    if policy.required_family:
+        if profile.family_status in policy.required_family:
+            score += 20
+    else:
+        score += 3
+
+    # ④ 직업 일치
+    if policy.required_work:
+        if profile.work_status in policy.required_work:
+            score += 15
+
+    # ⑤ 나이 범위 정밀도 — 범위가 좁을수록 이 유저에게 맞춤
+    if policy.age_min is not None or policy.age_max is not None:
+        lo = policy.age_min or 0
+        hi = policy.age_max or 120
+        span = hi - lo
+        if span <= 15:
+            score += 12
+        elif span <= 30:
+            score += 7
+        elif span <= 60:
+            score += 3
+
+    # ⑥ 우선 지원 대상
+    if exc_result == "PRIORITY":
+        score += 30
+
+    # ⑦ 온라인 신청 가능 — 접근성 가산
+    if getattr(policy, "online_apply", True):
+        score += 5
+
+    return score
+
+
+def build_apply_steps(policy: PolicyNode) -> list[str]:
+    """정책별 신청 단계를 동적으로 생성.
+
+    온라인 신청 가능 여부 + 담당 기관에 따라 맞춤 단계 반환.
+    """
+    url = policy.apply_url or ""
+    online = getattr(policy, "online_apply", True)
+    auth   = policy.authority or "담당 기관"
+
+    if online and ("bokjiro" in url or "wlfareInfoId" in url):
+        return [
+            "복지로(bokjiro.go.kr) 접속",
+            "공인인증서 또는 간편인증 로그인",
+            "신청서 작성 (소득·재산 자동 조회)",
+            "필요 서류 스캔 업로드",
+            "신청 완료 → 처리 결과 문자 수신",
+        ]
+    elif online and "nhis" in url:
+        return [
+            "국민건강보험공단(nhis.or.kr) 접속",
+            "공인인증서 로그인",
+            "온라인 신청서 작성",
+            "서류 업로드 후 제출",
+        ]
+    elif online and ("youth.seoul" in url or "basicincome.gg" in url
+                     or "idolbom" in url or "saeil" in url):
+        return [
+            "공식 사이트 접속 후 회원가입",
+            "온라인 신청서 작성",
+            "필요 서류 업로드",
+            "담당자 검토 후 승인 통보",
+        ]
+    elif online:
+        return [
+            "공식 사이트 접속",
+            "온라인 신청서 작성",
+            "필요 서류 제출",
+            "결과 통보 수령",
+        ]
+    else:
+        return [
+            f"{auth} 방문",
+            "신청서 수령 및 작성",
+            "필요 서류 제출",
+            f"담당자 상담 (☎ {policy.phone})",
+            "심사 후 결과 통보 (보통 14~30일)",
+        ]
+
+
 def build_match_reason(profile: UserProfile, policy: PolicyNode, level: MatchLevel) -> str:
     """매칭된 이유를 유저 언어로 생성 — '왜 나에게 맞는지' 한 줄 설명.
 
