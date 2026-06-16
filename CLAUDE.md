@@ -306,8 +306,8 @@ item.status = "none"(미신청) | "pending"(신청예정) | "done"(완료)
 | 경기일자리재단 | jobaba.net/fntn/dtl.do?trnsprtNo=33 |
 | 서울정신건강 | seoulmentalhealth.kr |
 | 경기정신건강 | gmhc.or.kr |
-| 사회서비스 전자바우처 | socialservice.or.kr/user/serviceInfo/W0000005/view.do (발달재활) |
-| 사회서비스 전자바우처 | socialservice.or.kr/user/serviceInfo/W0000009/view.do (가사간병) |
+| 발달재활서비스 | bokjiro WLF00003124 |
+| 가사간병 방문서비스 | bokjiro WLF00003586 |
 | 푸드뱅크·마켓 | foodbank1377.org |
 | 경기도 복지재단 | www.ggwf.or.kr |
 | 보건복지부 정책 | mohw.go.kr/menu.es?mid=a10712020000 (노인복지) |

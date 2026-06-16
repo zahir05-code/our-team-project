@@ -252,7 +252,7 @@ function wxAlert(t, at, wc) {
   if (wc >= 51 && wc <= 86) return {
     label:"우천·강설", color:"#0891b2",
     msg: "어르신·장애인 외출 주의 — 재가돌봄서비스 확인",
-    url: "https://www.socialservice.or.kr/user/serviceInfo/bokji/selectWelfareServiceList.do", btn:"돌봄서비스 확인"
+    url: "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=재가돌봄서비스", btn:"돌봄서비스 확인"
   };
   return {
     label:"오늘의 복지", color:"#059669",

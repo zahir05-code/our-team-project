@@ -897,7 +897,7 @@ POLICIES: list[PolicyNode] = [
         name        = "장애아동 재활치료 서비스 (발달재활서비스)",
         description = "만 18세 미만 발달장애 아동에게 언어·인지·행동 재활치료 바우처 지원",
         source      = "복지로",
-        apply_url   = "https://www.socialservice.or.kr/user/serviceInfo/W0000005/view.do",
+        apply_url   = "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003124",
         age_max     = 18,
         income_max  = IR.MIDDLE,
         required_situations = [LS.DISABILITY, LS.EDUCATION],
@@ -959,7 +959,7 @@ POLICIES: list[PolicyNode] = [
         name        = "가사간병 방문서비스",
         description = "거동 불편 저소득 가구에 가사·간병 도우미 파견 (월 24~40시간, 무료~소액)",
         source      = "복지로",
-        apply_url   = "https://www.socialservice.or.kr/user/serviceInfo/W0000009/view.do",
+        apply_url   = "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003586",
         income_max  = IR.MIDDLE_LOW,
         required_situations = [LS.CARE, LS.DISABILITY, LS.MEDICAL],
         required_docs = [
