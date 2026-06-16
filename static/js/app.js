@@ -1,4 +1,4 @@
-/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.37 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
+/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.38 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
 
 /* ── 딥링크 테이블 (build_welfare_deeplinks.py 생성 JSON) ── */
 let _deepLinks = {};   // id → {detailUrl, applyUrl, matchType, ...}
@@ -15,8 +15,6 @@ let _cachedResultAnalysis = null;
    4. buildApplyUrl fallback
 ─────────────────────────────────────────────────────── */
 function _noticeUrl(p) {
-  const rawUrl = (p.apply_url || p.url || "").trim();
-
   // ── 차단 패턴: 서비스 신청/상세 페이지가 아닌 URL ──
   const BLOCKED_PATTERNS = [
     "/pcd/",
@@ -24,43 +22,34 @@ function _noticeUrl(p) {
     "mogef.go.kr/sp/fam/",
     "mogef.go.kr/mp/",
   ];
-  const isBlockedUrl = (url) => BLOCKED_PATTERNS.some(pat => url.includes(pat));
-
-  // ── 홈페이지 판별: path가 없거나 "/" 뿐인 URL → 기관 홈 = 서비스 직접 URL 아님 ──
-  const isHomepage = (url) => {
+  const isBlockedUrl  = (url) => BLOCKED_PATTERNS.some(pat => url.includes(pat));
+  const isSearchPage  = (url) => /search\.do|query=/.test(url);
+  const isHomepage    = (url) => {
     try {
       const u = new URL(url);
-      const path = u.pathname.replace(/\/+$/, "");   // 후행 슬래시 제거
-      const hasQuery = u.search.length > 1;
-      return !hasQuery && (!path || path === "");     // 경로도 없고 쿼리도 없으면 홈
+      const path = u.pathname.replace(/\/+$/, "");
+      return !u.search.length > 1 && (!path || path === "");
     } catch { return false; }
   };
+  const isOk = (url) => url && /^https?:\/\//.test(url)
+    && !isBlockedUrl(url) && !isSearchPage(url);
 
-  // ── 검색 결과 페이지 판별 ──
-  const isSearchPage = (url) => /search\.do|query=/.test(url);
+  // ── 0순위: ont-card의 apply_url (policies_db.py 검증값 — 최우선 신뢰) ──
+  //   Supabase bk-card는 apply_url 필드가 없으므로 여기서만 선택됨
+  const ontUrl = (p.apply_url || "").trim();
+  if (ontUrl && isOk(ontUrl) && !isHomepage(ontUrl)) return ontUrl;
 
-  // 1순위: 복지로 WLF 서비스 상세 직접 URL (가장 신뢰)
-  if (rawUrl.includes("wlfareInfoId=")) return rawUrl;
-
-  // 2순위: 기관 특정 서비스 직접 URL
-  //   - 홈페이지·차단패턴·검색결과 페이지는 통과하지 않음
-  if (rawUrl && /^https?:\/\//.test(rawUrl)
-      && !isBlockedUrl(rawUrl)
-      && !isHomepage(rawUrl)
-      && !isSearchPage(rawUrl)) {
-    return rawUrl;
-  }
-
-  // 3순위: deeplink detailUrl (홈·검색결과 제외)
+  // ── 1순위: deeplink 테이블 (수동 검증 완료, Supabase URL보다 신뢰) ──
   const dl = getDeepLink(p.policy_id);
-  if (dl && dl.detailUrl
-      && !isBlockedUrl(dl.detailUrl)
-      && !isHomepage(dl.detailUrl)
-      && !isSearchPage(dl.detailUrl)) {
+  if (dl && dl.detailUrl && isOk(dl.detailUrl) && !isHomepage(dl.detailUrl)) {
     return dl.detailUrl;
   }
 
-  // 4순위: 복지로 키워드 검색 fallback (서비스명으로 최대한 좁혀서)
+  // ── 2순위: Supabase bk-card의 p.url (외부 DB — 검증 수준 낮음) ──
+  const bkUrl = (p.url || "").trim();
+  if (bkUrl && isOk(bkUrl) && !isHomepage(bkUrl)) return bkUrl;
+
+  // ── 3순위: 복지로 키워드 검색 fallback ──
   const keyword = encodeURIComponent((p.name || p.policy_name || "").slice(0, 20));
   return keyword
     ? `https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=${keyword}`
@@ -165,7 +154,7 @@ function _noticeBtn(p) {
 
 async function loadDeepLinks() {
   try {
-    const res = await fetch("/static/js/welfareDeepLinks.json?v=5.27");
+    const res = await fetch("/static/js/welfareDeepLinks.json?v=5.38");
     if (!res.ok) return;
     const arr = await res.json();
     arr.forEach(item => { _deepLinks[item.id] = item; });
