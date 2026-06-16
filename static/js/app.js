@@ -1,4 +1,4 @@
-/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.31 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
+/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.32 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
 
 /* ── 딥링크 테이블 (build_welfare_deeplinks.py 생성 JSON) ── */
 let _deepLinks = {};   // id → {detailUrl, applyUrl, matchType, ...}
@@ -1066,7 +1066,7 @@ function buildApplyUrl(p) {
       "youth.seoul.go.kr":   "🔗 서울청년포털 바로가기 →",
       "welfare.seoul.go.kr": "🔗 서울복지포털 바로가기 →",
       "wis.seoul.go.kr":     "🔗 서울복지포털 바로가기 →",
-      "basicincome.gg.go.kr":"🔗 경기도 청년기본소득 바로가기 →",
+      "youth.gg.go.kr":      "🔗 경기도 청년포털 바로가기 →",
       "gg.go.kr":            "🔗 경기도청 바로가기 →",
       "ggwf.or.kr":          "🔗 경기복지재단 바로가기 →",
       "mnuri.kr":            "🔗 문화누리카드 바로가기 →",
@@ -1682,7 +1682,7 @@ const WELFARE_CALENDAR = [
       how:"① 문화누리카드 누리집 (www.mnuri.kr) 온라인 신청\n② 읍·면·동 주민센터 방문 신청\n③ 우체국 방문 신청\n④ 전화 신청: ☎ 1544-3412",
       period:"매년 2월 초 신규 신청 시작 (기존 수급자는 자동 재충전)\n카드 사용 기간: 2월 ~ 다음 해 1월 31일",
       contact:"문화누리카드 고객센터 ☎ 1544-3412",
-      applyUrl:"https://www.mnuri.kr",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004574",
       applyLabel:"문화누리카드 신청하기 →",
     },
   },
@@ -1737,10 +1737,10 @@ const WELFARE_CALENDAR = [
     detail:{
       target:"신청일 기준 경기도 거주 만 24세 청년\n3년 이상 경기도 거주 또는 합산 10년 이상 거주\n소득·재산 기준 없음 (보편 지급)\n※ 주민등록상 경기도 주소 기준",
       benefit:"분기별 25만 원 × 4회 = 연 100만 원\n지역화폐(지역사랑상품권)로 지급\n대형마트·백화점·유흥업소 사용 제한, 해당 시·군 내 사용",
-      how:"① 경기도 청년기본소득 포털 (basicincome.gg.go.kr) 신청\n② 카카오톡 '청년기본소득' 채널 신청\n③ 해당 시·군 주민센터 방문 신청\n※ 분기별 신청: 1월(1분기)·4월(2분기)·7월(3분기)·10월(4분기)",
+      how:"① 경기도 청년포털 (youth.gg.go.kr) 온라인 신청\n② 카카오톡 '청년기본소득' 채널 신청\n③ 해당 시·군 주민센터 방문 신청\n※ 분기별 신청: 1월(1분기)·4월(2분기)·7월(3분기)·10월(4분기)",
       period:"4월 초 ~ 4월 30일 (2분기 신청)\n지급: 신청 후 약 1~2주 내 지역화폐 충전",
       contact:"경기도 청년기본소득 ☎ 031-120",
-      applyUrl:"https://basicincome.gg.go.kr",
+      applyUrl:"https://youth.gg.go.kr",
       applyLabel:"경기도 청년기본소득 신청하기 →",
     },
   },
@@ -1784,7 +1784,7 @@ const WELFARE_CALENDAR = [
       how:"① 서울청년포털 (youth.seoul.go.kr) 온라인 신청\n② 방문 접수 불가 — 온라인만 가능\n※ 매년 상반기(5~6월) 모집, 경쟁률 높아 조기 신청 권장",
       period:"2026년 상반기 모집: 6월 중 (정확한 일정은 서울청년포털 공지 확인)\n※ 매년 1~2회 모집",
       contact:"서울청년포털 ☎ 02-2133-5497\n다산콜센터 ☎ 120",
-      applyUrl:"https://youth.seoul.go.kr/site/main/welfare/welfareDetail?welfare_id=9",
+      applyUrl:"https://youth.seoul.go.kr",
       applyLabel:"서울청년포털 청년수당 신청하기 →",
     },
   },
@@ -1898,10 +1898,10 @@ const WELFARE_CALENDAR = [
     detail:{
       target:"신청일 기준 경기도 거주 만 24세 청년\n3년 이상 경기도 거주 또는 합산 10년 이상 거주\n소득·재산 기준 없음 (보편 지급)\n※ 주민등록상 경기도 주소 기준",
       benefit:"분기별 25만 원 × 4회 = 연 100만 원\n지역화폐(지역사랑상품권)로 지급 — 해당 시·군 내 사용 가능\n대형마트·백화점·유흥업소 등 사용 제한",
-      how:"① 경기도 청년기본소득 포털 (basicincome.gg.go.kr) 신청\n② 카카오톡 '청년기본소득' 채널 신청\n③ 해당 시·군 주민센터 방문 신청",
+      how:"① 경기도 청년포털 (youth.gg.go.kr) 온라인 신청\n② 카카오톡 '청년기본소득' 채널 신청\n③ 해당 시·군 주민센터 방문 신청",
       period:"분기별 신청 (1·4·7·10월 초)\n11월 신청분: 4분기 (10~12월) 지급분 대상",
       contact:"경기도 청년기본소득 ☎ 031-120\n각 시·군 담당 부서",
-      applyUrl:"https://basicincome.gg.go.kr",
+      applyUrl:"https://youth.gg.go.kr",
       applyLabel:"경기도 청년기본소득 신청하기 →",
     },
   },
@@ -1912,11 +1912,11 @@ const WELFARE_CALENDAR = [
     detail:{
       target:"• 만 65세 이상 어르신 (전원 무료)\n• 생후 6개월 ~ 만 13세 어린이 (전원 무료)\n• 임산부 (전원 무료)\n• 기초생활수급자·차상위계층 (전원 무료)",
       benefit:"인플루엔자(독감) 예방접종 1회 무료\n※ 12세 이하 어린이 최초 접종자: 4주 간격 2회 접종\n전국 지정 의료기관 및 보건소에서 접종",
-      how:"① 지역 내 지정 의료기관 방문 (예약 없이 가능, 기관별 상이)\n② 보건소 방문 (예약 권장)\n③ 예방접종도우미 사이트 (nip.kdca.go.kr)에서 지정 기관 검색",
+      how:"① 지역 내 지정 의료기관 방문 (예약 없이 가능, 기관별 상이)\n② 보건소 방문 (예약 권장)\n③ 질병관리청 (kdca.go.kr)에서 지정 기관 검색",
       period:"매년 10월 초 ~ 12월 말 (물량 소진 전)\n어르신: 10월부터 / 어린이: 9월 말부터",
       contact:"질병관리청 예방접종도우미 ☎ 1339\n보건소 ☎ 120 (서울) / 031-120 (경기)",
-      applyUrl:"https://nip.kdca.go.kr/irgd/introduce.do?MnLv1=3&MnLv2=2",
-      applyLabel:"예방접종도우미 지정기관 검색 →",
+      applyUrl:"https://www.kdca.go.kr",
+      applyLabel:"질병관리청 예방접종 안내 →",
     },
   },
   /* ────── 12월 ────── */
@@ -2081,7 +2081,7 @@ const LOCAL_BENEFITS = {
     { name:"어르신 교통비 지원 (65세↑)", desc:"서울 거주 만 65세 이상, 연 10만원 교통카드 충전", contact:"02-120", url:"https://wis.seoul.go.kr", tag:"노인" },
   ],
   "경기도": [
-    { name:"경기도 청년기본소득", desc:"경기도 거주 만 24세, 분기 25만원 (연 100만원)", contact:"031-120", url:"https://basicincome.gg.go.kr", tag:"청년" },
+    { name:"경기도 청년기본소득", desc:"경기도 거주 만 24세, 분기 25만원 (연 100만원)", contact:"031-120", url:"https://youth.gg.go.kr", tag:"청년" },
     { name:"경기도 산후조리 지원금", desc:"출산 가정 산후조리비 최대 100만원 지원", contact:"031-8008-2114", url:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004568", tag:"임신·출산" },
     { name:"경기도 무한돌봄 긴급복지", desc:"위기 가구 생계·의료·주거비 신속 지원", contact:"031-120", url:"https://www.ggwf.or.kr", tag:"긴급" },
     { name:"경기도 청년 노동자 통장", desc:"중소기업 재직 청년, 2년 저축 시 최대 1,080만원", contact:"031-120", url:"https://www.jobaba.net", tag:"청년" },
