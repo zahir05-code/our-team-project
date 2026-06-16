@@ -340,13 +340,13 @@ POLICIES: list[PolicyNode] = [
         tags=["노인일자리", "어르신", "60세", "사회활동"],
     ),
 
-    # ── 16. 장기요양 (노인 돌봄) ─────────────────────────────
+    # ── 16. 장기요양 (노인 돌봄) ─────────────────────────────  [WLF00004565 CSV검증]
     PolicyNode(
         policy_id   = "NHIS_001",
         name        = "노인장기요양보험",
         description = "치매·중풍 등으로 혼자 일상생활이 어려운 어르신에게 요양 서비스 제공",
         source      = "건강보험공단",
-        apply_url   = "https://www.nhis.or.kr",
+        apply_url   = "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004565",
         age_min     = 65,
         required_situations = [LS.CARE, LS.MEDICAL],
         required_family     = [FS.WITH_ELDERLY, FS.WITH_SICK_FAMILY],
@@ -390,7 +390,7 @@ POLICIES: list[PolicyNode] = [
         name        = "서울형 긴급복지 지원",
         description = "서울 거주 위기 가구에 생계·의료·주거 긴급 지원 (중앙 기준보다 완화)",
         source      = "서울시",
-        apply_url   = "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003952",
+        apply_url   = "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=서울형긴급복지지원",
         regions     = ["서울특별시"],
         income_max  = IR.MIDDLE,
         required_situations = [LS.CRISIS, LS.LIVING_COST],
@@ -692,7 +692,7 @@ POLICIES: list[PolicyNode] = [
         name        = "저소득층 양곡 지원",
         description = "기초생활수급자에게 시중가 50% 할인으로 쌀 구입 지원",
         source      = "농림축산식품부",
-        apply_url   = "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004566",
+        apply_url   = "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=저소득층양곡지원",
         income_max  = IR.VERY_LOW,
         required_situations = [LS.LIVING_COST],
         required_docs = [DocumentType.ID_COPY],
@@ -876,7 +876,7 @@ POLICIES: list[PolicyNode] = [
         name        = "독거노인 생활관리사 파견",
         description = "홀로 사는 어르신 가정에 생활관리사가 정기 방문, 안전·건강 확인 및 말벗 서비스",
         source      = "복지로",
-        apply_url   = "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004570",
+        apply_url   = "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=독거노인생활관리사",
         age_min     = 65,
         required_situations = [LS.CARE, LS.LIVING_COST],
         required_family     = [FS.SINGLE],
@@ -959,7 +959,7 @@ POLICIES: list[PolicyNode] = [
         name        = "가사간병 방문서비스",
         description = "거동 불편 저소득 가구에 가사·간병 도우미 파견 (월 24~40시간, 무료~소액)",
         source      = "복지로",
-        apply_url   = "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003586",
+        apply_url   = "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00009830",
         income_max  = IR.MIDDLE_LOW,
         required_situations = [LS.CARE, LS.DISABILITY, LS.MEDICAL],
         required_docs = [
