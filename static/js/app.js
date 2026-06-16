@@ -2448,7 +2448,7 @@ function renderMyinfoSaved() {
               <button class="wst-btn ${st==="pending"?"wst-active wst-pending":""}" onclick="setItemStatus(${i},${j},'pending')">예정</button>
               <button class="wst-btn ${st==="done"?"wst-active wst-done":""}" onclick="setItemStatus(${i},${j},'done')">완료✓</button>
             </div>
-            <a href="${it.url||'https://www.bokjiro.go.kr'}" target="_blank" rel="noopener" class="wallet-apply-btn">신청 →</a>
+            <a href="${buildApplyUrl({ policy_id: it.policyId||"", url: it.url||"", name: it.name||"" }).url}" target="_blank" rel="noopener" class="wallet-apply-btn">신청 →</a>
           </div>
         </div>`;
       });
@@ -2773,10 +2773,11 @@ function saveResultToMyPage() {
   // 카드별 상세 데이터 수집
   const items = [];
   ontCards.forEach(c => {
-    const name = c.querySelector(".ont-policy-name")?.textContent.trim() || "";
-    const desc = c.querySelector(".ont-desc")?.textContent.trim() || "";
-    const url  = c.querySelector("a.ont-apply-btn")?.href || "";
-    if (name) items.push({ name, desc, url, type: "ont" });
+    const name     = c.querySelector(".ont-policy-name")?.textContent.trim() || "";
+    const desc     = c.querySelector(".ont-desc")?.textContent.trim() || "";
+    const policyId = c.dataset.policyId || "";   // ← 딥링크 조회에 필수
+    const url      = c.querySelector("a.ont-apply-btn")?.href || c.dataset.url || "";
+    if (name) items.push({ name, desc, url, policyId, type: "ont" });
   });
   bkCards.forEach(c => {
     const name     = c.dataset.name  || c.querySelector(".bk-name")?.textContent.trim() || "";
