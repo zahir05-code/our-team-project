@@ -18,42 +18,53 @@ function _noticeUrl(p) {
   const rawUrl = (p.apply_url || p.url || "").trim();
 
   // ── 차단 패턴: 서비스 신청/상세 페이지가 아닌 URL ──
-  // 여기 해당하면 deeplink/fallback으로 내려보냄
   const BLOCKED_PATTERNS = [
-    "/pcd/",          // mogef·여타부처 정책자료실 문서목록
-    "search.do",      // 검색결과 페이지
-    "mogef.go.kr/wm/",  // 성평등가족부 개편으로 404 확인된 경로
-    "mogef.go.kr/sp/fam/", // 동일
-    "mogef.go.kr/mp/",    // 동일
+    "/pcd/",
+    "mogef.go.kr/wm/",
+    "mogef.go.kr/sp/fam/",
+    "mogef.go.kr/mp/",
   ];
   const isBlockedUrl = (url) => BLOCKED_PATTERNS.some(pat => url.includes(pat));
 
-  // mogef 홈페이지는 허용 (항상 접속 가능), 내부 경로는 차단
-  const isMogefHome = (url) =>
-    /^https?:\/\/(www\.)?mogef\.go\.kr\/?$/.test(url);
+  // ── 홈페이지 판별: path가 없거나 "/" 뿐인 URL → 기관 홈 = 서비스 직접 URL 아님 ──
+  const isHomepage = (url) => {
+    try {
+      const u = new URL(url);
+      const path = u.pathname.replace(/\/+$/, "");   // 후행 슬래시 제거
+      const hasQuery = u.search.length > 1;
+      return !hasQuery && (!path || path === "");     // 경로도 없고 쿼리도 없으면 홈
+    } catch { return false; }
+  };
+
+  // ── 검색 결과 페이지 판별 ──
+  const isSearchPage = (url) => /search\.do|query=/.test(url);
 
   // 1순위: 복지로 WLF 서비스 상세 직접 URL (가장 신뢰)
   if (rawUrl.includes("wlfareInfoId=")) return rawUrl;
 
-  // 2순위: 기관 특정 서비스 직접 URL (홈·차단패턴 아닌 경우)
-  // mogef 홈페이지도 유효한 목적지로 허용
-  const genericHosts = ["bokjiro.go.kr", "lh.or.kr", "mnuri.kr", "kinfa.or.kr",
-                        "semas.or.kr", "mohw.go.kr", "childcare.go.kr", "gmhc.or.kr",
-                        "seoulmentalhealth.kr", "ggwf.or.kr"];
-  if (rawUrl && /^https?:\/\//.test(rawUrl) && !isBlockedUrl(rawUrl)) {
-    if (isMogefHome(rawUrl)) return rawUrl;  // mogef 홈 → 허용
-    const isGenericHome = genericHosts.some(h =>
-      rawUrl.replace(/^https?:\/\/(www\.)?/, "").replace(/\/?$/, "") === h
-    );
-    if (!isGenericHome) return rawUrl;
+  // 2순위: 기관 특정 서비스 직접 URL
+  //   - 홈페이지·차단패턴·검색결과 페이지는 통과하지 않음
+  if (rawUrl && /^https?:\/\//.test(rawUrl)
+      && !isBlockedUrl(rawUrl)
+      && !isHomepage(rawUrl)
+      && !isSearchPage(rawUrl)) {
+    return rawUrl;
   }
 
-  // 3순위: deeplink detailUrl (차단패턴 제외)
+  // 3순위: deeplink detailUrl (홈·검색결과 제외)
   const dl = getDeepLink(p.policy_id);
-  if (dl && dl.detailUrl && !isBlockedUrl(dl.detailUrl)) return dl.detailUrl;
+  if (dl && dl.detailUrl
+      && !isBlockedUrl(dl.detailUrl)
+      && !isHomepage(dl.detailUrl)
+      && !isSearchPage(dl.detailUrl)) {
+    return dl.detailUrl;
+  }
 
-  // 4순위: buildApplyUrl fallback
-  return buildApplyUrl(p).url;
+  // 4순위: 복지로 키워드 검색 fallback (서비스명으로 최대한 좁혀서)
+  const keyword = encodeURIComponent((p.name || p.policy_name || "").slice(0, 20));
+  return keyword
+    ? `https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=${keyword}`
+    : "https://www.bokjiro.go.kr";
 }
 
 /* ── 신청 준비 가이드 모달 ──
@@ -999,10 +1010,21 @@ function buildApplyUrl(p) {
   const src  = (p.source || "").trim();
   const keyword = encodeURIComponent(name.replace(/\s*\(.*?\)\s*/g,"").trim());
 
-  /* ── 0순위: 딥링크 JSON 테이블 (build_welfare_deeplinks.py 생성) ── */
+  /* ── 홈페이지 여부 판별 (path 없음 = 기관 홈 = 서비스 직접 URL 아님) ── */
+  const _isHomepage = (url) => {
+    try {
+      const u = new URL(url);
+      const path = u.pathname.replace(/\/+$/, "");
+      return !u.search.slice(1) && (!path || path === "");
+    } catch { return false; }
+  };
+
+  /* ── 0순위: 딥링크 JSON 테이블 ── */
   if (pid) {
     const dl = getDeepLink(pid);
-    if (dl && dl.detailUrl && !dl.detailUrl.includes("search.do")) {
+    if (dl && dl.detailUrl
+        && !dl.detailUrl.includes("search.do")
+        && !_isHomepage(dl.detailUrl)) {
       return {
         url: dl.detailUrl,
         label: `🔗 ${dl.title} 바로가기 →`,
