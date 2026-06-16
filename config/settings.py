@@ -1,6 +1,12 @@
 # 프로젝트 전역 설정
 # [보안 원칙] API 키, 토큰 등 민감 정보는 반드시 .env 파일에 분리 저장
 
+# ─── 앱 버전 (단일 진실 소스) ────────────────────────────────
+# 이 값만 수정하면 git commit 시 아래 파일이 자동 동기화됩니다:
+#   static/js/app.js  (1번째 줄 주석)
+#   templates/index.html  (?v= 쿼리스트링, CSS + JS 모두)
+APP_VERSION = "5.29"
+
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
