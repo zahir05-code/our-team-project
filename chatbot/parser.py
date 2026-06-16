@@ -73,9 +73,16 @@ def build_profile(answers: dict) -> UserProfile:
 
     UI 레이블(챗봇 흐름)과 enum value(API 직접 호출) 모두 지원.
     """
-    age      = int(answers.get("age", 0))
-    region   = answers.get("region", "서울특별시")
-    district = answers.get("district", "")
+    # ① 나이: 빈 문자열·None 안전 처리
+    raw_age = answers.get("age", 0)
+    try:
+        age = int(raw_age) if str(raw_age).strip() else 0
+    except (ValueError, TypeError):
+        age = 0
+
+    # ② 지역: 빈 문자열·None → 기본값 서울특별시
+    region   = (answers.get("region") or "서울특별시").strip() or "서울특별시"
+    district = answers.get("district", "") or ""
 
     situations = answers.get("life_situations", [])
     life_situations = [r for s in situations if (r := _resolve_situation(s))]
