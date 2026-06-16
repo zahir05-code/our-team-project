@@ -1,4 +1,4 @@
-/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.34 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
+/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.35 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
 
 /* ── 딥링크 테이블 (build_welfare_deeplinks.py 생성 JSON) ── */
 let _deepLinks = {};   // id → {detailUrl, applyUrl, matchType, ...}
@@ -1984,10 +1984,28 @@ function renderCalendar() {
       </div>`;
       lastMonth = ev.month;
     }
-    html += `<div class="cal-card" onclick="openCalDetail(${i})" role="button" style="cursor:pointer">
+
+    // ── 만료 상태 배지 ──────────────────────────────────────
+    let statusBadge = "";
+    let cardClass   = "cal-card";
+    if (ev.month === 0) {
+      statusBadge = "";                      // 상시 — 배지 없음
+    } else if (ev.month < thisMonth) {
+      statusBadge = '<span class="cal-status cal-status-expired">🔒 마감</span>';
+      cardClass   = "cal-card cal-card-expired";
+    } else if (ev.month === thisMonth) {
+      statusBadge = '<span class="cal-status cal-status-active">✅ 진행중</span>';
+    } else {
+      statusBadge = '<span class="cal-status cal-status-upcoming">📅 예정</span>';
+    }
+
+    html += `<div class="${cardClass}" onclick="openCalDetail(${i})" role="button" style="cursor:pointer">
       <div class="cal-card-top">
         <span class="cal-tag" style="background:${ev.color}20;color:${ev.color}">${ev.tag}</span>
-        <span class="cal-link-btn" style="pointer-events:none">자세히 →</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          ${statusBadge}
+          <span class="cal-link-btn" style="pointer-events:none">자세히 →</span>
+        </div>
       </div>
       <p class="cal-name">${ev.name}</p>
       <p class="cal-desc">${ev.desc}</p>

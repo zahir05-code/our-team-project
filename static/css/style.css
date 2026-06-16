@@ -1410,6 +1410,16 @@ body { padding-bottom: 68px; }
 }
 .cal-name    { font-size: 0.97rem; font-weight: 700; color: #111827; margin-bottom: 4px; }
 .cal-desc    { font-size: 0.82rem; color: #6b7280; line-height: 1.5; }
+
+/* ── 달력 만료 상태 배지 ── */
+.cal-status {
+  border-radius: 20px; padding: 1px 8px;
+  font-size: 0.70rem; font-weight: 700; white-space: nowrap;
+}
+.cal-status-expired  { background: #f3f4f6; color: #9ca3af; }
+.cal-status-active   { background: #d1fae5; color: #059669; }
+.cal-status-upcoming { background: #dbeafe; color: #2563eb; }
+.cal-card-expired    { opacity: 0.55; }
 .cal-contact { font-size: 0.8rem; color: #4b5563; margin-top: 6px; }
 
 /* 우리동네 */
