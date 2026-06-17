@@ -230,6 +230,165 @@ def log_update(source: str, total: int, new_count: int, message: str):
         logger.error(f"[Collector] 로그 기록 실패: {e}")
 
 
+# ── 서울시 열린데이터 복지서비스 수집 ────────────────────
+
+SEOUL_API_BASE = "http://openapi.seoul.go.kr:8088"
+
+def collect_seoul_welfare(max_items: int = 200) -> dict:
+    """
+    서울 열린데이터 광장 복지서비스 API → Supabase 저장.
+    API: 서울시_복지서비스 (SEOUL_OPEN_DATA_KEY 환경변수 필요)
+    키 없으면 graceful skip.
+    """
+    api_key = os.environ.get("SEOUL_OPEN_DATA_KEY")
+    if not api_key:
+        logger.info("[Seoul] SEOUL_OPEN_DATA_KEY 없음 → 수집 skip")
+        return {"ok": False, "source": "seoul", "count": 0, "message": "API 키 없음"}
+
+    endpoint = f"{SEOUL_API_BASE}/{api_key}/json/WelfareService/1/{max_items}/"
+    try:
+        resp = requests.get(endpoint, timeout=20)
+        resp.raise_for_status()
+        data = resp.json()
+        rows = data.get("WelfareService", {}).get("row", [])
+        if not rows:
+            return {"ok": False, "source": "seoul", "count": 0, "message": "응답 데이터 없음"}
+
+        policies = []
+        for r in rows:
+            name = r.get("SVC_NM", "").strip()
+            if not name:
+                continue
+            policies.append({
+                "policy_id":    f"SEOUL_OPEN_{r.get('SVC_ID', name[:10])}",
+                "name":         name,
+                "description":  r.get("SVC_CONTENT", "")[:500],
+                "benefit":      r.get("RPRSN_SVC_CD_NM", ""),
+                "how_to_apply": "Y" if r.get("ONLINE_APPLY_YN") == "Y" else "방문/전화 신청",
+                "contact":      r.get("DEPT_NM", "서울시"),
+                "url":          r.get("SVC_URL") or "https://welfare.seoul.go.kr",
+                "source":       "서울특별시",
+                "tags":         _split_tags(r.get("LIFEARRAY", "")),
+                "regions":      ["서울특별시"],
+                "income_levels": ["전체"],
+                "is_active":    True,
+            })
+
+        ok, err = upsert_policies(policies)
+        msg = f"서울시 {ok}건 저장, {err}건 오류"
+        log_update("seoul_api", ok + err, ok, msg)
+        logger.info(f"[Seoul] {msg}")
+        return {"ok": True, "source": "seoul", "count": ok, "message": msg}
+
+    except Exception as e:
+        msg = f"서울시 API 오류: {e}"
+        logger.error(f"[Seoul] {msg}")
+        return {"ok": False, "source": "seoul", "count": 0, "message": msg}
+
+
+# ── 경기도 복지서비스 수집 ────────────────────────────────
+
+GYEONGGI_API_BASE = "https://openapi.gg.go.kr"
+
+def collect_gyeonggi_welfare(max_items: int = 200) -> dict:
+    """
+    경기데이터드림 복지서비스 API → Supabase 저장.
+    API: 경기도_복지정보 (GYEONGGI_OPEN_DATA_KEY 환경변수 필요)
+    키 없으면 graceful skip.
+    """
+    api_key = os.environ.get("GYEONGGI_OPEN_DATA_KEY")
+    if not api_key:
+        logger.info("[Gyeonggi] GYEONGGI_OPEN_DATA_KEY 없음 → 수집 skip")
+        return {"ok": False, "source": "gyeonggi", "count": 0, "message": "API 키 없음"}
+
+    endpoint = f"{GYEONGGI_API_BASE}/SocialWelfareProgram"
+    params = {
+        "KEY":      api_key,
+        "Type":     "json",
+        "pIndex":   1,
+        "pSize":    max_items,
+    }
+    try:
+        resp = requests.get(endpoint, params=params, timeout=20)
+        resp.raise_for_status()
+        data = resp.json()
+        rows = data.get("SocialWelfareProgram", [{}])[-1].get("row", []) \
+               if isinstance(data.get("SocialWelfareProgram"), list) \
+               else []
+
+        if not rows:
+            return {"ok": False, "source": "gyeonggi", "count": 0, "message": "응답 데이터 없음"}
+
+        policies = []
+        for r in rows:
+            name = r.get("PROGRM_NM", "").strip()
+            if not name:
+                continue
+            policies.append({
+                "policy_id":    f"GG_OPEN_{r.get('PROGRM_CD', name[:10])}",
+                "name":         name,
+                "description":  r.get("PROGRM_CN", "")[:500],
+                "benefit":      r.get("PROGRM_TRGET_NM", ""),
+                "how_to_apply": "방문/전화 신청",
+                "contact":      r.get("INSTT_NM", "경기도"),
+                "url":          r.get("PROGRM_URL") or "https://www.ggwf.or.kr",
+                "source":       "경기도",
+                "tags":         _split_tags(r.get("PROGRM_TRGET_NM", "")),
+                "regions":      ["경기도"],
+                "income_levels": ["전체"],
+                "is_active":    True,
+            })
+
+        ok, err = upsert_policies(policies)
+        msg = f"경기도 {ok}건 저장, {err}건 오류"
+        log_update("gyeonggi_api", ok + err, ok, msg)
+        logger.info(f"[Gyeonggi] {msg}")
+        return {"ok": True, "source": "gyeonggi", "count": ok, "message": msg}
+
+    except Exception as e:
+        msg = f"경기도 API 오류: {e}"
+        logger.error(f"[Gyeonggi] {msg}")
+        return {"ok": False, "source": "gyeonggi", "count": 0, "message": msg}
+
+
+# ── 전체 주간 수집 (3개 소스 통합) ───────────────────────
+
+def collect_all_weekly() -> dict:
+    """
+    매주 월요일 새벽 3시 실행 — 3개 소스 동시 수집.
+    1. 중앙부처 (정부24 data.go.kr) — 전 페이지 순환
+    2. 서울시 (열린데이터광장)
+    3. 경기도 (데이터드림)
+    키 없는 소스는 자동 skip.
+    """
+    logger.info("[Weekly] ===== 주간 전체 수집 시작 =====")
+    results = {}
+
+    # ① 중앙부처: 10페이지(최대 1,000건) 수집
+    central_total = 0
+    for page in range(1, 11):
+        res = collect_one_page(page=page)
+        central_total += res.get("count", 0)
+        if not res.get("ok"):
+            break
+    results["central"] = central_total
+
+    # ② 서울시
+    seoul_res = collect_seoul_welfare(max_items=300)
+    results["seoul"] = seoul_res.get("count", 0)
+
+    # ③ 경기도
+    gg_res = collect_gyeonggi_welfare(max_items=300)
+    results["gyeonggi"] = gg_res.get("count", 0)
+
+    total = sum(results.values())
+    msg = (f"주간 수집 완료 — 중앙부처 {results['central']}건 / "
+           f"서울시 {results['seoul']}건 / 경기도 {results['gyeonggi']}건 / 합계 {total}건")
+    logger.info(f"[Weekly] {msg}")
+    log_update("weekly_all", total, total, msg)
+    return {"ok": True, "total": total, "detail": results, "message": msg}
+
+
 # ── 메인 수집 실행 ────────────────────────────────────────
 
 def collect_one_page(page: int = 1) -> dict:

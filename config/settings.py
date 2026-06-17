@@ -5,7 +5,7 @@
 # 이 값만 수정하면 git commit 시 아래 파일이 자동 동기화됩니다:
 #   static/js/app.js  (1번째 줄 주석)
 #   templates/index.html  (?v= 쿼리스트링, CSS + JS 모두)
-APP_VERSION = "5.39"
+APP_VERSION = "5.40"
 
 from pathlib import Path
 
@@ -20,6 +20,14 @@ REPORT_DRAFT_DIR   = BASE_DIR / "reports" / "drafts"
 # ─── 복지로 API 설정 ────────────────────────────────────────
 WELFARE_API_BASE_URL = "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo"
 WELFARE_API_KEY      = ""  # .env 에서 주입
+
+# ─── 지자체 API 설정 (주간 자동 수집) ────────────────────────
+# Railway 환경변수에서 주입 — 없으면 해당 소스 자동 skip
+# SEOUL_OPEN_DATA_KEY   : 서울 열린데이터광장 인증키 (data.seoul.go.kr)
+# GYEONGGI_OPEN_DATA_KEY: 경기 데이터드림 인증키 (openapi.gg.go.kr)
+# GOV_WELFARE_API_KEY   : 정부24 공공데이터포털 (apis.data.go.kr/B554287/)
+SEOUL_API_BASE    = "http://openapi.seoul.go.kr:8088"
+GYEONGGI_API_BASE = "https://openapi.gg.go.kr"
 
 # ─── 환급금·지원금 조회 API 목록 (A-4 신규 탑재) ───────────
 REFUND_API_SOURCES = {
