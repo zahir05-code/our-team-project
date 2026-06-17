@@ -94,7 +94,7 @@ WLF00018636  청년도약계좌
 | **중앙부처 정책** | 복지로 WLF 직접 상세 URL (`moveTWAT52011M.do?wlfareInfoId=WLF...`) |
 | **서울시 정책** | `youth.seoul.go.kr`, `welfare.seoul.go.kr`, `wis.seoul.go.kr` 등 서울 공식 직접 페이지 |
 | **경기도 정책** | `ggwf.or.kr`, `youth.gg.go.kr`, `jobaba.net` 등 경기 공식 직접 페이지 |
-| **고용노동부** | `work.go.kr` 서비스별 직접 경로, `ei.go.kr` |
+| **고용노동부** | `work24.go.kr` (구 워크넷 통합), `ei.go.kr` — ⚠️ `work.go.kr` 서비스 종료, 사용 금지 |
 | **건강보험공단** | `nhis.or.kr` 서비스별 직접 경로 |
 
 > ⚠️ 서울 정책에 경기 URL, 경기 정책에 서울 URL 절대 혼용 금지
@@ -404,8 +404,9 @@ item.status = "none"(미신청) | "pending"(신청예정) | "done"(완료)
 | 복지로 | bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF... |
 | 국민건강보험 | nhis.or.kr/nhis/policy/wbhace01900m01.do (틀니·임플란트) |
 | 국민건강보험 | nhis.or.kr/nhis/policy/wbhace02100m01.do (장애인 보조기기) |
-| 워크넷 | work.go.kr/empInfo/neisWorkerService/neisWorkerServiceView.do |
-| 워크넷 중장년 | work.go.kr/senior/info/seniorJobRecommInfo.do |
+| ~~워크넷~~ | ~~work.go.kr~~ — 서비스 종료 (사용 금지) |
+| 고용24 (구 워크넷 통합) | work24.go.kr/cm/main.do |
+| 국민취업지원제도 | bokjiro WLF00003245 |
 | 고용보험 | ei.go.kr/ei/eih/eg/b/ehFrontEIApply.do |
 | 새일센터 | saeil.mogef.go.kr |
 | 성평등가족부 홈 | mogef.go.kr (홈페이지만 안전 — 내부 경로 사용 금지) |
@@ -441,6 +442,8 @@ item.status = "none"(미신청) | "pending"(신청예정) | "done"(완료)
 - `mogef.go.kr/wm/...` — 성평등가족부 개편으로 404 (내부 경로 전체 사용 금지)
 - `mogef.go.kr/mp/pcd/...` — 정책자료실 문서목록 (서비스 페이지 아님)
 - `mafra.go.kr/sites/...` — 미검증 (대체: bokjiro WLF00004566)
+- `www.work.go.kr` 전체 — 워크넷 서비스 2024년 종료 → `www.work24.go.kr` 로 대체 (절대 사용 금지)
+- `www.work.go.kr/senior` — 동일 사유 종료 (대체: `www.work24.go.kr/cm/main.do`)
 
 ---
 

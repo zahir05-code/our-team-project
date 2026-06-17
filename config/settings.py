@@ -5,7 +5,7 @@
 # 이 값만 수정하면 git commit 시 아래 파일이 자동 동기화됩니다:
 #   static/js/app.js  (1번째 줄 주석)
 #   templates/index.html  (?v= 쿼리스트링, CSS + JS 모두)
-APP_VERSION = "5.38"
+APP_VERSION = "5.39"
 
 from pathlib import Path
 

@@ -78,7 +78,7 @@ GENDER_LINKS: dict[str, dict] = {
         "고용노동부(일자리·육아휴직)":   "https://www.moel.go.kr",
         "국가보훈부":                    "https://www.mpva.go.kr",
         "고용보험(육아휴직 신청)":       "https://www.ei.go.kr",
-        "워크넷 중장년 취업":            "https://www.work.go.kr",
+        "워크넷 중장년 취업":            "https://www.work24.go.kr/cm/main.do",
         "한국장애인고용공단":            "https://www.kead.or.kr",
         "국방부 병역명문가":             "https://www.mnd.go.kr",
     },

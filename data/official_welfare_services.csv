@@ -26,8 +26,8 @@ WLF00004575,통신요금감면,통신비지원,bokjiro,https://www.bokjiro.go.kr
 WLF00004576,주거취약계층주거지원,고시원쪽방,bokjiro,https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004576,,LH콜센터,1600-1004
 WLF00004577,임신출산진료비지원,임신바우처,bokjiro,https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004577,,건강보험공단,1577-1000
 MOEL_UE001,구직급여,실업급여,bokjiro,https://www.ei.go.kr/ei/eih/eg/b/ehFrontEIApply.do,,고용복지플러스센터,1350
-MOEL_YO001,국민취업지원제도,청년취업지원금,bokjiro,https://www.work.go.kr/empInfo/neisWorkerService/neisWorkerServiceView.do,,고용복지플러스센터,1350
-MOEL_MID001,중장년취업지원,장년워크넷,bokjiro,https://www.work.go.kr/senior/info/seniorJobRecommInfo.do,,고용복지플러스센터,1350
+MOEL_YO001,국민취업지원제도,청년취업지원금,bokjiro,https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003245,,고용복지플러스센터,1350
+MOEL_MID001,중장년취업지원,고용24,bokjiro,https://www.work24.go.kr/cm/main.do,,고용복지플러스센터,1350
 NHIS_LTC001,노인장기요양보험,장기요양등급,gov24,https://www.nhis.or.kr/nhis/policy/wbhace03800m01.do,,건강보험공단,1577-1000
 SEOUL_RENT001,서울시청년월세지원,서울청년월세,local,https://youth.seoul.go.kr/site/main/content/monthlyrent,,서울시,120
 SEOUL_EMG001,서울형긴급복지지원,서울긴급복지,local,https://welfare.seoul.go.kr/site/main/content/emergency_welfare,,읍면동주민센터,120

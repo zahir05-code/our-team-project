@@ -221,7 +221,7 @@ POLICIES: list[PolicyNode] = [
         name        = "청년 취업지원금 (국민취업지원제도)",
         description = "취업에 어려움이 있는 청년에게 구직활동 지원금 및 취업 서비스 제공",
         source      = "고용노동부",
-        apply_url   = "https://www.work.go.kr",
+        apply_url   = "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003245",
         age_min     = 15,
         age_max     = 34,
         income_max  = IR.MIDDLE_LOW,
@@ -265,10 +265,10 @@ POLICIES: list[PolicyNode] = [
     # ── 12. 중장년 취업지원 ──────────────────────────────────
     PolicyNode(
         policy_id   = "MOEL_002",
-        name        = "중장년 취업지원 (장년 워크넷)",
-        description = "만 40세 이상 중장년층의 재취업·전직 지원 서비스",
+        name        = "중장년 취업지원 (고용24)",
+        description = "만 40세 이상 중장년층의 재취업·전직 지원 서비스 (고용24 통합포털)",
         source      = "고용노동부",
-        apply_url   = "https://www.work.go.kr/senior",
+        apply_url   = "https://www.work24.go.kr/cm/main.do",
         age_min     = 40,
         required_situations = [LS.JOB],
         required_work       = [WS.JOB_SEEKING, WS.UNEMPLOYED, WS.OTHER],
