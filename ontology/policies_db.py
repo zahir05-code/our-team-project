@@ -268,7 +268,7 @@ POLICIES: list[PolicyNode] = [
         name        = "중장년 취업지원 (고용24)",
         description = "만 40세 이상 중장년층의 재취업·전직 지원 서비스 (고용24 통합포털)",
         source      = "고용노동부",
-        apply_url   = "https://www.work24.go.kr/cm/c/f/1100/selecSystInfo.do?systId=SI00000316&systClId=SC00000206",
+        apply_url   = "https://www.work24.go.kr/wk/u/b/1000/seniorChgJobSptSvc.do",
         age_min     = 40,
         required_situations = [LS.JOB],
         required_work       = [WS.JOB_SEEKING, WS.UNEMPLOYED, WS.OTHER],
