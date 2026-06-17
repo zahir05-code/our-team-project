@@ -288,12 +288,12 @@ def collect_seoul_welfare(max_items: int = 200) -> dict:
 
 # ── 경기도 복지서비스 수집 ────────────────────────────────
 
-GYEONGGI_API_BASE = "https://openapi.gg.go.kr"
+GYEONGGI_API_BASE = "https://data.gg.go.kr/portal/data/service"
 
 def collect_gyeonggi_welfare(max_items: int = 200) -> dict:
     """
-    경기데이터드림 복지서비스 API → Supabase 저장.
-    API: 경기도_복지정보 (GYEONGGI_OPEN_DATA_KEY 환경변수 필요)
+    경기데이터드림 마이데이터_복지정보 API → Supabase 저장.
+    infId: 8Z6Y0JFIP4J4FPVMQX3C37678851 (마이데이터 통합플랫폼_복지정보)
     키 없으면 graceful skip.
     """
     api_key = os.environ.get("GYEONGGI_OPEN_DATA_KEY")
@@ -301,39 +301,44 @@ def collect_gyeonggi_welfare(max_items: int = 200) -> dict:
         logger.info("[Gyeonggi] GYEONGGI_OPEN_DATA_KEY 없음 → 수집 skip")
         return {"ok": False, "source": "gyeonggi", "count": 0, "message": "API 키 없음"}
 
-    endpoint = f"{GYEONGGI_API_BASE}/SocialWelfareProgram"
+    endpoint = "https://data.gg.go.kr/portal/data/service/selectServicePage.do"
     params = {
-        "KEY":      api_key,
-        "Type":     "json",
-        "pIndex":   1,
-        "pSize":    max_items,
+        "infId":    "8Z6Y0JFIP4J4FPVMQX3C37678851",
+        "infSeq":   "2",
+        "key":      api_key,
+        "type":     "json",
+        "pageNo":   1,
+        "numOfRows": max_items,
     }
     try:
         resp = requests.get(endpoint, params=params, timeout=20)
         resp.raise_for_status()
         data = resp.json()
-        rows = data.get("SocialWelfareProgram", [{}])[-1].get("row", []) \
-               if isinstance(data.get("SocialWelfareProgram"), list) \
-               else []
+        # 경기데이터드림 응답 구조: {"result": {"featureCollection": {"features": [...]}}}
+        features = (data.get("result", {})
+                        .get("featureCollection", {})
+                        .get("features", []))
+        rows = [f.get("properties", {}) for f in features] if features else []
 
         if not rows:
             return {"ok": False, "source": "gyeonggi", "count": 0, "message": "응답 데이터 없음"}
 
         policies = []
         for r in rows:
-            name = r.get("PROGRM_NM", "").strip()
+            name = (r.get("WELFAREINFONAME") or r.get("PRCUSR_NM") or "").strip()
             if not name:
                 continue
+            apply_url = r.get("RCPTURL") or r.get("REFURL") or "https://www.ggwf.or.kr"
             policies.append({
-                "policy_id":    f"GG_OPEN_{r.get('PROGRM_CD', name[:10])}",
+                "policy_id":    f"GG_OPEN_{r.get('WELFAREINFOCODE', name[:10])}",
                 "name":         name,
-                "description":  r.get("PROGRM_CN", "")[:500],
-                "benefit":      r.get("PROGRM_TRGET_NM", ""),
-                "how_to_apply": "방문/전화 신청",
-                "contact":      r.get("INSTT_NM", "경기도"),
-                "url":          r.get("PROGRM_URL") or "https://www.ggwf.or.kr",
+                "description":  (r.get("WELFAREINFODETAILCN") or "")[:500],
+                "benefit":      r.get("WELFARECATEGORY") or "",
+                "how_to_apply": r.get("APPLYMETHODNM") or "방문/전화 신청",
+                "contact":      r.get("CHARGEDEPTPHONENUMBER") or r.get("INSTT_NM") or "경기도",
+                "url":          apply_url,
                 "source":       "경기도",
-                "tags":         _split_tags(r.get("PROGRM_TRGET_NM", "")),
+                "tags":         _split_tags(r.get("WELFARECATEGORY", "")),
                 "regions":      ["경기도"],
                 "income_levels": ["전체"],
                 "is_active":    True,
