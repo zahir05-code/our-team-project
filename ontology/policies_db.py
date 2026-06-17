@@ -692,7 +692,7 @@ POLICIES: list[PolicyNode] = [
         name        = "저소득층 양곡 지원",
         description = "기초생활수급자에게 시중가 50% 할인으로 쌀 구입 지원",
         source      = "농림축산식품부",
-        apply_url   = "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003129",
+        apply_url   = "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=저소득층양곡지원",
         income_max  = IR.VERY_LOW,
         required_situations = [LS.LIVING_COST],
         required_docs = [DocumentType.ID_COPY],
@@ -959,7 +959,7 @@ POLICIES: list[PolicyNode] = [
         name        = "가사간병 방문서비스",
         description = "거동 불편 저소득 가구에 가사·간병 도우미 파견 (월 24~40시간, 무료~소액)",
         source      = "복지로",
-        apply_url   = "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00009830",
+        apply_url   = "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003586",
         income_max  = IR.MIDDLE_LOW,
         required_situations = [LS.CARE, LS.DISABILITY, LS.MEDICAL],
         required_docs = [
