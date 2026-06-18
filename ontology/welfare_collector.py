@@ -106,6 +106,13 @@ def _parse_list_xml(xml_text: str) -> list[dict]:
                 el = item.find(tag)
                 return el.text.strip() if el is not None and el.text else ""
 
+            sigungu = t("sigunguCd") or t("areaCd") or ""
+            regions = _parse_regions(sigungu)
+
+            # 서울·경기 이외 지역 전용 정책은 수집 제외
+            if not regions:
+                continue
+
             policy = {
                 "policy_id":     t("servId"),
                 "name":          t("servNm"),
@@ -118,7 +125,7 @@ def _parse_list_xml(xml_text: str) -> list[dict]:
                 "source":        t("jurMnofNm") or "복지로",
                 "category":      t("lifeArray"),
                 "tags":          _split_tags(t("intrsThemaArray") + "," + t("lifeArray")),
-                "regions":       ["서울특별시", "경기도"],
+                "regions":       regions,
                 "income_levels": _parse_income(t("lifeArray")),
                 "deadline":      "",
                 "is_active":     True,
@@ -147,20 +154,23 @@ def _split_tags(raw: str) -> list[str]:
 
 
 def _parse_regions(sigungu_code: str) -> list[str]:
-    """지역코드 → 지역명 변환 (서울/경기 필터)."""
-    if not sigungu_code:
-        return ["서울특별시", "경기도"]  # 기본: 전국 → 허용 지역 모두 포함
+    """지역코드 → 지역명 변환 (서울/경기 필터).
 
-    regions = []
+    - 코드 없음(전국 공통) → 서울+경기 모두 포함
+    - 11xxx → 서울특별시
+    - 41xxx → 경기도
+    - 그 외 타 지역 코드 → [] (수집 제외)
+    """
+    if not sigungu_code or sigungu_code.strip() == "":
+        return ["서울특별시", "경기도"]  # 전국 공통 정책
+
     code = sigungu_code.strip()
     if code.startswith("11"):
-        regions.append("서울특별시")
+        return ["서울특별시"]
     elif code.startswith("41"):
-        regions.append("경기도")
+        return ["경기도"]
     else:
-        # 전국 정책 → 두 지역 모두
-        regions = ["서울특별시", "경기도"]
-    return regions
+        return []  # 서울·경기 외 지역 → 수집 제외
 
 
 def _parse_income(target_text: str) -> list[str]:

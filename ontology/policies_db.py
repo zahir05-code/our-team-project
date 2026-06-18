@@ -876,7 +876,7 @@ POLICIES: list[PolicyNode] = [
         name        = "독거노인 생활관리사 파견",
         description = "홀로 사는 어르신 가정에 생활관리사가 정기 방문, 안전·건강 확인 및 말벗 서비스",
         source      = "복지로",
-        apply_url   = "https://www.1661-2129.or.kr/",
+        apply_url   = "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004572",
         age_min     = 65,
         required_situations = [LS.CARE, LS.LIVING_COST],
         required_family     = [FS.SINGLE],
