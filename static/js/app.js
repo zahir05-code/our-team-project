@@ -2702,12 +2702,67 @@ function renderMyinfoSaved() {
 function setItemStatus(sessionIdx, itemIdx, status) {
   const list = JSON.parse(localStorage.getItem(SAVED_KEY) || "[]");
   if (!list[sessionIdx] || !list[sessionIdx].items) return;
-  list[sessionIdx].items[itemIdx].status = status;
+  const item = list[sessionIdx].items[itemIdx];
+  item.status = status;
   localStorage.setItem(SAVED_KEY, JSON.stringify(list));
   renderWalletSummary();
   renderMyinfoSaved();
   const labels = { none:"미신청", pending:"신청예정으로 설정", done:"신청완료로 변경 ✅" };
   showToast(labels[status] || "");
+  // 신청예정·완료 시 알림 문자 제안
+  if (status === "pending" || status === "done") {
+    openStatusNotifyModal(item.name || "", item.url || "", status);
+  }
+}
+
+/* ── 신청 상태 알림 모달 ── */
+function openStatusNotifyModal(name, url, status) {
+  const existing = document.getElementById("statusNotifyModal");
+  if (existing) existing.remove();
+  const label = status === "pending" ? "신청 예정 알림" : "신청 완료 알림";
+  const modal = document.createElement("div");
+  modal.id = "statusNotifyModal";
+  modal.className = "sms-modal";
+  modal.innerHTML = `
+    <div class="sms-modal-box">
+      <div class="sms-modal-header">
+        <span>📲 ${label} 문자 받기</span>
+        <button onclick="document.getElementById('statusNotifyModal').remove()">✕</button>
+      </div>
+      <div class="sms-modal-body">
+        <p style="font-size:13px;color:#555;margin-bottom:8px;">${name}</p>
+        <input id="statusNotifyPhone" type="tel" class="sms-phone-input" placeholder="휴대폰 번호 (01012345678)" />
+        <p id="statusNotifyResult" style="font-size:12px;color:#e53935;margin-top:6px;"></p>
+      </div>
+      <div class="sms-modal-footer">
+        <button class="sms-btn-cancel" onclick="document.getElementById('statusNotifyModal').remove()">취소</button>
+        <button class="sms-btn-send" onclick="sendStatusNotify(${JSON.stringify(name)},${JSON.stringify(url)},${JSON.stringify(status)})">발송</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  document.getElementById("statusNotifyPhone").focus();
+}
+
+async function sendStatusNotify(name, url, status) {
+  const phone = (document.getElementById("statusNotifyPhone")?.value || "").trim();
+  const resultEl = document.getElementById("statusNotifyResult");
+  if (!phone) { if(resultEl) resultEl.textContent = "번호를 입력해 주세요."; return; }
+  try {
+    const resp = await fetch("/welfare/notify-status", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone, name, url, status })
+    });
+    const data = await resp.json();
+    if (resp.ok) {
+      document.getElementById("statusNotifyModal")?.remove();
+      showToast("알림 문자를 발송했습니다 📲");
+    } else {
+      if(resultEl) resultEl.textContent = data.detail || "발송 실패";
+    }
+  } catch(e) {
+    if(resultEl) resultEl.textContent = "네트워크 오류";
+  }
 }
 
 /* ── 프로필 섹션 접기/펼치기 ── */

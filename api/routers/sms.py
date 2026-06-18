@@ -19,6 +19,12 @@ class SmsItem(BaseModel):
     url:       str
     level:     str = ""   # "✅ 신청 요건 충족" | "🔶 해당 가능성 있음" | ...
 
+class SmsStatusRequest(BaseModel):
+    phone:  str  = Field(..., description="수신자 휴대폰 번호")
+    name:   str  = Field(..., description="복지 서비스명")
+    url:    str  = Field("", description="신청 URL")
+    status: str  = Field(..., description="pending | done")
+
 class SmsRequest(BaseModel):
     phone:    str = Field(..., description="수신자 휴대폰 번호 (01012345678)")
     age:      int = Field(..., description="사용자 나이")
@@ -119,3 +125,65 @@ async def send_sms(req: SmsRequest):
         )
 
     return {"success": True, "message": f"{phone_clean}로 문자를 발송했습니다."}
+
+
+# ── 신청 상태 알림 엔드포인트 ─────────────────────────────────
+
+@router.post("/notify-status", summary="신청 상태 변경 알림 문자")
+async def notify_status(req: SmsStatusRequest):
+    api_key    = os.environ.get("SOLAPI_API_KEY", "")
+    api_secret = os.environ.get("SOLAPI_API_SECRET", "")
+    sender     = os.environ.get("SOLAPI_SENDER", "")
+
+    if not all([api_key, api_secret, sender]):
+        raise HTTPException(
+            status_code=503,
+            detail="SMS 서비스가 설정되지 않았습니다.",
+        )
+
+    phone_clean = "".join(c for c in req.phone if c.isdigit())
+    if not (10 <= len(phone_clean) <= 11):
+        raise HTTPException(status_code=400, detail="올바른 휴대폰 번호를 입력하세요.")
+
+    if req.status == "pending":
+        text = (
+            f"[아테나] 신청 예정 알림\n"
+            f"▶ {req.name}\n"
+            f"신청을 예정하셨습니다.\n"
+            f"잊지 말고 신청해보세요!\n"
+            f"{'신청하기: ' + req.url + chr(10) if req.url else ''}"
+            f"📱 lingostaredu.app"
+        )
+    else:  # done
+        text = (
+            f"[아테나] 신청 완료 확인\n"
+            f"✅ {req.name}\n"
+            f"신청 완료로 기록했습니다.\n"
+            f"결과가 나오면 담당 기관에서 연락드립니다.\n"
+            f"📱 lingostaredu.app"
+        )
+
+    payload = {
+        "message": {
+            "to":   phone_clean,
+            "from": sender,
+            "text": text,
+            "type": "LMS" if len(text) > 90 else "SMS",
+        }
+    }
+    headers = {
+        "Authorization": _make_auth_header(api_key, api_secret),
+        "Content-Type":  "application/json",
+    }
+
+    async with httpx.AsyncClient(timeout=10) as client:
+        resp = await client.post(SOLAPI_API_URL, json=payload, headers=headers)
+
+    if resp.status_code != 200:
+        raise HTTPException(status_code=502, detail=f"Solapi 오류: {resp.status_code}")
+
+    data = resp.json()
+    if data.get("errorCount", 1) > 0:
+        raise HTTPException(status_code=502, detail=f"문자 발송 실패: {data}")
+
+    return {"success": True}
