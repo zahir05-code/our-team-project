@@ -1,4 +1,4 @@
-/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.53 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
+/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.54 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
 
 /* ── 딥링크 테이블 (build_welfare_deeplinks.py 생성 JSON) ── */
 let _deepLinks = {};   // id → {detailUrl, applyUrl, matchType, ...}
@@ -998,14 +998,18 @@ async function sendSmsResult() {
     if (items.length >= 5) return;
     const name  = card.querySelector(".ont-card-name")?.textContent?.trim() || "";
     const level = card.querySelector(".ont-card-badge")?.textContent?.trim() || "";
-    const url   = card.querySelector(".official-notice-btn")?.href || "";
-    if (name && url) items.push({ name, level, url });
+    const btn   = card.querySelector(".official-notice-btn");
+    const url   = (btn?.href && !btn.href.endsWith("#")) ? btn.href
+                : btn?.getAttribute("onclick")?.match(/window\.open\(['"]([^'"]+)['"]/)?.[1] || "";
+    if (name) items.push({ name, level, url });
   });
   document.querySelectorAll(".bk-card").forEach(card => {
     if (items.length >= 5) return;
     const name = card.querySelector(".bk-card-name")?.textContent?.trim() || "";
-    const url  = card.querySelector(".official-notice-btn")?.href || "";
-    if (name && url) items.push({ name, level: "", url });
+    const btn  = card.querySelector(".official-notice-btn");
+    const url  = (btn?.href && !btn.href.endsWith("#")) ? btn.href
+               : btn?.getAttribute("onclick")?.match(/window\.open\(['"]([^'"]+)['"]/)?.[1] || "";
+    if (name) items.push({ name, level: "", url });
   });
 
   if (items.length === 0) {
