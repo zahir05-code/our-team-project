@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: athena-welfare
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn api.app:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: GOV_WELFARE_API_KEY
+        sync: false
+      - key: SEOUL_OPEN_DATA_KEY
+        sync: false
+      - key: GYEONGGI_OPEN_DATA_KEY
+        sync: false
+      - key: SOLAPI_API_KEY
+        sync: false
+      - key: SOLAPI_API_SECRET
+        sync: false
+      - key: SOLAPI_SENDER
+        sync: false
