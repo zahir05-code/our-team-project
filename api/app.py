@@ -7,6 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
 
 from api.routers import welfare
+from api.routers import sms
 from api.schemas import HealthResponse
 from welfare_analyzer.models.user_profile import ALLOWED_REGIONS
 from db.models import init_db
@@ -32,6 +33,7 @@ app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 
 # 라우터 등록
 app.include_router(welfare.router)
+app.include_router(sms.router)
 
 
 @app.on_event("startup")

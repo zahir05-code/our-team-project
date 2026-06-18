@@ -283,6 +283,11 @@ static/js/welfareDeepLinks.json      — 빌드 결과 (50개 서비스, 직접 
   - `SUPABASE_KEY` — anon key (읽기)
   - `SUPABASE_SERVICE_KEY` — service_role key (쓰기, RLS 우회)
   - `GOV_WELFARE_API_KEY` — 정부24 공공데이터포털 API 키
+  - `SEOUL_OPEN_DATA_KEY` — 서울 열린데이터광장 인증키 (`openapi.seoul.go.kr:8088`)
+  - `GYEONGGI_OPEN_DATA_KEY` — 경기데이터드림 인증키 (`data.gg.go.kr`, infId: 8Z6Y0JFIP4J4FPVMQX3C37678851)
+  - `SOLAPI_API_KEY` — Solapi API 키 (문자 발송, https://solapi.com)
+  - `SOLAPI_API_SECRET` — Solapi API 시크릿
+  - `SOLAPI_SENDER` — 발신 번호 (Solapi 등록 번호, 예: 01012345678)
 
 ---
 
@@ -488,3 +493,8 @@ item.status = "none"(미신청) | "pending"(신청예정) | "done"(완료)
 | v5.25 | deeplink WLF ID 오매핑 4건 수정 (FOOD_001→WLF00004566, SENIOR_001 재교체, YOUTH_003→WLF00018636, GYEONGGI_002→ggwf.or.kr), _noticeUrl 우선순위 개선 |
 | v5.26 | mogef 정책자료실(/pcd/) URL 차단패턴 추가, MULTI_001·004·005 mogef 내부경로 제거 |
 | v5.27 | mogef 내부경로 전체 404 확인 → 성평등가족부 홈페이지로 교체, _noticeUrl 방어코드 강화, deeplink 50건 전수검증 완료 (미검증 0건) |
+| v5.38~v5.40 | **주간 자동 수집 스케줄러 탑재** — `ontology/welfare_collector.py`에 `collect_seoul_welfare()` / `collect_gyeonggi_welfare()` / `collect_all_weekly()` 신설. `policy_updater.py` IntervalTrigger(6h) → CronTrigger(매주 월 03:00 KST)로 교체. 중앙(정부24) + 서울 열린데이터광장 API + 경기데이터드림 API 3개 소스 주간 통합 수집. Railway 환경변수 6개 등록: `SEOUL_OPEN_DATA_KEY`, `GYEONGGI_OPEN_DATA_KEY`, `SUPABASE_URL/KEY/SERVICE_KEY`, `GOV_WELFARE_API_KEY`. API 키 미설정 시 해당 소스 자동 skip(graceful). |
+| v5.41 | 경기도 API 엔드포인트 교체 — `openapi.gg.go.kr`(404) → `data.gg.go.kr` 경기데이터드림 (infId: 8Z6Y0JFIP4J4FPVMQX3C37678851). 응답 필드명 WELFAREINFONAME/RCPTURL/WELFAREINFODETAILCN/WELFARECATEGORY/CHARGEDEPTPHONENUMBER 기준으로 파싱 수정. |
+| v5.42~v5.43 | **공식공고문 보기 전체 직접 서비스 URL 전수 교체** — policies_db.py + welfareDeepLinks.json 전 정책 apply_url 홈페이지 루트 → 직접 서비스 페이지로 일괄 교체(8건). 중장년취업지원 work24 직접 신청 URL(`seniorChgJobSptSvc.do`), 아이돌봄 직접 신청, 외국인근로자의료 직접 페이지, 서울청년월세·희망두배통장, 경기청년기본소득·긴급복지, 틀니임플란트·보조기기 nhis 직접 경로. |
+| v5.44 | 전체 홈페이지 URL 직접 서비스 페이지 일괄 교체 (v5.43 후속 전수검수). |
+| v5.45 | **WLF ID 전수검증** — CSV(`data/official_welfare_services.csv`) 대조로 미검증 ID 3건 수정. CARE_001 가사간병 WLF00009830(EFWSV00001 오류) → WLF00003586 교체. FOOD_001 양곡지원 WLF00003129(CSV 미존재) → bokjiro 키워드검색 fallback 교체. policies_db.py + welfareDeepLinks.json 동시 반영. |

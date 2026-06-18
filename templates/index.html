@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>아테나 복지서비스 | 내 혜택 찾기</title>
-  <link rel="stylesheet" href="/static/css/style.css?v=5.50">
+  <link rel="stylesheet" href="/static/css/style.css?v=5.51">
 </head>
 <body>
 
@@ -249,6 +249,9 @@
 
       <button class="btn-save-result" onclick="saveResultToMyPage()" data-i18n="btn_save_result">
         📌 이 결과 마이페이지에 저장
+      </button>
+      <button id="smsSendBtn" class="btn-sms-result" onclick="openSmsModal()" style="display:none">
+        📱 결과 문자로 받기
       </button>
       <button class="btn-retry" onclick="retry()" data-i18n="btn_retry">↩ 다시 조회하기</button>
     </section>
@@ -571,9 +574,30 @@
     </div>
   </div>
 
-  <script src="/static/js/data.js?v=5.50"></script>
-  <script src="/static/js/i18n.js?v=5.50"></script>
-  <script src="/static/js/translations.js?v=5.50"></script>
-  <script src="/static/js/app.js?v=5.50"></script>
+  <!-- SMS 모달 -->
+  <div class="modal-overlay hidden" id="smsModal" onclick="if(event.target===this)closeSmsModal()">
+    <div class="modal-content sms-modal">
+      <div class="sms-modal-header">
+        <span>📱 결과 문자로 받기</span>
+        <button onclick="closeSmsModal()">✕</button>
+      </div>
+      <div class="sms-modal-body">
+        <p class="sms-modal-desc">조회 결과(최대 5건)를 문자로 받아볼 수 있습니다.<br>번호는 저장되지 않습니다.</p>
+        <input id="smsPhoneInput" type="tel" placeholder="010-0000-0000" maxlength="13"
+               oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+               onkeydown="if(event.key==='Enter')sendSmsResult()" />
+        <div id="smsResult" style="font-size:13px;min-height:18px;margin-top:6px"></div>
+      </div>
+      <div class="sms-modal-footer">
+        <button class="sms-cancel-btn" onclick="closeSmsModal()">취소</button>
+        <button id="smsSendConfirmBtn" class="sms-send-btn" onclick="sendSmsResult()">발송</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/data.js?v=5.51"></script>
+  <script src="/static/js/i18n.js?v=5.51"></script>
+  <script src="/static/js/translations.js?v=5.51"></script>
+  <script src="/static/js/app.js?v=5.51"></script>
 </body>
 </html>

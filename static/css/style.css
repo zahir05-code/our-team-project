@@ -1115,6 +1115,104 @@ body.scene-result .card-flag-overlay {
 }
 .btn-save-result:hover { opacity: 0.88; }
 
+/* ── 문자 받기 버튼 ── */
+.btn-sms-result {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin: 8px 0 0;
+  padding: 13px;
+  background: linear-gradient(135deg, #059669, #047857);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.18s;
+}
+.btn-sms-result:hover { opacity: 0.88; }
+
+/* ── SMS 모달 ── */
+.sms-modal {
+  max-width: 360px;
+  width: 92vw;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+}
+.sms-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e293b;
+  border-bottom: 1px solid #f1f5f9;
+}
+.sms-modal-header button {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+.sms-modal-body {
+  padding: 16px 18px;
+}
+.sms-modal-desc {
+  font-size: 12.5px;
+  color: #64748b;
+  margin: 0 0 12px;
+  line-height: 1.6;
+}
+.sms-modal-body input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1rem;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+.sms-modal-body input:focus { border-color: #059669; }
+.sms-modal-footer {
+  display: flex;
+  gap: 8px;
+  padding: 12px 18px 18px;
+}
+.sms-cancel-btn {
+  flex: 1;
+  padding: 11px;
+  background: #f1f5f9;
+  color: #64748b;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.sms-send-btn {
+  flex: 2;
+  padding: 11px;
+  background: linear-gradient(135deg, #059669, #047857);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.sms-send-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.sms-send-btn:hover:not(:disabled) { opacity: 0.88; }
+
 /* ── 마이페이지 모달 ── */
 .mypage-modal {
   max-width: 480px;

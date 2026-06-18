@@ -1,4 +1,4 @@
-/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.50 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
+/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.51 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
 
 /* ── 딥링크 테이블 (build_welfare_deeplinks.py 생성 JSON) ── */
 let _deepLinks = {};   // id → {detailUrl, applyUrl, matchType, ...}
@@ -968,6 +968,82 @@ function renderResult(data, analysis) {
   const totalCards = (data.ontology ? (data.ontology.summary?.total || 0) : 0)
                    + (data.supabase_policies ? data.supabase_policies.length : 0);
   updateResultBadge(totalCards);
+
+  // 문자 받기 버튼 (결과 있을 때만)
+  const smsBtn = document.getElementById("smsSendBtn");
+  if (smsBtn) smsBtn.style.display = totalCards > 0 ? "flex" : "none";
+}
+
+/* ══════════════════════════════════════
+   SMS 모달 — 결과 문자 발송
+══════════════════════════════════════ */
+function openSmsModal() {
+  document.getElementById("smsModal").classList.remove("hidden");
+  document.getElementById("smsPhoneInput").focus();
+}
+function closeSmsModal() {
+  document.getElementById("smsModal").classList.add("hidden");
+  document.getElementById("smsPhoneInput").value = "";
+  document.getElementById("smsResult").textContent = "";
+}
+
+async function sendSmsResult() {
+  const phone = document.getElementById("smsPhoneInput").value.trim();
+  if (!phone) { document.getElementById("smsResult").textContent = "휴대폰 번호를 입력해 주세요."; return; }
+
+  // 결과 카드에서 항목 수집 (ont-card + bk-card 최대 5건)
+  const items = [];
+  document.querySelectorAll(".ont-card").forEach(card => {
+    if (items.length >= 5) return;
+    const name  = card.querySelector(".ont-card-name")?.textContent?.trim() || "";
+    const level = card.querySelector(".ont-card-badge")?.textContent?.trim() || "";
+    const url   = card.querySelector(".official-notice-btn")?.href || "";
+    if (name && url) items.push({ name, level, url });
+  });
+  document.querySelectorAll(".bk-card").forEach(card => {
+    if (items.length >= 5) return;
+    const name = card.querySelector(".bk-card-name")?.textContent?.trim() || "";
+    const url  = card.querySelector(".official-notice-btn")?.href || "";
+    if (name && url) items.push({ name, level: "", url });
+  });
+
+  if (items.length === 0) {
+    document.getElementById("smsResult").textContent = "발송할 결과가 없습니다.";
+    return;
+  }
+
+  const btn = document.getElementById("smsSendConfirmBtn");
+  btn.disabled = true;
+  btn.textContent = "발송 중…";
+  document.getElementById("smsResult").textContent = "";
+
+  try {
+    const resp = await fetch("/welfare/send-sms", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        phone,
+        age:    state.age    || 0,
+        region: state.region || "",
+        items,
+      }),
+    });
+    const data = await resp.json();
+    if (resp.ok) {
+      document.getElementById("smsResult").textContent = "✅ 문자를 발송했습니다!";
+      document.getElementById("smsResult").style.color = "#22c55e";
+      setTimeout(closeSmsModal, 1800);
+    } else {
+      document.getElementById("smsResult").textContent = "❌ " + (data.detail || "발송 실패");
+      document.getElementById("smsResult").style.color = "#ef4444";
+    }
+  } catch (e) {
+    document.getElementById("smsResult").textContent = "❌ 네트워크 오류";
+    document.getElementById("smsResult").style.color = "#ef4444";
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "발송";
+  }
 }
 
 /* ══════════════════════════════════════
