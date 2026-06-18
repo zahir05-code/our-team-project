@@ -5,7 +5,7 @@
 # 이 값만 수정하면 git commit 시 아래 파일이 자동 동기화됩니다:
 #   static/js/app.js  (1번째 줄 주석)
 #   templates/index.html  (?v= 쿼리스트링, CSS + JS 모두)
-APP_VERSION = "5.47"
+APP_VERSION = "5.48"
 
 from pathlib import Path
 
@@ -34,7 +34,7 @@ REFUND_API_SOURCES = {
     "국세청 환급금 조회":
         "https://teht.hometax.go.kr/websquare/websquare.html?w2xPath=/ui/rf/a/b/UTERPAAB99.xml",
     "정부24 미환급금 조회":
-        "https://www.gov.kr/portal/rcvfvrSvc/dtlEx/398000000069",
+        "https://www.gov.kr",
     "금융결제원 휴면계좌 통합조회":
         "https://www.payinfo.or.kr",
     "건강보험공단 환급금 조회":

@@ -1,4 +1,4 @@
-/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.47 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
+/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.48 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
 
 /* ── 딥링크 테이블 (build_welfare_deeplinks.py 생성 JSON) ── */
 let _deepLinks = {};   // id → {detailUrl, applyUrl, matchType, ...}
@@ -247,7 +247,7 @@ function wxAlert(t, at, wc) {
   if (wc >= 95) return {
     label:"기상특보", color:"#7c3aed",
     msg: "재난긴급생활비 지원 대상 확인하세요",
-    url: "https://www.gov.kr/portal/welfare/welfareInfo", btn:"재난지원 확인"
+    url: "https://www.gov.kr", btn:"재난지원 확인"
   };
   if (wc >= 51 && wc <= 86) return {
     label:"우천·강설", color:"#0891b2",

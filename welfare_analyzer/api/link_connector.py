@@ -36,8 +36,8 @@ SITUATION_SERVICE_CODE = {
 
 # 중앙 부처별 복지 포털 링크 — 메인 또는 안정적인 1단계 하위 URL만 사용
 CENTRAL_GOV_LINKS = {
-    "보조금24":             "https://www.gov.kr/portal/rcvfvrInfo",
-    "정부24 복지서비스":    "https://www.gov.kr/portal/welfare/welfareInfo",
+    "보조금24":             "https://www.gov.kr",
+    "정부24 복지서비스":    "https://www.gov.kr",
     "보건복지부":           "https://www.mohw.go.kr",
     "고용노동부 고용서비스":"https://www.moel.go.kr",
     "국토교통부 주거복지":  "https://www.molit.go.kr",
@@ -108,7 +108,7 @@ def get_lifecycle_code(age: int) -> str:
 def build_bokjiro_search_url(profile: UserProfile) -> str:
     """사용자 나이 기반 정부24 복지서비스 포털 URL 반환."""
     # 정부24 복지서비스 포털 — GET 접근 가능, 나이 무관 전체 복지서비스 목록
-    return "https://www.gov.kr/portal/welfare/welfareInfo"
+    return "https://www.gov.kr"
 
 
 def build_result_links(profile: UserProfile) -> dict:
