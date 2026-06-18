@@ -1,4 +1,4 @@
-/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.46 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
+/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.47 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
 
 /* ── 딥링크 테이블 (build_welfare_deeplinks.py 생성 JSON) ── */
 let _deepLinks = {};   // id → {detailUrl, applyUrl, matchType, ...}
@@ -2101,7 +2101,7 @@ const LOCAL_BENEFITS = {
     { name:"서울시 청년수당", desc:"만 19~34세 미취업 청년, 월 50만원 × 6개월", contact:"02-2133-5186", url:"https://youth.seoul.go.kr", tag:"청년" },
     { name:"서울시 안심소득 시범사업", desc:"기준 중위소득 85% 이하 가구, 부족분의 절반 지원", contact:"02-120", url:"https://wis.seoul.go.kr", tag:"저소득" },
     { name:"서울형 긴급복지 지원", desc:"위기 가구 생계·의료·주거비 신속 지원", contact:"02-120", url:"https://www.welfare.seoul.kr/web/contents/emergency.lp", tag:"긴급" },
-    { name:"서울 희망두배 청년통장", desc:"월 10~15만원 저축 시 서울시 동일 금액 매칭", contact:"02-2133-7395", url:"https://youth.seoul.go.kr/site/main/welfare/welfareDetail?welfare_id=13", tag:"청년" },
+    { name:"서울 희망두배 청년통장", desc:"월 10~15만원 저축 시 서울시 동일 금액 매칭", contact:"02-2133-7395", url:"https://account.welfare.seoul.kr/web/contents/youthBank.lp", tag:"청년" },
     { name:"서울 임신출산 의료비 지원", desc:"임산부 1인당 100만원 국민행복카드 지원", contact:"1577-1000", url:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004577", tag:"임신·출산" },
     { name:"어르신 교통비 지원 (65세↑)", desc:"서울 거주 만 65세 이상, 연 10만원 교통카드 충전", contact:"02-120", url:"https://wis.seoul.go.kr", tag:"노인" },
   ],
@@ -2121,7 +2121,7 @@ const LOCAL_BENEFITS = {
 const LOCAL_PUBLIC = {
   "서울특별시": [
     { type:"welfare",  name:"서울시 종합사회복지관",       addr:"각 구별 운영",           tel:"02-2133-7386", desc:"생활상담, 재가복지, 직업지원 등 종합 복지서비스", url:"https://wis.seoul.go.kr", hours:"평일 09:00~18:00" },
-    { type:"welfare",  name:"서울시니어플러스 (노인복지관)",addr:"25개 자치구 운영",        tel:"02-2133-5400", desc:"만 60세 이상 건강·교육·취업·여가 프로그램 운영",   url:"https://seniorplus.seoul.go.kr", hours:"평일 09:00~18:00" },
+    { type:"welfare",  name:"서울시니어플러스 (노인복지관)",addr:"25개 자치구 운영",        tel:"02-2133-5400", desc:"만 60세 이상 건강·교육·취업·여가 프로그램 운영",   url:"https://www.seoul.go.kr", hours:"평일 09:00~18:00" },
     { type:"center",   name:"주민센터 (동 행정복지센터)",  addr:"내 동 주민센터",          tel:"120",          desc:"복지급여 신청, 주민등록, 증명서 발급, 통합사례관리",url:"https://www.gov.kr", hours:"평일 09:00~18:00" },
     { type:"center",   name:"서울시 희망복지지원단",       addr:"각 구청 내",             tel:"02-2133-7386", desc:"위기가정 발굴·지원, 통합사례관리, 자원연계",        url:"https://www.welfare.seoul.kr", hours:"평일 09:00~18:00" },
     { type:"meal",     name:"무료급식소 (경로식당)",       addr:"각 구별 운영",           tel:"120",          desc:"만 60세 이상 어르신 무료 또는 저렴한 식사 제공",    url:"https://wis.seoul.go.kr", hours:"월~금 점심" },

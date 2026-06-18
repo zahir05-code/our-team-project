@@ -784,7 +784,7 @@
     "title": "주거 취약계층 주거지원 (LH임대주택)",
     "sourceSite": "bokjiro",
     "detailUrl": "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004576",
-    "applyUrl": "https://www.lh.or.kr/lhinfo/apply/appDetail.do?sns_apply_no=1",
+    "applyUrl": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWtWrtancList.do",
     "authority": "LH 콜센터 또는 읍·면·동 주민센터",
     "phone": "1600-1004",
     "matchType": "partial",
