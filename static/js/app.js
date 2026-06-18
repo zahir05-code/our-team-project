@@ -1,4 +1,4 @@
-/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.52 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
+/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.53 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
 
 /* ── 딥링크 테이블 (build_welfare_deeplinks.py 생성 JSON) ── */
 let _deepLinks = {};   // id → {detailUrl, applyUrl, matchType, ...}
@@ -462,6 +462,7 @@ function loadProfile() {
 function renderSituationGrid() {
   const grid = document.getElementById("situationGrid");
   if (!grid) return;
+  grid.innerHTML = "";  // 중복 렌더링 방지
   const labels = T("situations");  // 현재 언어 번역 배열
   SITUATIONS.forEach((value, i) => {
     const label = (Array.isArray(labels) && labels[i]) ? labels[i] : value;
