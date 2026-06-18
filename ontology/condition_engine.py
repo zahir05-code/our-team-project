@@ -287,6 +287,10 @@ def match(profile: UserProfile, policy: PolicyNode) -> tuple[MatchLevel, list[st
     """
     reasons: list[str] = []
 
+    # ── 0. 외국인·이민자 전용 정책 — 한국인 사용자에게 FUTURE만 표시 ──
+    if getattr(policy, "foreigner_only", False):
+        return MatchLevel.FUTURE, ["결혼이민자·귀화자·외국인 전용 서비스 — 해당 여부 확인 필요"]
+
     # ── 1. 예외 규칙 먼저 확인 ─────────────────────────────
     exc_result = _apply_exceptions(profile, policy)
     if exc_result == "EXCLUDED":

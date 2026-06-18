@@ -111,6 +111,10 @@ class PolicyNode:
     phone:          str = "129 (복지 콜센터)"
     online_apply:   bool = True
 
+    # ── 외국인·이민자 전용 플래그 ─────────────────────────────
+    # True = 결혼이민자·귀화자·외국인 전용 서비스 (한국인에게는 FUTURE로만 노출)
+    foreigner_only: bool = False
+
     # ── 태그 (검색·필터용) ───────────────────────────────────
     tags: list[str] = field(default_factory=list)
 
