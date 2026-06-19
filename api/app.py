@@ -1,5 +1,6 @@
 """아테나 복지서비스 FastAPI 앱 — v3.4 (50개 정책 + 자동갱신)."""
 
+import os
 from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -21,11 +22,21 @@ app = FastAPI(
     version="3.4.0",
 )
 
+_ALLOWED_ORIGINS = [
+    o.strip()
+    for o in os.getenv(
+        "ALLOWED_ORIGINS",
+        "https://lingostaredu.app,http://localhost:8000,http://127.0.0.1:8000",
+    ).split(",")
+    if o.strip()
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=_ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type"],
 )
 
 # 정적 파일 서빙

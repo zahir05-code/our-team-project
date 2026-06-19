@@ -1,6 +1,6 @@
 """FastAPI 요청·응답 스키마."""
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional
 
 
@@ -47,11 +47,21 @@ class HealthResponse(BaseModel):
 
 class NlpRequest(BaseModel):
     """자연어 입력 요청."""
-    text:              str            = Field(..., min_length=5, description="자연어 상황 설명")
+    text:              str            = Field(..., min_length=1, max_length=200, description="자연어 상황 설명")
     income_range:      Optional[str] = Field(None, description="소득 수준 (선택)")
     gender:            Optional[str] = Field(None, description="성별 (여성|남성|무관)")
     region_override:   Optional[str] = Field("",   description="지역 미감지 시 보완 입력")
     district_override: Optional[str] = Field("",   description="구·시·군 미감지 시 보완 입력")
+
+    @field_validator("text")
+    @classmethod
+    def clean_text(cls, v: str) -> str:
+        v = v.strip()
+        if not v:
+            raise ValueError("검색어를 입력해 주세요.")
+        if any(ord(ch) < 32 and ch not in "\n\t" for ch in v):
+            raise ValueError("허용되지 않는 문자가 포함되어 있습니다.")
+        return v
 
 
 class NlpAnalysis(BaseModel):
