@@ -942,7 +942,7 @@ POLICIES: list[PolicyNode] = [
         name        = "장애인 보조기기 지원",
         description = "등록 장애인에게 휠체어·보청기·의수족 등 보조기기 구입비 최대 100% 지원",
         source      = "건강보험공단",
-        apply_url   = "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=장애인보조기기",
+        apply_url   = "https://www.nhis.or.kr/nhis/policy/wbhace02100m01.do",
         required_situations = [LS.DISABILITY, LS.MEDICAL],
         required_docs = [
             DocumentType.ID_COPY,
