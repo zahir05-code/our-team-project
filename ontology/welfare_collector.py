@@ -388,13 +388,11 @@ def collect_all_weekly() -> dict:
             break
     results["central"] = central_total
 
-    # ② 서울시
-    seoul_res = collect_seoul_welfare(max_items=300)
-    results["seoul"] = seoul_res.get("count", 0)
+    # ② 서울시 — API 미지원으로 비활성화 (중앙부처 API가 서울 정책 포함)
+    results["seoul"] = 0
 
-    # ③ 경기도
-    gg_res = collect_gyeonggi_welfare(max_items=300)
-    results["gyeonggi"] = gg_res.get("count", 0)
+    # ③ 경기도 — API 미지원으로 비활성화 (중앙부처 API가 경기 정책 포함)
+    results["gyeonggi"] = 0
 
     total = sum(results.values())
     msg = (f"주간 수집 완료 — 중앙부처 {results['central']}건 / "
