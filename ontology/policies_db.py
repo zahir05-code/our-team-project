@@ -681,7 +681,7 @@ POLICIES: list[PolicyNode] = [
         name        = "저소득층 통신요금 감면",
         description = "기초생활수급자·차상위계층의 이동통신·인터넷 요금 월 최대 26,000원 감면",
         source      = "과학기술정보통신부",
-        apply_url   = "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004575",
+        apply_url   = "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=저소득층+통신요금+감면",
         income_max  = IR.LOW,
         required_situations = [LS.LIVING_COST],
         required_docs = [DocumentType.ID_COPY],
