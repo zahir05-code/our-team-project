@@ -115,6 +115,17 @@ async def db_test():
     return JSONResponse(result)
 
 
+@app.post("/api/policies/collect", summary="정책 수동 수집 트리거")
+async def policy_collect():
+    """서울·경기·중앙 정책 즉시 수집 (관리자용)."""
+    try:
+        from ontology.welfare_collector import collect_all_weekly
+        result = collect_all_weekly()
+        return JSONResponse({"status": "완료", "result": result})
+    except Exception as e:
+        return JSONResponse({"status": "오류", "error": str(e)}, status_code=500)
+
+
 @app.get("/api/policies/count", summary="정책 개수 확인")
 async def policy_count():
     """현재 등록된 정책 총 개수."""
