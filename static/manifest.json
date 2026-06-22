@@ -1,0 +1,32 @@
+{
+  "name": "아테나 복지서비스",
+  "short_name": "아테나",
+  "description": "서울·경기 맞춤 복지혜택, 3분 안에",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d1b2a",
+  "theme_color": "#1a3a5c",
+  "orientation": "portrait",
+  "lang": "ko",
+  "icons": [
+    {
+      "src": "/static/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "내 혜택 찾기",
+      "url": "/",
+      "description": "맞춤 복지서비스 조회"
+    }
+  ]
+}

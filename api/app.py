@@ -64,6 +64,17 @@ async def index():
     return FileResponse(BASE_DIR / "templates" / "index.html")
 
 
+@app.get("/sw.js", include_in_schema=False)
+async def service_worker():
+    """PWA Service Worker — 루트 스코프(/) 전체 제어를 위해 루트에서 서빙."""
+    from fastapi.responses import FileResponse as FR
+    return FR(
+        BASE_DIR / "static" / "sw.js",
+        media_type="application/javascript",
+        headers={"Service-Worker-Allowed": "/"},
+    )
+
+
 @app.get("/health", response_model=HealthResponse, summary="서버 상태 확인")
 async def health():
     return HealthResponse(
