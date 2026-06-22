@@ -1,4 +1,4 @@
-/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.69 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
+/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.70 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
 
 /* ── 딥링크 테이블 (build_welfare_deeplinks.py 생성 JSON) ── */
 let _deepLinks = {};   // id → {detailUrl, applyUrl, matchType, ...}
@@ -702,6 +702,7 @@ function stepAge(delta) {
   const el = document.getElementById("inputAge");
   const val = parseInt(el.value) || 0;
   el.value = Math.max(1, Math.min(120, val + delta));
+  state.age = String(el.value);
   onAgeInput();
 }
 
@@ -795,6 +796,16 @@ function onPledgeToggle() {
 async function submitProfile() {
   if (!_pledged) {
     alert(T("alert_pledge")); return;
+  }
+  // state.age 누락 방어 — inputAge에서 직접 재읽기
+  if (!state.age || isNaN(parseInt(state.age))) {
+    const fallbackAge = parseInt(document.getElementById("inputAge")?.value);
+    if (fallbackAge >= 1 && fallbackAge <= 120) state.age = String(fallbackAge);
+    else { showToast("✏️ " + T("toast_age_required")); return; }
+  }
+  // life_situations 누락 방어
+  if (!state.life_situations || state.life_situations.length === 0) {
+    showToast("✏️ " + T("toast_situation_required")); return;
   }
   showLoading();
   try {
