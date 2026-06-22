@@ -1476,6 +1476,19 @@ body.scene-result .card-flag-overlay {
 /* 하단 탭 때문에 콘텐츠가 가려지지 않도록 */
 body { padding-bottom: 68px; }
 
+/* 결과 요약 바 */
+.result-summary-bar {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  padding: 10px 4px 6px;
+}
+.rsb-item {
+  font-size: 0.78rem; font-weight: 700;
+  padding: 4px 10px; border-radius: 20px;
+}
+.rsb-def { background: #d1fae5; color: #065f46; }
+.rsb-pos { background: #fef3c7; color: #92400e; }
+.rsb-fut { background: #e0e7ff; color: #3730a3; }
+
 /* 헤더 마이페이지 버튼 → 하단 탭으로 대체되므로 숨김 */
 .mypage-shortcut { display: none !important; }
 

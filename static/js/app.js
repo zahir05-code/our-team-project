@@ -1,4 +1,4 @@
-/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.65 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
+/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.66 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
 
 /* ── 딥링크 테이블 (build_welfare_deeplinks.py 생성 JSON) ── */
 let _deepLinks = {};   // id → {detailUrl, applyUrl, matchType, ...}
@@ -190,6 +190,20 @@ const nlpState = {
   region_override: "", district_override: "",
 };
 
+/* ── 장바구니 탭 배지 업데이트 ── */
+function updateCartBadge() {
+  const badge = document.getElementById("cartBadge");
+  if (!badge) return;
+  const list = JSON.parse(localStorage.getItem(SAVED_KEY) || "[]");
+  const total = list.reduce((sum, s) => sum + ((s.items || s.names || []).length), 0);
+  if (total > 0) {
+    badge.textContent = total > 99 ? "99+" : total;
+    badge.classList.remove("hidden");
+  } else {
+    badge.classList.add("hidden");
+  }
+}
+
 /* ── 초기화 ── */
 window.addEventListener("DOMContentLoaded", () => {
   loadDeepLinks();   // 딥링크 JSON 비동기 로드
@@ -200,6 +214,7 @@ window.addEventListener("DOMContentLoaded", () => {
   loadProfile();  // 저장된 프로필 자동 복원
   setScene("home");         // 첫 화면 씬 — 태극기 full 표시
   loadHeaderWeather();      // 헤더 날씨 위젯 로드
+  updateCartBadge();        // 장바구니 배지 초기화
 });
 
 /* ══════════════════════════════════════════════
@@ -950,6 +965,17 @@ function renderResult(data, analysis) {
     body.insertAdjacentHTML("beforeend",
       `<p style="text-align:center;color:#94a3b8;padding:30px 0">조건에 맞는 서비스를 찾지 못했습니다.<br>정보를 더 입력하면 더 많은 결과가 나올 수 있습니다.</p>`);
   } else {
+    // 결과 요약 바
+    const ont = data.ontology;
+    if (ont && ont.summary && ont.summary.total > 0) {
+      const nd = ont.definite.length, np = ont.possible.length, nf = ont.future.length;
+      body.insertAdjacentHTML("beforeend", `
+        <div class="result-summary-bar">
+          ${nd > 0 ? `<span class="rsb-item rsb-def">✅ 즉시신청 ${nd}건</span>` : ""}
+          ${np > 0 ? `<span class="rsb-item rsb-pos">🔶 확인필요 ${np}건</span>` : ""}
+          ${nf > 0 ? `<span class="rsb-item rsb-fut">📌 미리보기 ${nf}건</span>` : ""}
+        </div>`);
+    }
     // 면책 고지
     body.insertAdjacentHTML("beforeend", `
       <div class="ont-disclaimer" style="margin-bottom:8px">
@@ -3162,6 +3188,7 @@ function deleteSavedResult(idx) {
   const saved = JSON.parse(localStorage.getItem(SAVED_KEY) || "[]");
   saved.splice(idx, 1);
   localStorage.setItem(SAVED_KEY, JSON.stringify(saved));
+  updateCartBadge();
   renderSavedList();
 }
 
@@ -3212,6 +3239,7 @@ function saveResultToMyPage() {
 
   if (saved.length > 10) saved.splice(10);
   localStorage.setItem(SAVED_KEY, JSON.stringify(saved));
+  updateCartBadge();
   showToast(`🛒 ${total}건 혜택을 장바구니에 담았습니다!`);
 }
 
