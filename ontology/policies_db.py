@@ -801,7 +801,7 @@ POLICIES: list[PolicyNode] = [
         name        = "청년 주거급여 분리지급",
         description = "주거급여 수급 가구의 청년 자녀(19~30세)가 부모와 별거 시 주거급여 별도 수령 가능",
         source      = "국토교통부",
-        apply_url   = "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=청년도약계좌",
+        apply_url   = "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=청년주거급여분리지급",
         age_min     = 19,
         age_max     = 30,
         income_max  = IR.LOW,
@@ -923,7 +923,7 @@ POLICIES: list[PolicyNode] = [
         name        = "발달장애인 주간활동 서비스",
         description = "성인 발달장애인에게 낮 시간 활동 지원 서비스 제공 (월 100~125시간)",
         source      = "복지로",
-        apply_url   = "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=노인맞춤돌봄서비스",
+        apply_url   = "https://www.bokjiro.go.kr/ssis-tbu/search/search.do?query=발달장애인주간활동서비스",
         age_min     = 18,
         required_situations = [LS.DISABILITY, LS.CARE],
         required_docs = [
