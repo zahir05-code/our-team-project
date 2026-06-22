@@ -1,4 +1,4 @@
-/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.67 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
+/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.68 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
 
 /* ── 딥링크 테이블 (build_welfare_deeplinks.py 생성 JSON) ── */
 let _deepLinks = {};   // id → {detailUrl, applyUrl, matchType, ...}
@@ -2833,9 +2833,9 @@ function renderMyinfoSaved() {
           </div>
           <div class="wallet-item-right">
             <div class="wallet-status-toggle">
-              <button class="wst-btn ${st==="none"?"wst-active":""}" onclick="setItemStatus(${i},${j},'none')">미신청</button>
-              <button class="wst-btn ${st==="pending"?"wst-active wst-pending":""}" onclick="setItemStatus(${i},${j},'pending')">예정</button>
-              <button class="wst-btn ${st==="done"?"wst-active wst-done":""}" onclick="setItemStatus(${i},${j},'done')">완료✓</button>
+              <button class="wst-btn ${st==="none"?"wst-active":""}" onclick="setItemStatus(${i},${j},'none')">○ 미신청</button>
+              <button class="wst-btn ${st==="pending"?"wst-active wst-pending":""}" onclick="setItemStatus(${i},${j},'pending')">⏳ 예정</button>
+              <button class="wst-btn ${st==="done"?"wst-active wst-done":""}" onclick="setItemStatus(${i},${j},'done')">✅ 완료</button>
             </div>
             <button class="wallet-apply-btn" onclick="(function(){const p={policy_id:${JSON.stringify(it.policyId||"")},url:${JSON.stringify(it.url||"")},name:${JSON.stringify(it.name||"")}};const pData={name:${JSON.stringify(it.name||"")},required_docs:${JSON.stringify(it.required_docs||[])},authority:${JSON.stringify(it.authority||"")},phone:${JSON.stringify(it.phone||"")},description:''};openApplyGuide(pData,buildApplyUrl(p).url)})()">신청 →</button>
           </div>

@@ -2309,11 +2309,12 @@ a.uni-meta-item { color: #2563eb; text-decoration: none; }
 .wallet-item {
   display: flex; align-items: flex-start; gap: 10px;
   padding: 12px 14px; border-bottom: 1px solid #f8fafc;
+  border-left: 4px solid transparent;
 }
 .wallet-item:last-child { border-bottom: none; }
-.wallet-item--done    { background: #f0fdf4; }
-.wallet-item--pending { background: #fefce8; }
-.wallet-item--none    { background: #fff; }
+.wallet-item--none    { background: #fff;     border-left-color: #e2e8f0; }
+.wallet-item--pending { background: #fefce8;  border-left-color: #fbbf24; }
+.wallet-item--done    { background: #f0fdf4;  border-left-color: #4ade80; }
 
 .wallet-item-left { flex: 1; min-width: 0; }
 .wallet-item-name {
@@ -2329,10 +2330,10 @@ a.uni-meta-item { color: #2563eb; text-decoration: none; }
 }
 
 /* 상태 토글 버튼 3개 */
-.wallet-status-toggle { display: flex; gap: 3px; }
+.wallet-status-toggle { display: flex; gap: 4px; }
 .wst-btn {
-  font-size: 0.62rem; font-weight: 700; padding: 3px 7px;
-  border-radius: 6px; border: 1.5px solid #e2e8f0;
+  font-size: 0.63rem; font-weight: 700; padding: 5px 8px;
+  border-radius: 8px; border: 1.5px solid #e2e8f0;
   background: #f8fafc; color: #94a3b8; cursor: pointer;
   transition: all 0.12s;
 }
