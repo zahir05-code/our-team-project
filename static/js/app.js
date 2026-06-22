@@ -1,4 +1,4 @@
-/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.63 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
+/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.64 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
 
 /* ── 딥링크 테이블 (build_welfare_deeplinks.py 생성 JSON) ── */
 let _deepLinks = {};   // id → {detailUrl, applyUrl, matchType, ...}
@@ -237,7 +237,7 @@ function wxAlert(t, at, wc) {
   if (t <= -10 || at <= -15) return {
     label:"한파 경보", color:"#1d4ed8",
     msg: `체감온도 ${at}°C — 한파 긴급복지·에너지바우처 즉시 신청`,
-    url: "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004186", btn:"한파 긴급복지 신청"
+    url: "https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004564", btn:"한파 긴급복지 신청"
   };
   if (t <= 0) return {
     label:"영하 날씨", color:"#2563eb",
@@ -1652,7 +1652,7 @@ const WELFARE_CALENDAR = [
       how:"① 읍·면·동 주민센터 또는 시·군·구청 방문 신청\n② 복지로 온라인 신청\n③ ☎ 129 전화 신고 (복지 공무원 현장 출동 가능)",
       period:"연중 상시 (위기 발생 즉시 신청 가능)",
       contact:"보건복지부 복지로 콜센터 ☎ 129",
-      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004563",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004564",
       applyLabel:"복지로 긴급복지지원 신청하기 →",
     },
   },
@@ -1666,7 +1666,7 @@ const WELFARE_CALENDAR = [
       how:"① 읍·면·동 주민센터 방문 신청\n② 복지로 온라인 신청",
       period:"연중 상시 신청 가능",
       contact:"보건복지부 장애인정책과 ☎ 129\n국민연금공단 콜센터 ☎ 1355",
-      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004556",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004573",
       applyLabel:"복지로 장애인연금 신청하기 →",
     },
   },
@@ -1680,7 +1680,7 @@ const WELFARE_CALENDAR = [
       how:"① 읍·면·동 주민센터 방문 신청 (대리 신청 가능)\n② 국민연금공단 지사 방문 신청\n③ 복지로 온라인 신청\n④ 스마트폰: 국민연금 앱",
       period:"만 65세 도달 생일 1개월 전부터 신청 가능, 연중 상시",
       contact:"보건복지부 기초연금 ☎ 129\n국민연금공단 ☎ 1355",
-      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004555",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004571",
       applyLabel:"복지로 기초연금 신청하기 →",
     },
   },
@@ -1708,7 +1708,7 @@ const WELFARE_CALENDAR = [
       how:"① 읍·면·동 주민센터 방문 신청\n② 복지로 온라인 신청 (www.bokjiro.go.kr)\n③ 정부24 온라인 신청\n④ 행복출산 원스톱 서비스 (출생신고 시 동시 신청)",
       period:"연중 상시 신청 가능 (출생일로부터 60일 이내 신청 시 출생월부터 소급 지급)",
       contact:"보건복지부 복지로 콜센터 ☎ 129",
-      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00013233",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004568",
       applyLabel:"복지로 아동수당 신청하기 →",
     },
   },
@@ -1726,6 +1726,48 @@ const WELFARE_CALENDAR = [
       applyLabel:"복지로 한부모가족 지원 신청하기 →",
     },
   },
+  {
+    month:0, tag:"상시", color:"#db2777",
+    name:"임신·출산 진료비 지원 (국민행복카드)",
+    desc:"임산부에게 국민행복카드 100만원 바우처 지급 — 병원비·약값 사용 가능",
+    detail:{
+      target:"건강보험 가입자 또는 피부양자인 임산부 (임신 확인 후 신청)\n※ 의료급여 수급자는 별도 바우처 지급",
+      benefit:"• 임신 1회당 100만 원 바우처 (다태아 140만 원)\n• 사용처: 산부인과·한의원·약국·조산원\n• 분만 취약지 거주 임산부: 추가 20만 원 지원\n• 출산 후 2년까지 사용 가능",
+      how:"① 국민건강보험공단 지사 방문 신청\n② 복지로 온라인 신청 (bokjiro.go.kr)\n③ 정부24 온라인 신청\n④ 행복출산 원스톱 서비스 이용 (출생신고 시 동시 신청)",
+      period:"임신 확인 후 즉시 신청 가능 (연중 상시)\n출산 후 2년까지 잔여 바우처 사용 가능",
+      contact:"국민건강보험공단 ☎ 1577-1000\n복지로 ☎ 129",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004577",
+      applyLabel:"복지로 국민행복카드 신청하기 →",
+    },
+  },
+  {
+    month:0, tag:"상시", color:"#0891b2",
+    name:"어린이집 보육료 지원 (영유아보육료)",
+    desc:"만 0~5세 어린이집 이용 아동 보육료 전액 지원 (소득 무관)",
+    detail:{
+      target:"어린이집을 이용하는 만 0~5세 모든 아동 (소득·재산 기준 없음)\n• 0세반: 월 54만 원\n• 1세반: 월 47만 5,000원\n• 2세반: 월 39만 4,000원\n• 3~5세반: 월 28만 원 (누리과정)\n※ 국공립·직장·가정·민간 어린이집 모두 해당",
+      benefit:"어린이집 보육료 전액 바우처 지원 (보육료 카드로 결제)\n추가보육료(연장보육) 별도 지원\n시간제 보육 이용 시 시간당 지원",
+      how:"① 읍·면·동 주민센터 방문 신청\n② 복지로 온라인 신청 (bokjiro.go.kr)\n③ 정부24 온라인 신청\n④ 어린이집 입소 시 함께 신청 가능",
+      period:"연중 상시 신청 가능 (어린이집 입소 전 신청 권장)",
+      contact:"보건복지부 보육정책관 ☎ 129\n아이사랑 보육포털 ☎ 1661-5534",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004566",
+      applyLabel:"복지로 보육료 지원 신청하기 →",
+    },
+  },
+  {
+    month:0, tag:"상시", color:"#7c3aed",
+    name:"장애인 활동지원 서비스",
+    desc:"혼자 일상생활이 어려운 장애인에게 활동보조인 파견 (월 최대 480시간)",
+    detail:{
+      target:"만 6세~65세 미만 장애인복지법상 등록 장애인\n(65세 이상은 장기요양보험으로 전환)\n※ 독립생활 욕구가 있는 중증장애인 우선",
+      benefit:"• 활동보조: 일상생활·이동 보조 (월 최대 480시간)\n• 방문목욕: 목욕 서비스 월 최대 16회\n• 방문간호: 간호사 방문 간호 서비스\n※ 본인부담금: 소득 수준별 월 2만~17만 원",
+      how:"① 읍·면·동 주민센터 방문 신청\n② 서비스 지원 종합조사(국민연금공단) 받은 후 결정\n③ 서비스 기관 선택 후 이용",
+      period:"연중 상시 신청 가능",
+      contact:"보건복지부 ☎ 129\n국민연금공단 장애인지원팀 ☎ 1355",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00003260",
+      applyLabel:"복지로 장애인 활동지원 신청하기 →",
+    },
+  },
   /* ────── 1월 ────── */
   {
     month:1, tag:"1월", color:"#2563eb",
@@ -1739,6 +1781,20 @@ const WELFARE_CALENDAR = [
       contact:"국세청 세미래 콜센터 ☎ 126",
       applyUrl:"https://www.hometax.go.kr/websquare/websquare.html?w2xPath=/ui/pp/index.xml&tmIdx=0&tm2lIdx=&tm3lIdx=",
       applyLabel:"홈택스 간편 신청하기 →",
+    },
+  },
+  {
+    month:1, tag:"1월", color:"#7c3aed",
+    name:"국가장학금 1차 신청 (대학생)",
+    desc:"한국장학재단 국가장학금 1학기분 — 매년 1월 초 신청 마감, 놓치면 2차까지",
+    detail:{
+      target:"국내 대학교에 재학 중인 학자금 지원 구간 8구간 이하 대학생\n(소득분위 1~8구간, 재산 및 소득 합산 기준)\n※ 신편입생, 재학생, 휴학생 모두 신청 가능",
+      benefit:"• 기초~1구간: 등록금 전액 지원\n• 2구간: 연 520만 원\n• 3구간: 연 520만 원\n• 4구간: 연 390만 원\n• 5~6구간: 연 368만 원\n• 7~8구간: 연 120만 원\n※ 다자녀가구·장애인 학생 추가 지원",
+      how:"① 한국장학재단 홈페이지 (kosaf.go.kr) 온라인 신청\n② 모바일 앱 '한국장학재단' 신청\n③ 대학 학생처 방문 상담 가능\n※ 가구원 정보 제공 동의(부모 동의) 필수",
+      period:"1차 신청: 매년 1월 초 ~ 1월 말 (정확한 일정은 한국장학재단 공지 확인)\n2차 신청: 5월 중 (1차 미신청자 추가 기회)",
+      contact:"한국장학재단 ☎ 1599-2000",
+      applyUrl:"https://www.kosaf.go.kr",
+      applyLabel:"한국장학재단 국가장학금 신청하기 →",
     },
   },
   /* ────── 2월 ────── */
@@ -1797,6 +1853,20 @@ const WELFARE_CALENDAR = [
       contact:"에너지바우처 콜센터 ☎ 1600-3190\n한국에너지공단 ☎ 1600-3101",
       applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00010086",
       applyLabel:"복지로 에너지바우처 안내 보기 →",
+    },
+  },
+  {
+    month:3, tag:"3월", color:"#16a34a",
+    name:"교육급여 신청 (새학기 학용품비·수업료)",
+    desc:"저소득 초·중·고생 교육급여 — 새학기 3월 신청, 학용품비·수업료·입학금 지원",
+    detail:{
+      target:"기준 중위소득 50% 이하 가구의 초·중·고등학교 재학 아동·청소년\n(기초생활수급자 교육급여 수급자 포함)\n※ 가구 내 학령기 자녀 모두 신청 가능",
+      benefit:"• 초등학생: 연 46만 1,000원 (2026년)\n• 중학생: 연 65만 4,000원\n• 고등학생: 연 65만 4,000원 + 수업료·입학금 실비 지원\n교육활동지원비로 학용품·교재·급식비 등 사용",
+      how:"① 읍·면·동 주민센터(행정복지센터) 방문 신청\n② 복지로 온라인 신청 (bokjiro.go.kr)\n③ 학교 행정실 경유 신청 가능 (담임교사 문의)",
+      period:"새학기 3월 신청 권장 (연중 상시 신청 가능)\n신청 후 심사 통과 시 신청월부터 소급 지급",
+      contact:"교육부 교육복지정책과 ☎ 02-6222-6060\n복지로 ☎ 129",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004561",
+      applyLabel:"복지로 교육급여 신청하기 →",
     },
   },
   /* ────── 4월 ────── */
@@ -1868,8 +1938,22 @@ const WELFARE_CALENDAR = [
       how:"① 읍·면·동 주민센터(행정복지센터) 방문 신청\n② 복지로 온라인 신청 (bokjiro.go.kr)\n③ 국토부 마이홈포털 (myhome.go.kr) 정보 확인",
       period:"상시 신청 가능 (연중 수시)\n여름 이사 전(6월) 신청 시 7월부터 지원 가능",
       contact:"LH 주거급여 콜센터 ☎ 1600-0777\n주민센터 ☎ 120 (서울) / 031-120 (경기)",
-      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004185",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004560",
       applyLabel:"복지로 주거급여 신청하기 →",
+    },
+  },
+  {
+    month:6, tag:"6월", color:"#7c3aed",
+    name:"서울 희망두배 청년통장 모집",
+    desc:"서울 저소득 청년 2년 저축 시 시에서 1:1 매칭 — 최대 720만 원 형성",
+    detail:{
+      target:"신청일 기준 서울 거주 만 18~34세\n근로·사업소득 있는 취업자 (주 30시간 이상 취업 권장)\n기준 중위소득 100% 이하\n※ 부양가족 있는 경우 우대",
+      benefit:"본인 월 10만 원 저축 시 시 매칭 월 10만 원 (1:1 매칭)\n2년 만기 시 본인 240만 원 + 서울시 240만 원 = 최대 480만 원\n※ 고금리 적금 추가 이자 포함 시 최대 720만 원 가능",
+      how:"① 서울복지포털 (account.welfare.seoul.kr) 온라인 신청\n② 해당 주민센터 방문 신청\n③ 매년 상반기 1회 모집 (5~7월 중 공고)",
+      period:"매년 5~7월 모집 (연 1회, 2026년 정확한 일정은 서울시 공지 확인)",
+      contact:"서울시 복지정책실 ☎ 02-2133-7346\n다산콜센터 ☎ 120",
+      applyUrl:"https://account.welfare.seoul.kr/web/contents/youthBank.lp",
+      applyLabel:"서울 희망두배 청년통장 신청하기 →",
     },
   },
   /* ────── 7월 ────── */
@@ -1897,7 +1981,7 @@ const WELFARE_CALENDAR = [
       how:"이미 수급 중이면 별도 신청 불필요 — 자동 인상 지급\n신규 신청: 주민센터 방문 또는 복지로 온라인",
       period:"매년 1월 인상 적용 (7월에 상반기 소급 차액 지급되는 경우 있음)",
       contact:"보건복지부 ☎ 129 / 국민연금공단 ☎ 1355",
-      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004555",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004571",
       applyLabel:"복지로 기초연금 신청하기 →",
     },
   },
@@ -1916,6 +2000,20 @@ const WELFARE_CALENDAR = [
       applyLabel:"서민금융진흥원 청년도약계좌 안내 →",
     },
   },
+  {
+    month:8, tag:"8월", color:"#16a34a",
+    name:"가사간병 방문서비스 신청",
+    desc:"거동 불편 저소득 가구에 가사·간병 도우미 파견 — 월 24~40시간 무료~소액",
+    detail:{
+      target:"만 65세 미만 기준 중위소득 70% 이하 가구 중\n장애인·희귀질환자·중증질환자·출산후조리가 필요한 자 등\n※ 독거노인은 노인맞춤돌봄서비스(129)로 별도 신청",
+      benefit:"• 가사서비스: 식사 준비·세탁·청소 등\n• 간병서비스: 신체수발·통원이동 보조 등\n월 24시간(가형)~40시간(나형) 제공\n본인부담금: 무료~월 4만 8,000원 (소득 수준별)",
+      how:"① 읍·면·동 주민센터(행정복지센터) 방문 신청\n② 복지로 온라인 신청 불가 — 주민센터 방문 필수\n③ 서비스 조사 후 제공기관 연계",
+      period:"연중 상시 신청 가능 (대기자 발생 시 순서 대기)",
+      contact:"보건복지부 ☎ 129\n읍·면·동 주민센터 ☎ 120(서울) / 031-120(경기)",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00009830",
+      applyLabel:"복지로 가사간병방문서비스 안내 →",
+    },
+  },
   /* ────── 9월 ────── */
   {
     month:9, tag:"9월", color:"#7c3aed",
@@ -1932,6 +2030,20 @@ const WELFARE_CALENDAR = [
     },
   },
   /* ────── 10월 ────── */
+  {
+    month:9, tag:"9월", color:"#7c3aed",
+    name:"국가장학금 2학기 신청 (대학생)",
+    desc:"한국장학재단 2학기분 국가장학금 — 9월 초 신청 마감",
+    detail:{
+      target:"국내 대학교에 재학 중인 학자금 지원 구간 8구간 이하 대학생\n(소득분위 1~8구간, 재산 및 소득 합산 기준)\n1학기 신청자도 2학기 별도 신청 필요",
+      benefit:"• 기초~1구간: 등록금 전액\n• 2~3구간: 연 520만 원 (학기당 260만 원)\n• 4구간: 연 390만 원\n• 5~6구간: 연 368만 원\n• 7~8구간: 연 120만 원\n※ 성적 기준 충족 필수 (직전 학기 12학점 이상, B학점 이상 권장)",
+      how:"① 한국장학재단 홈페이지 (kosaf.go.kr) 온라인 신청\n② 모바일 앱 '한국장학재단' 신청\n※ 가구원 정보 제공 동의 미완료 시 장학금 지급 불가",
+      period:"2학기 신청: 매년 9월 초 ~ 9월 말 (정확한 일정은 한국장학재단 공지 확인)",
+      contact:"한국장학재단 ☎ 1599-2000",
+      applyUrl:"https://www.kosaf.go.kr",
+      applyLabel:"한국장학재단 국가장학금 신청하기 →",
+    },
+  },
   {
     month:9, tag:"9월", color:"#2563eb",
     name:"근로·자녀장려금 반기 신청",
@@ -1958,6 +2070,20 @@ const WELFARE_CALENDAR = [
       contact:"에너지바우처 콜센터 ☎ 1600-3190",
       applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00010086",
       applyLabel:"복지로 에너지바우처 안내 보기 →",
+    },
+  },
+  {
+    month:10, tag:"10월", color:"#16a34a",
+    name:"노인 무료 독감 예방접종 시작",
+    desc:"만 65세 이상 어르신 독감 예방접종 무료 — 10월부터 전국 보건소·의원",
+    detail:{
+      target:"만 65세 이상 어르신 (전원 무료)\n임산부·생후 6개월~13세 어린이 (별도 무료 대상)\n기초생활수급자·차상위계층 (무료)",
+      benefit:"인플루엔자 예방접종 1회 무료\n(65세 이상 고위험군 폐렴구균 예방접종도 보건소 무료 가능)\n※ 12세 이하 최초 접종 아동 4주 간격 2회 접종",
+      how:"① 가까운 지정 의료기관 방문 (예약 후 방문 권장)\n② 보건소 방문 (예약 필수, 지역 보건소 홈페이지 확인)\n③ 질병관리청 예방접종도우미 사이트에서 지정 기관 검색",
+      period:"매년 10월 초 ~ 12월 말 (재고 소진 전)\n어르신: 10월 / 어린이: 9월 말 시작",
+      contact:"질병관리청 예방접종도우미 ☎ 1339\n보건소 ☎ 120 (서울) / 031-120 (경기)",
+      applyUrl:"https://nip.kdca.go.kr",
+      applyLabel:"예방접종도우미 기관 검색하기 →",
     },
   },
   /* ────── 11월 ────── */
@@ -2014,7 +2140,7 @@ const WELFARE_CALENDAR = [
       how:"① 읍·면·동 주민센터(행정복지센터) 방문 또는 전화\n② 복지로 온라인 신청 (bokjiro.go.kr)\n③ 위기상담 전화 ☎ 129 (24시간 운영)\n※ 한파 등 재난 상황 시 현장 조사 없이 즉시 지원 가능",
       period:"상시 신청 가능 (연중)\n12월~2월 동절기 집중 지원 기간 (한파주의보 발령 시 우선 처리)",
       contact:"보건복지상담센터 ☎ 129 (24시간)\n읍·면·동 주민센터 ☎ 120 (서울) / 031-120 (경기)",
-      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004186",
+      applyUrl:"https://www.bokjiro.go.kr/ssis-tbu/twataa/wlfareInfo/moveTWAT52011M.do?wlfareInfoId=WLF00004564",
       applyLabel:"복지로 긴급복지지원 신청하기 →",
     },
   },
