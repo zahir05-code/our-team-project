@@ -351,6 +351,19 @@ body.scene-result .card-flag-overlay {
 .region-big-btn.active { border-color: #2563eb; background: rgba(219,234,254,0.75); color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
 
 /* 나이 */
+.age-stepper {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 24px;
+}
+.age-stepper .age-input { margin-bottom: 0; flex: 1; }
+.age-step-btn {
+  width: 52px; height: 56px; flex-shrink: 0;
+  border: 2px solid #e5e7eb; border-radius: 14px;
+  background: #fff; font-size: 1.6rem; font-weight: 700; color: #374151;
+  cursor: pointer; transition: border-color 0.15s, background 0.15s, color 0.15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.age-step-btn:hover  { border-color: #2563eb; color: #2563eb; background: #eff6ff; }
+.age-step-btn:active { background: #dbeafe; }
 .age-input {
   width: 100%; padding: 16px 18px;
   border: 2px solid #e5e7eb; border-radius: 14px;
@@ -851,6 +864,7 @@ body.scene-result .card-flag-overlay {
 
   /* 나이 입력 */
   .age-input { padding: 14px 12px; font-size: 1.2rem; border-radius: 12px; margin-bottom: 18px; }
+  .age-step-btn { width: 48px; height: 50px; font-size: 1.4rem; border-radius: 12px; }
 
   /* 상황 그리드 — 3열 유지하되 패딩 축소 */
   .situation-grid { gap: 6px; margin-bottom: 16px; }

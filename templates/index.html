@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>아테나 복지서비스 | 내 혜택 찾기</title>
-  <link rel="stylesheet" href="/static/css/style.css?v=5.66">
+  <link rel="stylesheet" href="/static/css/style.css?v=5.67">
   <!-- 카카오 애드핏 SDK -->
   <script async src="//t1.daumcdn.net/kas/static/ba.min.js"></script>
 </head>
@@ -80,10 +80,14 @@
 
         <!-- 나이 -->
         <p class="step-q" style="margin-top:22px;" data-i18n="q_age">나이가 어떻게 되세요?</p>
-        <input class="age-input" type="number" id="inputAge"
-               placeholder="예: 45" min="1" max="120"
-               aria-label="나이 입력" data-i18n-ph="age_ph"
-               oninput="onAgeInput()">
+        <div class="age-stepper">
+          <button class="age-step-btn" type="button" onclick="stepAge(-1)" aria-label="나이 줄이기">−</button>
+          <input class="age-input" type="number" id="inputAge"
+                 placeholder="예: 45" min="1" max="120"
+                 aria-label="나이 입력" data-i18n-ph="age_ph"
+                 oninput="onAgeInput()">
+          <button class="age-step-btn" type="button" onclick="stepAge(1)" aria-label="나이 늘리기">+</button>
+        </div>
 
         <!-- 가족 구성원 카운터 -->
         <p class="step-q" style="margin-top:22px;" data-i18n="label_family">가족 구성원</p>
@@ -628,9 +632,9 @@
     </div>
   </div>
 
-  <script src="/static/js/data.js?v=5.66"></script>
-  <script src="/static/js/i18n.js?v=5.66"></script>
-  <script src="/static/js/translations.js?v=5.66"></script>
-  <script src="/static/js/app.js?v=5.66"></script>
+  <script src="/static/js/data.js?v=5.67"></script>
+  <script src="/static/js/i18n.js?v=5.67"></script>
+  <script src="/static/js/translations.js?v=5.67"></script>
+  <script src="/static/js/app.js?v=5.67"></script>
 </body>
 </html>
