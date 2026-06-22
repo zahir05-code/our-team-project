@@ -2842,3 +2842,20 @@ a.uni-meta-item { color: #2563eb; text-decoration: none; }
 }
 .official-notice-btn:hover  { opacity: 0.88; transform: translateY(-1px); }
 .official-notice-btn:active { opacity: 0.75; transform: translateY(0); }
+
+/* 카드 하단 버튼 행 (공고문 + 복사) */
+.card-action-row {
+  display: flex; gap: 6px; align-items: stretch;
+}
+.card-action-row .official-notice-btn { flex: 1; }
+.share-copy-btn {
+  flex-shrink: 0; padding: 0 16px;
+  border: none; border-radius: 14px;
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+  color: #0369a1; font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(3,105,161,0.15);
+  transition: opacity 0.15s, transform 0.1s;
+}
+.share-copy-btn:hover  { opacity: 0.88; transform: translateY(-1px); }
+.share-copy-btn:active { opacity: 0.75; transform: translateY(0); }

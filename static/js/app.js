@@ -1,4 +1,4 @@
-/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.68 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
+/* 아테나 복지서비스 — 3단계 미니멀 UX (v5.69 신청 준비 가이드 모달: 공식공고문 보기 + 장바구니 신청버튼) */
 
 /* ── 딥링크 테이블 (build_welfare_deeplinks.py 생성 JSON) ── */
 let _deepLinks = {};   // id → {detailUrl, applyUrl, matchType, ...}
@@ -139,7 +139,6 @@ function closeApplyGuide() {
 /* ── 공식공고문 버튼 HTML ── */
 function _noticeBtn(p) {
   const url = _noticeUrl(p);
-  // 정책 데이터를 JSON으로 직렬화해 모달에 전달
   const pJson = encodeURIComponent(JSON.stringify({
     name:          p.policy_name || p.name || "",
     required_docs: p.required_docs || [],
@@ -149,7 +148,29 @@ function _noticeBtn(p) {
     policy_id:     p.policy_id    || "",
     apply_steps:   p.apply_steps  || [],
   }));
-  return `<button class="official-notice-btn" onclick="openApplyGuide(JSON.parse(decodeURIComponent('${pJson}')), '${url}')">${T("btn_notice")}</button>`;
+  const nameEnc = encodeURIComponent(p.policy_name || p.name || "");
+  return `<div class="card-action-row">
+    <button class="official-notice-btn" onclick="openApplyGuide(JSON.parse(decodeURIComponent('${pJson}')), '${url}')">${T("btn_notice")}</button>
+    <button class="share-copy-btn" onclick="sharePolicy(decodeURIComponent('${nameEnc}'), '${url}')" title="링크 복사">📋</button>
+  </div>`;
+}
+
+/* ── 정책 링크 클립보드 복사 ── */
+function sharePolicy(name, url) {
+  const text = `[${name}] 신청 링크: ${url}`;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text)
+      .then(() => showToast("📋 링크가 복사되었습니다"))
+      .catch(() => showToast("⚠️ 복사에 실패했습니다"));
+  } else {
+    // fallback for older browsers
+    const ta = document.createElement("textarea");
+    ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); showToast("📋 링크가 복사되었습니다"); }
+    catch(e) { showToast("⚠️ 복사에 실패했습니다"); }
+    document.body.removeChild(ta);
+  }
 }
 
 async function loadDeepLinks() {
